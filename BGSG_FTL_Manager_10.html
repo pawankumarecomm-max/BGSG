@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BGSG Logistics — FTL Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f2137;--blue:#1a5fa8;--lblue:#d4e8f7;--accent:#f4a62a;
+  --green:#2d7a3a;--lgreen:#e6f4ea;--red:#b91c1c;--lred:#fef2f2;
+  --orange:#c2570a;--lorange:#fff7ed;--purple:#6d28d9;--lpurple:#ede9fe;
+  --bg:#f0f2f5;--card:#fff;--sidebar:#0f2137;--st:#94a3b8;
+  --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --fn:'Barlow',sans-serif;--fd:'Barlow Condensed',sans-serif;
+}
+body{font-family:var(--fn);background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;font-size:14px}
+#ld{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px}
+.sp{width:42px;height:42px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#ldm{color:rgba(255,255,255,.7);font-size:13px;text-align:center;max-width:320px;line-height:1.6}
+#sb{width:230px;background:var(--sidebar);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.brd{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brl{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.bri{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.bri svg{width:20px;height:20px;fill:var(--navy)}
+.brn{font-family:var(--fd);font-size:19px;font-weight:700;color:#fff}
+.brs{font-size:11px;color:var(--st);margin-left:44px}
+.ng{padding:10px 0 4px}
+.nl{font-size:10px;font-weight:600;letter-spacing:.1em;color:#475569;padding:0 16px 5px;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:var(--st);font-size:13px;font-weight:500;transition:.15s;border-left:3px solid transparent}
+.ni:hover{color:#fff;background:rgba(255,255,255,.06)}
+.ni.active{color:#fff;background:rgba(255,255,255,.1);border-left-color:var(--accent)}
+.ni svg{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.ni.active svg{opacity:1}
+.sft{margin-top:auto;padding:12px 16px;border-top:1px solid rgba(255,255,255,.08)}
+.uc{display:flex;align-items:center;gap:10px}
+.av{width:30px;height:30px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:12px;color:var(--navy)}
+.un{font-size:12px;font-weight:600;color:#fff}
+.ur{font-size:11px;color:var(--st)}
+#mn{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#topbar{height:54px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ptitle{font-family:var(--fd);font-size:21px;font-weight:700;color:var(--navy)}
+.tright{margin-left:auto;display:flex;align-items:center;gap:8px}
+#syncst{font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px;color:var(--green)}
+#syncst::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;display:block}
+.btn{padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:var(--fn);transition:.15s;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{background:var(--bg)}
+.btnp{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btnp:hover{background:#1a4e8a}
+.btnd{background:var(--lred);color:var(--red);border-color:#fca5a5}
+.btno{background:var(--lorange);color:var(--orange);border-color:#fdba74}
+.btns{padding:4px 9px;font-size:12px}
+#ct{flex:1;overflow-y:auto;padding:20px 22px}
+.pg{display:none}
+.pg.active{display:block;animation:fi .18s}
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.mcard{background:var(--card);border-radius:10px;padding:14px 16px;border:1px solid var(--border)}
+.mlbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.mval{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--navy);line-height:1}
+.msub{font-size:12px;color:var(--muted);margin-top:3px}
+.card{background:var(--card);border-radius:10px;border:1px solid var(--border);margin-bottom:16px;overflow:hidden}
+.cardh{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.cardt{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--navy)}
+.cardb{padding:14px 16px}
+.sbox{flex:1;min-width:180px;padding:7px 11px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;background:var(--card);color:var(--text);font-family:var(--fn)}
+.sbox:focus{outline:none;border-color:var(--blue)}
+select.flt{padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;background:var(--card);color:var(--text);font-family:var(--fn)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;font-weight:700;color:var(--muted);padding:8px 9px;background:#f8fafc;border-bottom:1.5px solid var(--border);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+td{padding:8px 9px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8fafc}
+.tmon{font-family:monospace;font-size:12px}
+.tamt{font-weight:600;text-align:right}
+.tpro{font-weight:700;text-align:right;color:var(--green)}
+.tlos{font-weight:700;text-align:right;color:var(--red)}
+.tzer{font-weight:500;text-align:right;color:var(--muted)}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.pbgsg{background:#dbeafe;color:#1d4ed8}.pthrd{background:#ede9fe;color:#5b21b6}
+.p14{background:#fef9c3;color:#a16207}.p17{background:#e0f2fe;color:#0369a1}
+.p20{background:#f0fdf4;color:#166534}.p22{background:#fdf4ff;color:#86198f}
+.p32{background:#fff7ed;color:#9a3412}.pbol{background:#f1f5f9;color:#475569}
+.st-transit{background:#fef3c7;color:#b45309;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
+.st-delivered{background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
+.st-planned{background:#e0f2fe;color:#0369a1;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
+.pod-yes{background:#dcfce7;color:#166534;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}
+.pod-no{background:#fef2f2;color:#b91c1c;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}
+.af-pending{background:#fef3c7;color:#b45309;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
+.af-partial{background:#dbeafe;color:#1d4ed8;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
+.af-settled{background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
+.af-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+.af-card{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:14px 16px}
+.stat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat-tile{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.15s}
+.stat-tile:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(26,95,168,.1)}
+.stat-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.stat-num{font-family:var(--fd);font-size:26px;font-weight:700;color:var(--navy);line-height:1}
+.stat-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.mover{display:none;position:fixed;inset:0;background:rgba(15,33,55,.55);z-index:200;align-items:center;justify-content:center}
+.mover.open{display:flex}
+.mdlg{background:var(--card);border-radius:12px;width:620px;max-width:96%;max-height:92vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.22)}
+.mdlgh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);z-index:1}
+.mdlgt{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--navy)}
+.mdlgx{width:26px;height:26px;border-radius:5px;border:none;background:var(--bg);cursor:pointer;font-size:15px;color:var(--muted);font-family:var(--fn)}
+.mdlgb{padding:18px 20px}
+.mdlgf{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--card)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrp{display:flex;flex-direction:column;gap:4px}
+.fgrp.full{grid-column:1/-1}
+.flbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.finp{padding:8px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;background:var(--card);color:var(--text);font-family:var(--fn);width:100%}
+.finp:focus{outline:none;border-color:var(--blue)}
+.fsep{grid-column:1/-1;border:none;border-top:2px dashed var(--border);margin:2px 0}
+.fsecl{grid-column:1/-1;font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;background:var(--lblue);padding:5px 9px;border-radius:5px}
+.fsecv{grid-column:1/-1;font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;background:var(--lpurple);padding:5px 9px;border-radius:5px}
+.plprev{grid-column:1/-1;background:#f8fafc;border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;display:flex;gap:16px;flex-wrap:wrap;font-size:13px}
+.pli{color:var(--muted)}
+.pli.pr strong{color:var(--green);font-size:14px}
+.pli.ls strong{color:var(--red);font-size:14px}
+.srow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.sbox2{background:var(--card);border-radius:8px;border:1px solid var(--border);padding:12px}
+.slbl{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px}
+.sval{font-family:var(--fd);font-size:19px;font-weight:700}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.rcard{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:18px;cursor:pointer;transition:.2s}
+.rcard:hover{border-color:var(--blue);box-shadow:0 4px 14px rgba(26,95,168,.1);transform:translateY(-2px)}
+.ricon{font-size:24px;margin-bottom:6px}
+.rtitle{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.rdesc{font-size:12px;color:var(--muted)}
+.bchart{display:flex;align-items:flex-end;gap:4px;height:70px}
+.bar{flex:1;border-radius:3px 3px 0 0;background:var(--lblue);cursor:pointer}
+.bar:hover{background:var(--blue)}
+.blabs{display:flex;gap:4px;margin-top:4px}
+.blab{flex:1;text-align:center;font-size:9px;color:var(--muted)}
+.tcrow{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.tcrow:last-child{border-bottom:none}
+.epprev{grid-column:1/-1;display:none;background:#f8fafc;border:1.5px solid var(--border);border-radius:8px;padding:11px 14px}
+.eplbl{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.acts{display:flex;gap:4px}
+.sal-box{background:linear-gradient(135deg,#0f2137 0%,#1a5fa8 100%);border-radius:10px;padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.sal-item{text-align:center}
+.sal-lbl{font-size:11px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.05em}
+.sal-val{font-family:var(--fd);font-size:22px;font-weight:700;color:#fff}
+.sal-val.red{color:#fca5a5}
+.sal-val.grn{color:#86efac}
+.drv-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.drv-card{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:14px;text-align:center}
+.drv-av{width:40px;height:40px;border-radius:50%;background:var(--lblue);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:14px;color:var(--blue);margin:0 auto 8px}
+.drv-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px}
+.drv-total{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--red)}
+#toast{position:fixed;bottom:22px;right:22px;background:var(--navy);color:#fff;padding:11px 18px;border-radius:8px;font-size:13px;font-weight:500;z-index:999;display:none;box-shadow:0 6px 20px rgba(0,0,0,.22)}
+#toast.show{display:block}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
+</style>
+</head>
+<body>
+
+<div id="ld"><div class="sp"></div><div id="ldm">Loading from Google Sheets via SheetDB…</div></div>
+
+<div id="sb">
+  <div class="brd">
+    <div class="brl">
+      <div class="bri"><svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg></div>
+      <span class="brn">BGSG</span>
+    </div>
+    <div class="brs">Logistics · FTL Manager</div>
+  </div>
+  <div class="ng">
+    <div class="nl">Main</div>
+    <div class="ni active" onclick="gp('dashboard',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</div>
+    <div class="ni" onclick="gp('trips',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg>All Trips</div>
+    <div class="ni" onclick="gp('expenses',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>Expenses<span id="expbadge" style="margin-left:auto;background:var(--accent);color:var(--navy);font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700;display:none">0</span></div>
+    <div class="ni" onclick="gp('pl',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>P&amp;L Analysis</div>
+    <div class="ni" onclick="gp('drivers',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Drivers &amp; Salary</div>
+    <div class="ni" onclick="gp('agentfreight',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Agent Freight<span id="afbadge" style="margin-left:auto;background:#f59e0b;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700;display:none">0</span></div>
+  </div>
+  <div class="ng">
+    <div class="nl">Analysis</div>
+    <div class="ni" onclick="gp('trans',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 5H3c-1.1 0-2 .89-2 2v9h2c0 1.65 1.34 3 3 3s3-1.35 3-3h5.5c0 1.65 1.34 3 3 3s3-1.35 3-3H22v-5l-5-6z"/></svg>Transporters</div>
+    <div class="ni" onclick="gp('cust',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z"/></svg>Customers</div>
+    <div class="ni" onclick="gp('reports',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>Reports</div>
+  </div>
+  <div class="sft">
+    <div class="uc">
+      <div class="av">BG</div>
+      <div><div class="un">BGSG Logistics</div><div class="ur">SheetDB Connected</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="mn">
+  <div id="topbar">
+    <div class="ptitle" id="ptitle">Dashboard</div>
+    <div class="tright">
+      <div id="syncst">Synced</div>
+      <button class="btn btno" id="expbtn" onclick="openExpModal()" style="display:none">+ Expense</button>
+      <button class="btn btnp" id="mainbtn" onclick="openTripModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>Add Trip
+      </button>
+
+    </div>
+  </div>
+
+  <div id="ct">
+
+    <!-- DASHBOARD -->
+    <div id="pg-dashboard" class="pg active">
+      <div class="stat-strip">
+        <div class="stat-tile" onclick="filterByStatus('In Transit')">
+          <div class="stat-ico" style="background:#fef3c7">🚛</div>
+          <div><div class="stat-num" id="cnt-transit">0</div><div class="stat-lbl">In Transit</div></div>
+        </div>
+        <div class="stat-tile" onclick="filterByStatus('Delivered')">
+          <div class="stat-ico" style="background:#dcfce7">✅</div>
+          <div><div class="stat-num" id="cnt-delivered">0</div><div class="stat-lbl">Delivered</div></div>
+        </div>
+        <div class="stat-tile" onclick="filterByStatus('To Be Planned')">
+          <div class="stat-ico" style="background:#e0f2fe">📋</div>
+          <div><div class="stat-num" id="cnt-planned">0</div><div class="stat-lbl">To Be Planned</div></div>
+        </div>
+      </div>
+      <div class="mgrid" id="dashmetrics"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <div class="cardt" style="font-size:14px">Monthly Summary</div>
+        <select class="flt" id="dash-month-sel" onchange="renderDash()"><option value="">All Months</option></select>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="tw"><table>
+          <thead style="background:var(--navy)"><tr>
+            <th style="color:#fff">Month</th><th style="color:#fff">Trips</th><th style="color:#fff">Revenue</th>
+            <th style="color:#fff">CNG+Exp</th><th style="color:#fff">InFreight</th><th style="color:#fff">Gross P&L</th>
+            <th style="color:#fff">Agent Freight</th><th style="color:#fff">Driver Salaries</th><th style="color:#fff">EMI &amp; Maint.</th><th style="color:#fff">Net P&L</th>
+          </tr></thead>
+          <tbody id="month-summary-body"></tbody>
+        </table></div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
+        <div>
+          <div class="card">
+            <div class="cardh"><span class="cardt">Recent Trips</span><button class="btn btns" onclick="gp('trips',document.querySelectorAll('.ni')[1])">All Trips</button></div>
+            <div class="tw"><table><thead><tr><th>Date</th><th>Invoice</th><th>Customer</th><th>Route</th><th>Amount</th><th>P&L</th><th>Status</th></tr></thead><tbody id="dashtripsbody"></tbody></table></div>
+          </div>
+          <div class="card">
+            <div class="cardh"><span class="cardt">Daily Trip Volume</span></div>
+            <div class="cardb"><div class="bchart" id="barchart"></div><div class="blabs" id="barlabs"></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="card"><div class="cardh"><span class="cardt">Top Customers</span></div><div class="cardb" id="dashcust"></div></div>
+          <div class="card"><div class="cardh"><span class="cardt">Transporters</span></div><div class="cardb" id="dashtrans"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL TRIPS -->
+    <div id="pg-trips" class="pg">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🔍 Filters</div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+          <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Search</div><input class="sbox" style="width:100%" placeholder="Invoice, customer, vehicle…" id="trip-search" oninput="renderTrips()"></div>
+          <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Date From</div><input type="date" class="flt" style="width:100%" id="tf-date-from" onchange="renderTrips()"></div>
+          <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Date To</div><input type="date" class="flt" style="width:100%" id="tf-date-to" onchange="renderTrips()"></div>
+          <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Trip Status</div>
+            <select class="flt" style="width:100%" id="tf-status" onchange="renderTrips()">
+              <option value="">All Status</option><option value="To Be Planned">📋 To Be Planned</option>
+              <option value="In Transit">🚛 In Transit</option><option value="Delivered">✅ Delivered</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end"><button class="btn btns" onclick="clearTripFilters()" style="width:100%;justify-content:center;background:var(--lred);color:var(--red);border-color:#fca5a5">✕ Clear</button></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px">
+          <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Transporter</div><select class="flt" style="width:100%" id="tf-trans" onchange="renderTrips()"><option value="">All Transporters</option></select></div>
+          <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Vehicle Number</div><select class="flt" style="width:100%" id="tf-vehicle" onchange="renderTrips()"><option value="">All Vehicles</option></select></div>
+          <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Origin (From)</div><select class="flt" style="width:100%" id="tf-from" onchange="renderTrips()"><option value="">All Origins</option><option>BGSG BLR</option><option>Jhajjar</option><option>Amar Jyothi</option><option>Noida</option><option>EPW</option></select></div>
+          <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Customer</div><select class="flt" style="width:100%" id="tf-cust" onchange="renderTrips()"><option value="">All Customers</option></select></div>
+          <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Vehicle Type</div><select class="flt" style="width:100%" id="tf-type" onchange="renderTrips()"><option value="">All Types</option><option>14FT</option><option>17FT</option><option>20FT</option><option>22FT</option><option>32FT</option><option>Bolero</option></select></div>
+        </div>
+      </div>
+      <div id="trip-filter-summary" style="margin-bottom:10px;font-size:13px;color:var(--muted)"></div>
+      <div class="card" style="padding:0"><div class="tw"><table>
+        <thead><tr><th>Date</th><th>Transporter</th><th>From</th><th>To</th><th>Vehicle</th><th>Type</th><th>Invoice</th><th>Customer</th><th>Amount</th><th>CNG</th><th>MCD</th><th>Other</th><th>InFreight</th><th>P&L</th><th>Status</th><th>POD</th><th>Actions</th></tr></thead>
+        <tbody id="tripstbody"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- EXPENSES -->
+    <div id="pg-expenses" class="pg">
+      <div class="mgrid" id="expmetrics" style="grid-template-columns:repeat(5,1fr)"></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <input class="sbox" placeholder="Search expenses…" oninput="renderExpenses(this.value)">
+        <select class="flt" id="exptf" onchange="renderExpenses()"><option value="">All Types</option><option>CNG / Fuel</option><option>MCD / Tax</option><option>Toll</option><option>Driver Allowance</option><option>Loading / Unloading</option><option>Repair</option><option>InFreight</option><option>Other</option></select>
+      </div>
+      <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Date</th><th>Trip Invoice</th><th>Customer</th><th>Route</th><th>Type</th><th>Amount</th><th>Note</th><th>Actions</th></tr></thead><tbody id="exptbody"></tbody></table></div></div>
+    </div>
+
+    <!-- P&L -->
+    <div id="pg-pl" class="pg">
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px" id="plsummary"></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <input class="sbox" placeholder="Search trips…" oninput="renderPL(this.value)">
+        <select class="flt" id="plfilter" onchange="renderPL()"><option value="">All Trips</option><option value="profit">Profit Only</option><option value="zero">Zero P&L</option><option value="loss">Loss Only</option></select>
+        <select class="flt" id="pl-month" onchange="renderPL()"><option value="">All Months</option></select>
+      </div>
+      <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Date</th><th>Invoice</th><th>Transporter</th><th>Customer</th><th>Route</th><th>Amount</th><th>CNG</th><th>MCD</th><th>Other</th><th>InFreight</th><th>P&L</th><th>Margin%</th><th></th></tr></thead><tbody id="pltbody"></tbody></table></div></div>
+    </div>
+
+    <!-- DRIVERS -->
+    <div id="pg-drivers" class="pg">
+      <div class="sal-box" id="sal-banner"></div>
+      <div class="drv-grid" id="driver-cards"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" id="driver-pl-grid">
+        <div class="card">
+          <div class="cardh"><span class="cardt">Monthly Salary Log</span><button class="btn btnp btns" onclick="openSalaryModal()">+ Add Salary Entry</button></div>
+          <div class="tw"><table><thead><tr><th>Month</th><th>Driver</th><th>Salary (Rs)</th><th>Note</th><th>Actions</th></tr></thead><tbody id="salary-body"></tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="cardh"><span class="cardt">Vehicle EMI &amp; Maintenance</span><button class="btn btns" style="background:var(--lpurple);color:var(--purple);border-color:#c4b5fd" onclick="openVehicleExpModal()">+ Add Entry</button></div>
+          <div class="tw"><table><thead><tr><th>Month</th><th>Vehicle</th><th>Type</th><th>Amount (Rs)</th><th>Note</th><th>Actions</th></tr></thead><tbody id="vehexp-body"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT FREIGHT -->
+    <div id="pg-agentfreight" class="pg">
+      <div class="af-summary" id="af-metrics"></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+        <input class="sbox" placeholder="Search agent, vehicle…" oninput="renderAgentFreight(this.value)" style="max-width:240px">
+        <select class="flt" id="af-filter-pod" onchange="renderAgentFreight()">
+          <option value="">All Status</option>
+          <option value="Pending">⏳ Balance Pending</option>
+          <option value="Partial">🔵 Partially Received</option>
+          <option value="Settled">✅ Fully Settled</option>
+        </select>
+        <span style="font-size:12px;color:var(--muted);margin-left:4px" id="af-balance-alert"></span>
+      </div>
+      <div class="card" style="padding:0"><div class="tw"><table>
+        <thead><tr>
+          <th>Date</th><th>Agent</th><th>Vehicle</th>
+          <th>Loading Amt</th><th>Commission</th><th>Advance Paid</th>
+          <th>Balance Due</th><th>Balance Recd</th><th>Net Income</th>
+          <th>POD Status</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="af-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- TRANSPORTERS -->
+    <div id="pg-trans" class="pg">
+      <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Transporter</th><th>Trips</th><th>Total Amount</th><th>Total CNG</th><th>Total P&L</th><th>Avg P&L/Trip</th><th>Type</th></tr></thead><tbody id="transtbody"></tbody></table></div></div>
+    </div>
+
+    <!-- CUSTOMERS -->
+    <div id="pg-cust" class="pg">
+      <div style="margin-bottom:14px"><input class="sbox" placeholder="Search customer…" oninput="renderCust(this.value)"></div>
+      <div class="card" style="padding:0"><div class="tw"><table><thead><tr><th>Customer</th><th>Trips</th><th>Total Amount</th><th>Avg/Trip</th><th>Routes</th></tr></thead><tbody id="custtbody"></tbody></table></div></div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="pg-reports" class="pg">
+      <div class="srow" id="reportsummary"></div>
+      <div class="rgrid">
+        <div class="rcard" onclick="genReport('summary')"><div class="ricon">📊</div><div class="rtitle">Monthly Summary</div><div class="rdesc">Revenue, expenses, net P&L</div><button class="btn btns btnp" style="margin-top:8px">Generate</button></div>
+        <div class="rcard" onclick="genReport('transporter')"><div class="ricon">🚛</div><div class="rtitle">Transporter P&L</div><div class="rdesc">Revenue per transporter</div><button class="btn btns btnp" style="margin-top:8px">Generate</button></div>
+        <div class="rcard" onclick="genReport('customer')"><div class="ricon">👥</div><div class="rtitle">Customer Revenue</div><div class="rdesc">Amount billed per customer</div><button class="btn btns btnp" style="margin-top:8px">Generate</button></div>
+        <div class="rcard" onclick="genReport('vehicle')"><div class="ricon">🔢</div><div class="rtitle">Vehicle-wise P&L</div><div class="rdesc">P&L per vehicle number</div><button class="btn btns btnp" style="margin-top:8px">Generate</button></div>
+        <div class="rcard" onclick="genReport('route')"><div class="ricon">🗺️</div><div class="rtitle">Route Analysis</div><div class="rdesc">Top routes and avg freight</div><button class="btn btns btnp" style="margin-top:8px">Generate</button></div>
+        <div class="rcard" onclick="genReport('salary')"><div class="ricon">👤</div><div class="rtitle">Salary vs P&L</div><div class="rdesc">Monthly P&L after salaries</div><button class="btn btns btnp" style="margin-top:8px">Generate</button></div>
+        <div class="rcard" onclick="genReport('daily')"><div class="ricon">📅</div><div class="rtitle">Day-by-Day P&L</div><div class="rdesc">Daily revenue and profit</div><button class="btn btns btnp" style="margin-top:8px">Generate</button></div>
+      </div>
+      <div id="reportout" style="margin-top:16px"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TRIP MODAL -->
+<div class="mover" id="mo-trip">
+  <div class="mdlg">
+    <div class="mdlgh"><div class="mdlgt" id="tripmotitle">Add New Trip</div><button class="mdlgx" onclick="closeModal('mo-trip')">✕</button></div>
+    <div class="mdlgb">
+      <div class="fgrid">
+        <div class="fgrp"><label class="flbl">Date</label><input class="finp" type="date" id="t-date"></div>
+        <div class="fgrp"><label class="flbl">Transporter</label><input class="finp" id="t-trans" list="translist"><datalist id="translist"><option>BGSG Logistics</option><option>Amit Transport</option><option>RCB Transport</option><option>Ravi Tata Ace</option><option>JAGESWAR</option><option>Shree Ganesh Road Carrier</option><option>Routeredar-Divya</option><option>Khan Transport</option><option>Surindera Transport</option><option>OM LOGISTICS LTD.</option><option>Chinar Packaging</option><option>Wheelz EYE</option><option>DS INDIA LOGISTICS</option></datalist></div>
+        <div class="fgrp"><label class="flbl">From</label><input class="finp" id="t-from" list="fromlist"><datalist id="fromlist"><option>BGSG BLR</option><option>Jhajjar</option><option>Amar Jyothi</option><option>Noida</option><option>EPW</option></datalist></div>
+        <div class="fgrp"><label class="flbl">To</label><input class="finp" id="t-to"></div>
+        <div class="fgrp"><label class="flbl">Vehicle No</label><input class="finp" id="t-vehicle"></div>
+        <div class="fgrp"><label class="flbl">Type</label><select class="finp" id="t-type"><option>14FT</option><option>17FT</option><option>20FT</option><option>22FT</option><option>32FT</option><option>Bolero</option></select></div>
+        <div class="fgrp full"><label class="flbl">Invoice No</label><input class="finp" id="t-invoice"></div>
+        <div class="fgrp full"><label class="flbl">Customer Name</label><input class="finp" id="t-customer"></div>
+        <div class="fgrp"><label class="flbl">Driver No</label><input class="finp" id="t-driver"></div>
+        <div class="fgrp"><label class="flbl">Trip Status</label>
+          <select class="finp" id="t-status"><option value="To Be Planned">📋 To Be Planned</option><option value="In Transit">🚛 In Transit</option><option value="Delivered">✅ Delivered</option></select>
+        </div>
+        <div class="fgrp"><label class="flbl">POD Status</label>
+          <select class="finp" id="t-pod"><option value="Pending">⏳ POD Pending</option><option value="Received">✅ POD Received</option></select>
+        </div>
+        <div class="fgrp"></div>
+        <hr class="fsep">
+        <div class="fsecl">💰 Financials</div>
+        <div class="fgrp"><label class="flbl">Amount / Out-Freight (Rs)</label><input class="finp" type="number" id="t-amount" value="0" oninput="calcPL()"></div>
+        <div class="fgrp"><label class="flbl">CNG / Fuel (Rs)</label><input class="finp" type="number" id="t-cng" value="0" oninput="calcPL()"></div>
+        <div class="fgrp"><label class="flbl">MCD / Tax (Rs)</label><input class="finp" type="number" id="t-mcd" value="0" oninput="calcPL()"></div>
+        <div class="fgrp"><label class="flbl">Other Expenses (Rs)</label><input class="finp" type="number" id="t-other" value="0" oninput="calcPL()"></div>
+        <div class="fgrp"><label class="flbl">InFreight (Rs)</label><input class="finp" type="number" id="t-infreight" value="0" oninput="calcPL()"></div>
+        <div class="fgrp"></div>
+        <div class="plprev">
+          <div class="pli">Amount: <strong id="pamt">Rs 0</strong></div>
+          <div class="pli">Expenses: <strong id="pexp">Rs 0</strong></div>
+          <div class="pli">InFreight: <strong id="pinf">Rs 0</strong></div>
+          <div class="pli" id="plbox">P&L: <strong id="ppl">Rs 0</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="mdlgf"><button class="btn" onclick="closeModal('mo-trip')">Cancel</button><button class="btn btnp" id="tripsavebtn" onclick="saveTrip()">Save Trip</button></div>
+  </div>
+</div>
+
+<!-- EXPENSE MODAL -->
+<div class="mover" id="mo-exp">
+  <div class="mdlg" style="width:500px">
+    <div class="mdlgh"><div class="mdlgt">Add Expense to Trip</div><button class="mdlgx" onclick="closeModal('mo-exp')">✕</button></div>
+    <div class="mdlgb">
+      <div class="fgrid">
+        <div class="fgrp full"><label class="flbl">Link to Trip</label><select class="finp" id="e-trip" onchange="onTripSelect()"><option value="">-- Select Trip --</option></select></div>
+        <div class="fgrp full" id="e-tripinfo" style="display:none"><div style="background:var(--lblue);border-radius:7px;padding:9px 12px;font-size:12px;color:var(--navy)" id="e-triptext"></div></div>
+        <div class="fgrp"><label class="flbl">Date</label><input class="finp" type="date" id="e-date"></div>
+        <div class="fgrp"><label class="flbl">Type</label><select class="finp" id="e-type" onchange="previewExpPL()"><option>CNG / Fuel</option><option>MCD / Tax</option><option>Toll</option><option>Driver Allowance</option><option>Loading / Unloading</option><option>Repair</option><option>InFreight</option><option>Other</option></select></div>
+        <div class="fgrp"><label class="flbl">Amount (Rs)</label><input class="finp" type="number" id="e-amount" placeholder="0" oninput="previewExpPL()"></div>
+        <div class="fgrp full"><label class="flbl">Note</label><input class="finp" id="e-note" placeholder="e.g. Diesel at Nagpur"></div>
+        <div class="epprev" id="e-plprev">
+          <div class="eplbl">P&L Impact</div>
+          <div style="display:flex;gap:16px;font-size:13px;flex-wrap:wrap"><span>Current P&L: <strong id="e-curpl"></strong></span><span>This expense: <strong id="e-thisexp"></strong></span><span>New P&L: <strong id="e-newpl" style="font-size:14px"></strong></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="mdlgf"><button class="btn" onclick="closeModal('mo-exp')">Cancel</button><button class="btn btnp" onclick="saveExpense()">Save Expense</button></div>
+  </div>
+</div>
+
+<!-- SALARY MODAL -->
+<div class="mover" id="mo-salary">
+  <div class="mdlg" style="width:500px">
+    <div class="mdlgh"><div class="mdlgt">Add Salary Entry</div><button class="mdlgx" onclick="closeModal('mo-salary')">✕</button></div>
+    <div class="mdlgb">
+      <div class="fgrid">
+        <div class="fsecv">👤 Driver Salary</div>
+        <div class="fgrp"><label class="flbl">Month (e.g. 2026-03)</label><input class="finp" id="sal-month" placeholder="2026-03"></div>
+        <div class="fgrp"><label class="flbl">Driver Name</label><select class="finp" id="sal-driver"><option value="">-- Select Driver --</option></select></div>
+        <div class="fgrp"><label class="flbl">Salary Amount (Rs)</label><input class="finp" type="number" id="sal-amount" placeholder="0"></div>
+        <div class="fgrp full"><label class="flbl">Note</label><input class="finp" id="sal-note" placeholder="e.g. March salary, advance paid"></div>
+      </div>
+    </div>
+    <div class="mdlgf"><button class="btn" onclick="closeModal('mo-salary')">Cancel</button><button class="btn btnp" onclick="saveSalary()">Save Salary</button></div>
+  </div>
+</div>
+
+<!-- VEHICLE EMI / MAINTENANCE MODAL -->
+<div class="mover" id="mo-vehexp">
+  <div class="mdlg" style="width:500px">
+    <div class="mdlgh"><div class="mdlgt">Add Vehicle EMI / Maintenance</div><button class="mdlgx" onclick="closeModal('mo-vehexp')">✕</button></div>
+    <div class="mdlgb">
+      <div class="fgrid">
+        <div class="fsecl">🚗 Vehicle Fixed Expense</div>
+        <div class="fgrp"><label class="flbl">Month (e.g. 2026-03)</label><input class="finp" id="ve-month" placeholder="2026-03"></div>
+        <div class="fgrp"><label class="flbl">Vehicle Number</label><input class="finp" id="ve-vehicle" placeholder="DL01LY8139" list="ve-vehlist"><datalist id="ve-vehlist"></datalist></div>
+        <div class="fgrp"><label class="flbl">Expense Type</label>
+          <select class="finp" id="ve-type">
+            <option value="EMI">EMI / Loan Payment</option>
+            <option value="Maintenance">Maintenance / Repair</option>
+            <option value="Insurance">Insurance</option>
+            <option value="Tyre">Tyre Replacement</option>
+            <option value="Permit">Permit / RC / Fitness</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="fgrp"><label class="flbl">Amount (Rs)</label><input class="finp" type="number" id="ve-amount" placeholder="0"></div>
+        <div class="fgrp full"><label class="flbl">Note</label><input class="finp" id="ve-note" placeholder="e.g. March EMI — DL01LY8139"></div>
+      </div>
+    </div>
+    <div class="mdlgf"><button class="btn" onclick="closeModal('mo-vehexp')">Cancel</button><button class="btn btnp" onclick="saveVehicleExp()">Save Entry</button></div>
+  </div>
+</div>
+
+<!-- DRIVER SETUP MODAL -->
+<div class="mover" id="mo-drv-setup">
+  <div class="mdlg" style="width:480px">
+    <div class="mdlgh"><div class="mdlgt">Manage Drivers</div><button class="mdlgx" onclick="closeModal('mo-drv-setup')">✕</button></div>
+    <div class="mdlgb">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Add or remove drivers. Changes affect salary dropdowns and driver cards.</div>
+      <div id="drv-setup-list"></div>
+      <button class="btn btnp btns" style="margin-top:4px" onclick="addDriverRow()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Add Driver
+      </button>
+    </div>
+    <div class="mdlgf"><button class="btn" onclick="closeModal('mo-drv-setup')">Cancel</button><button class="btn btnp" onclick="saveDriverNames()">Save Drivers</button></div>
+  </div>
+</div>
+
+<!-- AGENT FREIGHT MODAL -->
+<div class="mover" id="mo-af">
+  <div class="mdlg" style="width:640px">
+    <div class="mdlgh"><div class="mdlgt" id="af-mo-title">Add Agent Freight Entry</div><button class="mdlgx" onclick="closeModal('mo-af')">✕</button></div>
+    <div class="mdlgb">
+      <div class="fgrid">
+        <div class="fsecl">🤝 Agent Details</div>
+        <div class="fgrp"><label class="flbl">Date</label><input class="finp" type="date" id="af-date"></div>
+        <div class="fgrp"><label class="flbl">Agent / Party Name</label><input class="finp" id="af-agent" placeholder="e.g. Gulshan Transport" list="af-agentlist"><datalist id="af-agentlist"></datalist></div>
+        <div class="fgrp"><label class="flbl">Vehicle No</label><input class="finp" id="af-vehicle" placeholder="DL01LY8139" list="af-vehlist"><datalist id="af-vehlist"></datalist></div>
+        <div class="fgrp"><label class="flbl">Note / Route</label><input class="finp" id="af-note" placeholder="e.g. Jhajjar to Mumbai"></div>
+
+        <hr class="fsep">
+        <div class="fsecl">💰 Freight Breakdown</div>
+
+        <div class="fgrp"><label class="flbl">Loading Amount (Rs)</label><input class="finp" type="number" id="af-loading" placeholder="40000" oninput="calcAF()"></div>
+        <div class="fgrp"><label class="flbl">Commission %</label><input class="finp" type="number" id="af-cpct" placeholder="e.g. 5" step="0.01" oninput="calcAF()"></div>
+        <div class="fgrp"><label class="flbl">Commission Amount (Rs)</label><input class="finp" type="number" id="af-camt" placeholder="auto-calculated" oninput="calcAFFromAmt()"></div>
+        <div class="fgrp"><label class="flbl">Advance Paid to You (Rs)</label><input class="finp" type="number" id="af-advance" placeholder="35000" oninput="calcAF()"></div>
+
+        <!-- Live preview -->
+        <div class="plprev" id="af-preview" style="display:none">
+          <div class="pli">Loading: <strong id="afp-load">Rs 0</strong></div>
+          <div class="pli">Commission: <strong id="afp-comm" style="color:var(--red)">Rs 0</strong></div>
+          <div class="pli">Advance Received: <strong id="afp-adv" style="color:var(--blue)">Rs 0</strong></div>
+          <div class="pli">Balance Due after POD: <strong id="afp-bal" style="color:var(--orange)">Rs 0</strong></div>
+          <div class="pli">Net Income (if fully settled): <strong id="afp-net" style="color:var(--green)">Rs 0</strong></div>
+        </div>
+
+        <hr class="fsep">
+        <div class="fsecv">📋 POD & Balance</div>
+        <div class="fgrp"><label class="flbl">POD Status</label>
+          <select class="finp" id="af-pod">
+            <option value="Pending">⏳ POD Pending</option>
+            <option value="Submitted">✅ POD Submitted</option>
+          </select>
+        </div>
+        <div class="fgrp"><label class="flbl">Balance Received (Rs)</label><input class="finp" type="number" id="af-balrcvd" placeholder="0" oninput="calcAF()"></div>
+      </div>
+    </div>
+    <div class="mdlgf"><button class="btn" onclick="closeModal('mo-af')">Cancel</button><button class="btn btnp" id="af-savebtn" onclick="saveAgentFreight()">Save Entry</button></div>
+  </div>
+</div>
+
+<!-- AGENT FREIGHT DETAIL / RECEIVE BALANCE MODAL -->
+<div class="mover" id="mo-af-detail">
+  <div class="mdlg" style="width:520px">
+    <div class="mdlgh"><div class="mdlgt" id="af-detail-title">Agent Freight Detail</div><button class="mdlgx" onclick="closeModal('mo-af-detail')">✕</button></div>
+    <div class="mdlgb" id="af-detail-body"></div>
+    <div class="mdlgf">
+      <button class="btn" onclick="closeModal('mo-af-detail')">Close</button>
+      <button class="btn btno" id="af-detail-editbtn">✏ Edit</button>
+      <button class="btn btnp" id="af-detail-rcvbtn">+ Receive Balance</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRIP DETAIL MODAL -->
+<div class="mover" id="mo-detail">
+  <div class="mdlg" style="width:660px">
+    <div class="mdlgh"><div class="mdlgt" id="detailtitle">Trip Detail</div><button class="mdlgx" onclick="closeModal('mo-detail')">✕</button></div>
+    <div class="mdlgb" id="detailbody"></div>
+    <div class="mdlgf"><button class="btn" onclick="closeModal('mo-detail')">Close</button><button class="btn btnp" id="detailexpbtn">+ Add Expense</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// SHEETDB API CONFIG — your Google Sheet connected
+// ═══════════════════════════════════════════════════
+var API   = 'https://sheetdb.io/api/v1/tfwrnvyi2l0a8';
+var SHEET_TRIPS    = 'Trips';
+var SHEET_EXPENSES = 'Expenses';
+var SHEET_SALARIES = 'Salaries';
+var SHEET_VEHICLEEXP   = 'VehicleExpenses';
+var SHEET_AGENTFREIGHT = 'AgentFreight';
+var SHEET_DRIVERS      = 'Drivers';
+
+var APP = { trips:[], expenses:[], salaries:[], vehicleExpenses:[], agentFreights:[] };
+var DRIVERS = ['Driver 1','Driver 2','Driver 3','Driver 4','Driver 5'];
+var curPage = 'dashboard';
+var editTripId = null;
+
+// ── Helpers ──────────────────────────────────────
+function fmt(n){ return 'Rs '+Math.round(+n||0).toLocaleString('en-IN'); }
+function fmtDate(d){
+  if(!d) return '';
+  var s=String(d).slice(0,10);
+  if(s.length<10) return s;
+  return s.slice(8,10)+'-'+s.slice(5,7)+'-'+s.slice(0,4);
+}
+function today(){ return new Date().toISOString().slice(0,10); }
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.className='show'; setTimeout(function(){t.className='';},2800); }
+function syncSt(col,msg){ var el=document.getElementById('syncst'); el.textContent=msg; el.style.color=col==='ok'?'var(--green)':col==='err'?'var(--red)':'var(--orange)'; }
+function tripPill(t){ var m={'14FT':'p14','17FT':'p17','20FT':'p20','22FT':'p22','32FT':'p32','Bolero':'pbol'}; return '<span class="pill '+(m[t]||'pbol')+'">'+(t||'-')+'</span>'; }
+function plTD(v){ v=+v||0; if(v>0)return '<td class="tpro">'+fmt(v)+'</td>'; if(v<0)return '<td class="tlos">'+fmt(v)+'</td>'; return '<td class="tzer">-</td>'; }
+function getTripExp(tid){ return APP.expenses.filter(function(e){return String(e.tripId)===String(tid);}); }
+function getMonths(){ var ms={}; APP.trips.forEach(function(t){ms[String(t.date).slice(0,7)]=1;}); APP.salaries.forEach(function(s){ms[s.month]=1;}); APP.vehicleExpenses.forEach(function(v){ms[v.month]=1;}); APP.agentFreights.forEach(function(a){if(a.date)ms[String(a.date).slice(0,7)]=1;}); return Object.keys(ms).sort(); }
+function recompPL(tid){
+  var trip=APP.trips.find(function(t){return String(t.id)===String(tid);}); if(!trip) return;
+  var exps=getTripExp(tid); var xE=0,xI=0;
+  exps.forEach(function(e){ var a=+e.amount||0; if(e.type==='InFreight')xI+=a; else xE+=a; });
+  trip.pl=(+trip.amount||0)-(+trip.cng||0)-(+trip.mcd||0)-(+trip.other||0)-xE+(+trip.infreight||0)+xI;
+}
+function updateBadge(){ var b=document.getElementById('expbadge'),n=APP.expenses.length; b.style.display=n>0?'inline-block':'none'; b.textContent=n; }
+function totalSalForMonth(m){ return APP.salaries.filter(function(s){return s.month===m;}).reduce(function(s,x){return s+(+x.amount||0);},0); }
+function updateDriverSelect(){
+  var sel=document.getElementById('sal-driver'); if(!sel) return;
+  sel.innerHTML='<option value="">-- Select Driver --</option>';
+  DRIVERS.forEach(function(d){ var o=document.createElement('option'); o.value=d.name; o.textContent=d.name; sel.appendChild(o); });
+}
+function renderDriverSetupList(){
+  var c=document.getElementById('drv-setup-list'); if(!c) return;
+  c.innerHTML=DRIVERS.map(function(d,i){
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'
+      +'<input class="finp" style="flex:1" value="'+d.name.replace(/"/g,'&quot;')+'" id="drv-inp-'+i+'" placeholder="Driver name">'
+      +'<button class="btn btns btnd" onclick="removeDriver(\''+d.id+'\')" title="Remove">✕</button>'
+      +'</div>';
+  }).join('');
+}
+function addDriverRow(){
+  // Add empty row to UI for typing — saved on "Save Drivers"
+  DRIVERS.push({id:'drv_new_'+Date.now(),name:'',_new:true});
+  renderDriverSetupList();
+  var inputs=document.querySelectorAll('[id^="drv-inp-"]');
+  if(inputs.length) inputs[inputs.length-1].focus();
+}
+function removeDriver(id){
+  if(DRIVERS.length<=1){toast('At least one driver required');return;}
+  var drv=DRIVERS.find(function(d){return String(d.id)===String(id);});
+  DRIVERS=DRIVERS.filter(function(d){return String(d.id)!==String(id);});
+  renderDriverSetupList();
+  // Delete from sheet only if it was already saved (not a brand-new unsaved row)
+  if(drv&&!drv._new){
+    apiDelete(SHEET_DRIVERS,id,function(err){
+      syncSt(err?'err':'ok',err?'Sync error':'Synced ✓');
+    });
+  }
+}
+function parseNum(v){ return parseFloat(v)||0; }
+
+// ── SheetDB API calls ─────────────────────────────
+function apiGet(sheet, cb){
+  fetch(API+'?sheet='+sheet)
+    .then(function(r){ return r.json(); })
+    .then(function(data){ cb(null, Array.isArray(data)?data:[]); })
+    .catch(function(e){ cb(e, []); });
+}
+function apiPost(sheet, row, cb){
+  fetch(API+'?sheet='+sheet, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({data:[row]})
+  }).then(function(r){ return r.json(); }).then(function(d){ if(cb)cb(null,d); }).catch(function(e){ if(cb)cb(e); });
+}
+function apiPatch(sheet, id, row, cb){
+  fetch(API+'/id/'+encodeURIComponent(id)+'?sheet='+sheet, {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({data:row})
+  }).then(function(r){ return r.json(); }).then(function(d){ if(cb)cb(null,d); }).catch(function(e){ if(cb)cb(e); });
+}
+function apiDelete(sheet, id, cb){
+  fetch(API+'/id/'+encodeURIComponent(id)+'?sheet='+sheet, {method:'DELETE'})
+    .then(function(r){ return r.json(); }).then(function(d){ if(cb)cb(null,d); }).catch(function(e){ if(cb)cb(e); });
+}
+function normalizeTrip(t){
+  return {
+    id:t.id||'', date:t.date||'', transporter:t.transporter||'', from:t.from||'', to:t.to||'',
+    vehicle:t.vehicle||'', type:t.type||'', invoice:t.invoice||'', customer:t.customer||'',
+    driverno:t.driverno||'', status:t.status||'To Be Planned', pod:t.pod||'Pending',
+    amount:parseNum(t.amount), cng:parseNum(t.cng), mcd:parseNum(t.mcd),
+    other:parseNum(t.other), infreight:parseNum(t.infreight), pl:parseNum(t.pl)
+  };
+}
+function normalizeExp(e){
+  return { id:e.id||'', tripId:e.tripId||'', date:e.date||'', type:e.type||'', amount:parseNum(e.amount), note:e.note||'' };
+}
+function normalizeSal(s){
+  return { id:s.id||'', month:s.month||'', driver:s.driver||'', amount:parseNum(s.amount), note:s.note||'' };
+}
+function normalizeVehicleExp(v){
+  return { id:v.id||'', month:v.month||'', vehicle:v.vehicle||'', type:v.type||'EMI', amount:parseNum(v.amount), note:v.note||'' };
+}
+function normalizeAgentFreight(a){
+  return {
+    id:a.id||'', date:a.date||'', agent:a.agent||'', vehicle:a.vehicle||'',
+    loadingAmount:parseNum(a.loadingAmount), advancePaid:parseNum(a.advancePaid),
+    commissionPct:parseNum(a.commissionPct), commissionAmt:parseNum(a.commissionAmt),
+    balanceDue:parseNum(a.balanceDue), balanceReceived:parseNum(a.balanceReceived),
+    podStatus:a.podStatus||'Pending', note:a.note||''
+  };
+}
+
+function normalizeDriver(d){ return {id:d.id||('drv'+Math.random().toString(36).slice(2)),name:d.name||''}; }
+
+// ── INIT ─────────────────────────────────────────
+function init(){
+  DRIVERS=[]; updateDriverSelect();
+  syncSt('save','Loading from Google Sheets…');
+  var loaded=0;
+  function done(){ loaded++; if(loaded===6) onLoaded(); }
+  apiGet(SHEET_TRIPS,        function(err,data){ if(!err) APP.trips=data.map(normalizeTrip); done(); });
+  apiGet(SHEET_EXPENSES,     function(err,data){ if(!err) APP.expenses=data.map(normalizeExp); done(); });
+  apiGet(SHEET_SALARIES,     function(err,data){ if(!err) APP.salaries=data.map(normalizeSal); done(); });
+  apiGet(SHEET_VEHICLEEXP,   function(err,data){ if(!err) APP.vehicleExpenses=data.map(normalizeVehicleExp); done(); });
+  apiGet(SHEET_AGENTFREIGHT, function(err,data){ if(!err) APP.agentFreights=data.map(normalizeAgentFreight); done(); });
+  apiGet(SHEET_DRIVERS, function(err,data){
+    if(!err && Array.isArray(data) && data.length>0){
+      DRIVERS=data.map(normalizeDriver).filter(function(d){return d.name;});
+    }
+    if(DRIVERS.length===0){
+      // Fallback: seed from localStorage if Drivers sheet is empty
+      var local=JSON.parse(localStorage.getItem('bgsg_drivers')||'null');
+      if(local&&local.length){ DRIVERS=local.map(function(n,i){return {id:'drv'+(i+1),name:n};}); }
+      else { DRIVERS=[{id:'drv1',name:'Driver 1'}]; }
+    }
+    updateDriverSelect();
+    done();
+  });
+}
+function onLoaded(){
+  document.getElementById('ld').style.display='none';
+  populateMonthDropdowns(); populateTripFilters();
+  renderPage('dashboard'); updateBadge(); updateAFBadge();
+  syncSt('ok','Synced ✓');
+  toast('Loaded '+APP.trips.length+' trips from Google Sheets!');
+}
+
+// ── Navigation ────────────────────────────────────
+var pageNames={dashboard:'Dashboard',trips:'All Trips',expenses:'Expenses',pl:'P&L Analysis',drivers:'Drivers & Salary',agentfreight:'Agent Freight',trans:'Transporters',cust:'Customers',reports:'Reports'};
+function gp(name,el){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('active');});
+  document.getElementById('pg-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  document.getElementById('ptitle').textContent=pageNames[name]||name;
+  document.getElementById('expbtn').style.display=(name==='expenses'||name==='trips')?'inline-flex':'none';
+  var mb=document.getElementById('mainbtn');
+  if(name==='expenses'){ mb.textContent='+ Expense'; mb.onclick=function(){openExpModal();}; }
+  else if(name==='drivers'){ mb.textContent='Setup Drivers'; mb.onclick=function(){openDrvSetup();}; }
+  else if(name==='agentfreight'){ mb.textContent='+ Agent Freight'; mb.onclick=function(){openAgentFreightModal();}; }
+  else { mb.textContent='+ Add Trip'; mb.onclick=function(){openTripModal();}; }
+  curPage=name; renderPage(name);
+}
+function renderPage(name){
+  var fns={dashboard:renderDash,trips:renderTrips,expenses:renderExpenses,pl:renderPL,drivers:renderDrivers,agentfreight:renderAgentFreight,trans:renderTrans,cust:renderCust,reports:renderReports};
+  if(fns[name]) fns[name]();
+}
+function populateMonthDropdowns(){
+  var months=getMonths();
+  ['dash-month-sel','pl-month'].forEach(function(id){
+    var sel=document.getElementById(id); if(!sel) return;
+    var cur=sel.value; while(sel.options.length>1) sel.remove(1);
+    months.forEach(function(m){ var o=document.createElement('option'); o.value=m; o.textContent=m; sel.appendChild(o); });
+    if(cur) sel.value=cur;
+  });
+}
+function populateTripFilters(){
+  var trans=[...new Set(APP.trips.map(function(t){return t.transporter;}))].sort();
+  var tsel=document.getElementById('tf-trans'); if(!tsel) return;
+  while(tsel.options.length>1) tsel.remove(1);
+  trans.forEach(function(tr){ var o=document.createElement('option'); o.value=tr; o.textContent=tr; tsel.appendChild(o); });
+  var vehs=[...new Set(APP.trips.map(function(t){return t.vehicle||'';}).filter(Boolean))].sort();
+  var vsel=document.getElementById('tf-vehicle'); if(!vsel) return;
+  while(vsel.options.length>1) vsel.remove(1);
+  vehs.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; vsel.appendChild(o); });
+  var custs=[...new Set(APP.trips.map(function(t){return t.customer.split(',')[0].trim();}))].sort();
+  var csel=document.getElementById('tf-cust'); if(!csel) return;
+  while(csel.options.length>1) csel.remove(1);
+  custs.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c; csel.appendChild(o); });
+}
+
+// ── DASHBOARD ─────────────────────────────────────
+function renderDash(){
+  var sel=document.getElementById('dash-month-sel').value||'';
+  var data=sel?APP.trips.filter(function(t){return String(t.date).slice(0,7)===sel;}):APP.trips;
+  var tA=data.reduce(function(s,t){return s+(+t.amount||0);},0);
+  var tP=data.reduce(function(s,t){return s+(+t.pl||0);},0);
+  var tSal=sel?totalSalForMonth(sel):APP.salaries.reduce(function(s,x){return s+(+x.amount||0);},0);
+  var tVeh=sel?totalVehExpForMonth(sel):APP.vehicleExpenses.reduce(function(s,x){return s+(+x.amount||0);},0);
+  var tAF=sel?APP.agentFreights.filter(function(a){return String(a.date).slice(0,7)===sel;}).reduce(function(s,a){return s+afNetIncome(a);},0):afTotalIncome();
+  var netPL=tP+tAF-tSal-tVeh;
+  var cntT=APP.trips.filter(function(t){return (t.status||'To Be Planned')==='In Transit';}).length;
+  var cntD=APP.trips.filter(function(t){return (t.status||'To Be Planned')==='Delivered';}).length;
+  var cntP=APP.trips.filter(function(t){return (t.status||'To Be Planned')==='To Be Planned';}).length;
+  document.getElementById('cnt-transit').textContent=cntT;
+  document.getElementById('cnt-delivered').textContent=cntD;
+  document.getElementById('cnt-planned').textContent=cntP;
+  document.getElementById('dashmetrics').innerHTML=
+    '<div class="mcard"><div class="mlbl">Trips'+(sel?' ('+sel+')':'')+' </div><div class="mval">'+data.length+'</div></div>'
+    +'<div class="mcard"><div class="mlbl">Revenue</div><div class="mval" style="font-size:20px">'+fmt(tA)+'</div></div>'
+    +'<div class="mcard"><div class="mlbl">Gross P&L</div><div class="mval" style="font-size:20px;color:'+(tP>0?'var(--green)':'var(--red)')+'">'+fmt(tP)+'</div></div>'
+    +'<div class="mcard"><div class="mlbl">Net P&L (after salary+EMI)</div><div class="mval" style="font-size:17px;color:'+(netPL>0?'var(--green)':'var(--red)')+'">'+fmt(netPL)+'</div><div class="msub" style="color:var(--muted)">Salary: <span style="color:var(--red)">'+fmt(tSal)+'</span> · EMI: <span style="color:var(--red)">'+fmt(tVeh)+'</span> · AF: <span style="color:var(--green)">+'+fmt(tAF)+'</span></div></div>';
+  var months=getMonths(); var mbody=''; var tR=0,tC=0,tIF=0,tGP=0,tAFt=0,tSL=0,tVL=0;
+  months.forEach(function(m){
+    var md=APP.trips.filter(function(t){return String(t.date).slice(0,7)===m;});
+    var mA=md.reduce(function(s,t){return s+(+t.amount||0);},0);
+    var mC=md.reduce(function(s,t){return s+(+t.cng||0)+(+t.mcd||0)+(+t.other||0);},0);
+    var mIF=md.reduce(function(s,t){return s+(+t.infreight||0);},0);
+    var mP=md.reduce(function(s,t){return s+(+t.pl||0);},0);
+    var mAF=APP.agentFreights.filter(function(a){return String(a.date).slice(0,7)===m;}).reduce(function(s,a){return s+afNetIncome(a);},0);
+    var mSal=totalSalForMonth(m); var mVeh=totalVehExpForMonth(m); var mNet=mP+mAF-mSal-mVeh;
+    tR+=mA; tC+=mC; tIF+=mIF; tGP+=mP; tAFt+=mAF; tSL+=mSal; tVL+=mVeh;
+    mbody+='<tr style="'+(sel===m?'background:#fffbeb;':'')+'">'
+      +'<td><strong>'+m+'</strong></td><td style="text-align:center">'+md.length+'</td>'
+      +'<td class="tamt">'+fmt(mA)+'</td><td class="tamt" style="color:var(--red)">'+fmt(mC)+'</td>'
+      +'<td class="tamt" style="color:var(--green)">'+fmt(mIF)+'</td>'
+      +'<td class="'+(mP>0?'tpro':'tlos')+'">'+fmt(mP)+'</td>'
+      +'<td class="tamt" style="color:var(--green)">'+(mAF?'+'+fmt(mAF):'-')+'</td>'
+      +'<td class="tamt" style="color:var(--purple)">'+fmt(mSal)+'</td>'
+      +'<td class="tamt" style="color:#0891b2">'+(mVeh?fmt(mVeh):'-')+'</td>'
+      +'<td class="'+(mNet>0?'tpro':'tlos')+'"><strong>'+fmt(mNet)+'</strong></td></tr>';
+  });
+  if(months.length>1) mbody+='<tr style="background:#f8fafc"><td><strong>TOTAL</strong></td><td style="text-align:center"><strong>'+APP.trips.length+'</strong></td><td class="tamt"><strong>'+fmt(tR)+'</strong></td><td class="tamt" style="color:var(--red)"><strong>'+fmt(tC)+'</strong></td><td class="tamt" style="color:var(--green)"><strong>'+fmt(tIF)+'</strong></td><td class="'+(tGP>0?'tpro':'tlos')+'"><strong>'+fmt(tGP)+'</strong></td><td class="tamt" style="color:var(--green)"><strong>+'+fmt(tAFt)+'</strong></td><td class="tamt" style="color:var(--purple)"><strong>'+fmt(tSL)+'</strong></td><td class="tamt" style="color:#0891b2"><strong>'+fmt(tVL)+'</strong></td><td class="'+(tGP+tAFt-tSL-tVL>0?'tpro':'tlos')+'"><strong>'+fmt(tGP+tAFt-tSL-tVL)+'</strong></td></tr>';
+  document.getElementById('month-summary-body').innerHTML=mbody||'<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:16px">No data</td></tr>';
+  var recent=data.slice(-8).reverse();
+  document.getElementById('dashtripsbody').innerHTML=recent.map(function(t){
+    var st=t.status||'To Be Planned';
+    var stCls=st==='In Transit'?'st-transit':st==='Delivered'?'st-delivered':'st-planned';
+    var ec=getTripExp(t.id).length;
+    return '<tr><td>'+fmtDate(t.date)+'</td><td class="tmon" style="font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.invoice+'</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.customer+'</td><td style="font-size:12px">'+t.from+' to '+t.to+'</td><td class="tamt">'+fmt(t.amount)+'</td>'+plTD(t.pl)+'<td><span class="'+stCls+'">'+st+'</span></td></tr>';
+  }).join('');
+  var bd={}; data.forEach(function(t){ var d=String(t.date).slice(0,10); bd[d]=(bd[d]||0)+1; });
+  var dates=Object.keys(bd).sort(); var mx=Math.max.apply(null,Object.values(bd).concat([1]));
+  document.getElementById('barchart').innerHTML=dates.map(function(d){ return '<div class="bar" style="height:'+Math.round(bd[d]/mx*100)+'%" title="'+fmtDate(d)+': '+bd[d]+' trips"></div>'; }).join('');
+  document.getElementById('barlabs').innerHTML=dates.map(function(d){ return '<div class="blab">'+d.slice(8)+'</div>'; }).join('');
+  var cm={}; data.forEach(function(t){ var c=t.customer.split(',')[0].trim().toUpperCase(); cm[c]=(cm[c]||0)+(+t.amount||0); });
+  document.getElementById('dashcust').innerHTML=Object.entries(cm).sort(function(a,b){return b[1]-a[1];}).slice(0,6).map(function(x){ return '<div class="tcrow"><span style="font-size:12px;font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+x[0]+'</span><span style="font-size:13px;font-weight:700;color:var(--blue)">'+fmt(x[1])+'</span></div>'; }).join('');
+  var tm={}; data.forEach(function(t){ tm[t.transporter]=(tm[t.transporter]||0)+1; }); var tot=data.length||1;
+  document.getElementById('dashtrans').innerHTML=Object.entries(tm).sort(function(a,b){return b[1]-a[1];}).map(function(x){ return '<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px"><span style="font-weight:500">'+x[0]+'</span><span style="color:var(--muted)">'+x[1]+' trips</span></div><div style="height:4px;background:var(--bg);border-radius:2px"><div style="height:4px;background:'+(x[0]==='BGSG Logistics'?'var(--blue)':'#94a3b8')+';border-radius:2px;width:'+Math.round(x[1]/tot*100)+'%"></div></div></div>'; }).join('');
+}
+
+// ── ALL TRIPS ─────────────────────────────────────
+function renderTrips(){
+  var q=document.getElementById('trip-search').value||'';
+  var fDF=document.getElementById('tf-date-from').value||'';
+  var fDT=document.getElementById('tf-date-to').value||'';
+  var fTr=document.getElementById('tf-trans').value||'';
+  var fVe=document.getElementById('tf-vehicle').value||'';
+  var fFr=document.getElementById('tf-from').value||'';
+  var fCu=document.getElementById('tf-cust').value||'';
+  var fSt=document.getElementById('tf-status').value||'';
+  var fTy=document.getElementById('tf-type').value||'';
+  var data=APP.trips.filter(function(t){
+    var d=String(t.date).slice(0,10);
+    if(q&&[t.invoice,t.customer,t.vehicle,t.from,t.to,t.transporter].join(' ').toLowerCase().indexOf(q.toLowerCase())<0) return false;
+    if(fDF&&d<fDF) return false;
+    if(fDT&&d>fDT) return false;
+    if(fTr&&t.transporter!==fTr) return false;
+    if(fVe&&t.vehicle!==fVe) return false;
+    if(fFr&&t.from!==fFr) return false;
+    if(fCu&&t.customer.split(',')[0].trim()!==fCu) return false;
+    if(fSt&&(t.status||'To Be Planned')!==fSt) return false;
+    if(fTy&&t.type!==fTy) return false;
+    return true;
+  });
+  var totA=data.reduce(function(s,t){return s+(+t.amount||0);},0);
+  var totP=data.reduce(function(s,t){return s+(+t.pl||0);},0);
+  document.getElementById('trip-filter-summary').innerHTML='Showing <strong>'+data.length+'</strong> trips &nbsp;|&nbsp; Revenue: <strong style="color:var(--blue)">'+fmt(totA)+'</strong> &nbsp;|&nbsp; P&L: <strong style="color:'+(totP>=0?'var(--green)':'var(--red)')+'">'+fmt(totP)+'</strong>';
+  document.getElementById('tripstbody').innerHTML=data.map(function(t){
+    var ec=getTripExp(t.id).length;
+    var st=t.status||'To Be Planned';
+    var stCls=st==='In Transit'?'st-transit':st==='Delivered'?'st-delivered':'st-planned';
+    var pod=t.pod||'Pending';
+    return '<tr>'
+      +'<td>'+fmtDate(t.date)+'</td>'
+      +'<td><span class="pill '+(t.transporter==='BGSG Logistics'?'pbgsg':'pthrd')+'">'+t.transporter+'</span></td>'
+      +'<td>'+t.from+'</td><td>'+t.to+'</td>'
+      +'<td class="tmon">'+t.vehicle+'</td><td>'+tripPill(t.type)+'</td>'
+      +'<td class="tmon" style="font-size:11px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+t.invoice+'">'+t.invoice+'</td>'
+      +'<td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.customer+'</td>'
+      +'<td class="tamt">'+(t.amount?fmt(t.amount):'-')+'</td>'
+      +'<td class="tamt" style="color:var(--orange)">'+(t.cng?fmt(t.cng):'-')+'</td>'
+      +'<td class="tamt">'+(t.mcd?fmt(t.mcd):'-')+'</td>'
+      +'<td class="tamt">'+(t.other?fmt(t.other):'-')+'</td>'
+      +'<td class="tamt" style="color:var(--green)">'+(t.infreight?fmt(t.infreight):'-')+'</td>'
+      +plTD(t.pl)
+      +'<td><span class="'+stCls+'">'+st+'</span></td>'
+      +'<td><span class="'+(pod==='Received'?'pod-yes':'pod-no')+'">'+(pod==='Received'?'✓ Rcvd':'⏳ Pending')+'</span></td>'
+      +'<td><div class="acts">'
+        +'<button class="btn btns" onclick="openDetail(\''+t.id+'\')">'+(ec>0?ec+' exp':'Detail')+'</button>'
+        +'<button class="btn btns btno" onclick="openExpModal(\''+t.id+'\')">+Exp</button>'
+        +'<button class="btn btns" onclick="openTripModal(\''+t.id+'\')">Edit</button>'
+        +'<button class="btn btns btnd" onclick="deleteTrip(\''+t.id+'\')">Del</button>'
+      +'</div></td></tr>';
+  }).join('')||'<tr><td colspan="17" style="text-align:center;color:var(--muted);padding:28px">No trips found.</td></tr>';
+}
+function clearTripFilters(){
+  ['trip-search','tf-trans','tf-vehicle','tf-from','tf-cust','tf-status','tf-type','tf-date-from','tf-date-to'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  renderTrips();
+}
+function filterByStatus(status){
+  gp('trips',document.querySelectorAll('.ni')[1]);
+  setTimeout(function(){ var sel=document.getElementById('tf-status'); if(sel){sel.value=status;renderTrips();} },100);
+}
+
+// ── EXPENSES ──────────────────────────────────────
+function renderExpenses(q){
+  q=q||''; var tf=document.getElementById('exptf').value||'';
+  var data=APP.expenses.filter(function(e){ if(tf&&e.type!==tf) return false; if(q){ var trip=APP.trips.find(function(t){return String(t.id)===String(e.tripId);}); if([e.type,e.note,trip?trip.invoice:'',trip?trip.customer:''].join(' ').toLowerCase().indexOf(q.toLowerCase())<0) return false; } return true; }).sort(function(a,b){return String(b.date).localeCompare(String(a.date));});
+  var byType={}; APP.expenses.forEach(function(e){byType[e.type]=(byType[e.type]||0)+(+e.amount||0);});
+  var total=APP.expenses.reduce(function(s,e){return s+(+e.amount||0);},0);
+  var allTypes=['CNG / Fuel','MCD / Tax','Toll','Driver Allowance','Loading / Unloading','Repair','InFreight','Other'];
+  document.getElementById('expmetrics').innerHTML='<div class="mcard"><div class="mlbl">Total Expenses</div><div class="mval" style="font-size:18px;color:var(--red)">'+fmt(total)+'</div><div class="msub">'+APP.expenses.length+' entries</div></div>'+allTypes.filter(function(tp){return byType[tp];}).map(function(tp){return '<div class="mcard"><div class="mlbl">'+tp+'</div><div class="mval" style="font-size:16px;color:'+(tp==='InFreight'?'var(--green)':'var(--red)')+'">'+fmt(byType[tp])+'</div></div>';}).join('');
+  document.getElementById('exptbody').innerHTML=data.length===0?'<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:28px">No expenses yet.</td></tr>':data.map(function(e){ var trip=APP.trips.find(function(t){return String(t.id)===String(e.tripId);}); return '<tr><td>'+fmtDate(e.date)+'</td><td class="tmon" style="font-size:11px">'+(trip?trip.invoice:'-')+'</td><td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(trip?trip.customer.split(',')[0]:'-')+'</td><td style="font-size:12px">'+(trip?trip.from+' to '+trip.to:'-')+'</td><td><span style="background:var(--lorange);color:var(--orange);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px">'+e.type+'</span></td><td class="'+(e.type==='InFreight'?'tpro':'tlos')+'" style="text-align:right">'+fmt(e.amount)+'</td><td style="font-size:12px;color:var(--muted)">'+(e.note||'-')+'</td><td><div class="acts">'+(trip?'<button class="btn btns" onclick="openDetail(\''+trip.id+'\')">Trip</button>':'')+'<button class="btn btns btnd" onclick="deleteExpense(\''+e.id+'\')">Del</button></div></td></tr>'; }).join('');
+}
+
+// ── P&L ───────────────────────────────────────────
+function renderPL(q){
+  q=q||''; var pf=document.getElementById('plfilter').value||''; var pm=document.getElementById('pl-month').value||'';
+  var data=APP.trips.filter(function(t){ if(q&&[t.invoice,t.customer,t.transporter].join(' ').toLowerCase().indexOf(q.toLowerCase())<0) return false; if(pm&&String(t.date).slice(0,7)!==pm) return false; if(pf==='profit'&&!(+t.pl>0)) return false; if(pf==='zero'&&+t.pl!==0) return false; if(pf==='loss'&&!(+t.pl<0)) return false; return true; }).sort(function(a,b){return (+b.pl||0)-(+a.pl||0);});
+  var tP=APP.trips.reduce(function(s,t){return s+(+t.pl||0);},0);
+  var tSal=APP.salaries.reduce(function(s,x){return s+(+x.amount||0);},0);
+  var tVeh=APP.vehicleExpenses.reduce(function(s,x){return s+(+x.amount||0);},0);
+  var tAF=afTotalIncome();
+  var netPLtotal=tP+tAF-tSal-tVeh;
+  document.getElementById('plsummary').innerHTML=
+    '<div class="sbox2"><div class="slbl">Gross Trip P&L</div><div class="sval" style="color:'+(tP>=0?'var(--green)':'var(--red)')+'">'+fmt(tP)+'</div></div>'
+    +'<div class="sbox2"><div class="slbl">Agent Freight Income</div><div class="sval" style="color:var(--green)">+'+fmt(tAF)+'</div></div>'
+    +'<div class="sbox2"><div class="slbl">Driver Salaries</div><div class="sval" style="color:var(--purple)">'+fmt(tSal)+'</div></div>'
+    +'<div class="sbox2"><div class="slbl">EMI &amp; Maintenance</div><div class="sval" style="color:#0891b2">'+fmt(tVeh)+'</div></div>'
+    +'<div class="sbox2"><div class="slbl">Net P&L (all incl.)</div><div class="sval" style="color:'+(netPLtotal>=0?'var(--green)':'var(--red)')+'">'+fmt(netPLtotal)+'</div></div>';
+  document.getElementById('pltbody').innerHTML=data.map(function(t){ var mg=t.amount?Math.round(t.pl/t.amount*100):0; var ec=getTripExp(t.id).length; return '<tr><td>'+fmtDate(t.date)+'</td><td class="tmon" style="font-size:11px">'+String(t.invoice).slice(0,20)+'</td><td>'+t.transporter+'</td><td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.customer+'</td><td style="font-size:12px">'+t.from+' to '+t.to+'</td><td class="tamt">'+(t.amount?fmt(t.amount):'-')+'</td><td class="tamt" style="color:var(--orange)">'+(t.cng?fmt(t.cng):'-')+'</td><td class="tamt">'+(t.mcd?fmt(t.mcd):'-')+'</td><td class="tamt">'+(t.other?fmt(t.other):'-')+'</td><td class="tamt" style="color:var(--green)">'+(t.infreight?fmt(t.infreight):'-')+'</td>'+plTD(t.pl)+'<td class="'+(+t.pl>0?'tpro':+t.pl<0?'tlos':'tzer')+'">'+mg+'%</td><td><button class="btn btns" onclick="openDetail(\''+t.id+'\')" style="font-size:11px">'+(ec>0?ec+' exp':'+Exp')+'</button></td></tr>'; }).join('')||'<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:22px">No trips.</td></tr>';
+}
+
+// ── DRIVERS & SALARY ──────────────────────────────
+function renderDrivers(){
+  var totSal=APP.salaries.reduce(function(s,x){return s+(+x.amount||0);},0);
+  var totVeh=APP.vehicleExpenses.reduce(function(s,x){return s+(+x.amount||0);},0);
+  var totAF=afTotalIncome();
+  var totPL=APP.trips.reduce(function(s,t){return s+(+t.pl||0);},0); var net=totPL+totAF-totSal-totVeh;
+  document.getElementById('sal-banner').innerHTML=
+    '<div class="sal-item"><div class="sal-lbl">Gross Trip P&L</div><div class="sal-val">'+fmt(totPL)+'</div></div>'
+    +'<div class="sal-item"><div class="sal-lbl">Agent Freight</div><div class="sal-val grn">+'+fmt(totAF)+'</div></div>'
+    +'<div class="sal-item"><div class="sal-lbl">Driver Salaries</div><div class="sal-val red">'+fmt(totSal)+'</div></div>'
+    +'<div class="sal-item"><div class="sal-lbl">EMI &amp; Maintenance</div><div class="sal-val red">'+fmt(totVeh)+'</div></div>'
+    +'<div class="sal-item"><div class="sal-lbl">Net P&L (after all)</div><div class="sal-val '+(net>=0?'grn':'red')+'">'+fmt(net)+'</div></div>'
+    +'<div class="sal-item"><div class="sal-lbl">Drivers</div><div class="sal-val">'+DRIVERS.length+'</div></div>';
+  var dt={}; DRIVERS.forEach(function(d){dt[d.name]=0;}); APP.salaries.forEach(function(s){ if(dt[s.driver]!==undefined) dt[s.driver]+=(+s.amount||0); });
+  document.getElementById('driver-cards').innerHTML=DRIVERS.map(function(d){ var ini=d.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2); return '<div class="drv-card"><div class="drv-av">'+ini+'</div><div class="drv-name">'+d.name+'</div><div class="drv-total">'+fmt(dt[d.name]||0)+'</div><div style="font-size:11px;color:var(--muted)">total paid</div></div>'; }).join('');
+  var sal=[...APP.salaries].sort(function(a,b){return String(b.month).localeCompare(String(a.month));});
+  document.getElementById('salary-body').innerHTML=sal.length===0?'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">No salary entries yet.</td></tr>':sal.map(function(s){return '<tr><td><strong>'+s.month+'</strong></td><td>'+s.driver+'</td><td class="tlos">'+fmt(s.amount)+'</td><td style="color:var(--muted);font-size:12px">'+(s.note||'-')+'</td><td><button class="btn btns btnd" onclick="deleteSalary(\''+s.id+'\')">Del</button></td></tr>';}).join('');
+  // Vehicle EMI table
+  var ve=[...APP.vehicleExpenses].sort(function(a,b){return String(b.month).localeCompare(String(a.month));});
+  var typeColors={EMI:'var(--purple)',Maintenance:'var(--orange)',Insurance:'var(--blue)',Tyre:'var(--green)',Permit:'#0891b2',Other:'var(--muted)'};
+  document.getElementById('vehexp-body').innerHTML=ve.length===0?'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">No vehicle expenses yet.</td></tr>':ve.map(function(v){var tc=typeColors[v.type]||'var(--muted)';return '<tr><td><strong>'+v.month+'</strong></td><td class="tmon">'+v.vehicle+'</td><td><span style="background:#f1f5f9;color:'+tc+';font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px">'+v.type+'</span></td><td class="tlos">'+fmt(v.amount)+'</td><td style="color:var(--muted);font-size:12px">'+(v.note||'-')+'</td><td><button class="btn btns btnd" onclick="deleteVehicleExp(\''+v.id+'\')">Del</button></td></tr>';}).join('');
+}
+function openDrvSetup(){ renderDriverSetupList(); document.getElementById('mo-drv-setup').classList.add('open'); }
+function saveDriverNames(){
+  var inputs=document.querySelectorAll('[id^="drv-inp-"]');
+  var newList=[];
+  inputs.forEach(function(inp,i){
+    var v=inp.value.trim(); if(!v) return;
+    var existing=DRIVERS[i];
+    newList.push({id:(existing&&existing.id)||('drv'+Date.now()+i), name:v, _new:(existing&&existing._new)||false, _oldName:(existing&&existing.name)||''});
+  });
+  if(newList.length===0){toast('Please add at least one driver');return;}
+
+  var toAdd=newList.filter(function(d){return d._new&&d.name;});
+  var toUpdate=newList.filter(function(d){return !d._new && d.name!==d._oldName && d.name;});
+
+  DRIVERS=newList.map(function(d){return {id:d.id,name:d.name};});
+  updateDriverSelect(); closeModal('mo-drv-setup'); renderDrivers();
+  toast('Drivers saved! Syncing to Google Sheets…');
+  syncSt('save','Syncing drivers…');
+
+  var ops=toAdd.length+toUpdate.length; if(ops===0){syncSt('ok','Synced ✓');return;}
+  var done=0; function cb(err){ done++; syncSt(err?'err':'ok',err?'Sync error':'Synced ✓'); }
+  toAdd.forEach(function(d){ apiPost(SHEET_DRIVERS,{id:d.id,name:d.name},cb); });
+  toUpdate.forEach(function(d){ apiPatch(SHEET_DRIVERS,d.id,{id:d.id,name:d.name},cb); });
+}
+function openSalaryModal(){ updateDriverSelect(); document.getElementById('sal-month').value=today().slice(0,7); document.getElementById('sal-amount').value=''; document.getElementById('sal-note').value=''; document.getElementById('mo-salary').classList.add('open'); }
+function saveSalary(){
+  var month=document.getElementById('sal-month').value; var driver=document.getElementById('sal-driver').value;
+  var amount=+document.getElementById('sal-amount').value||0; var note=document.getElementById('sal-note').value;
+  if(!month||!driver){toast('Please fill month and driver');return;} if(!amount){toast('Please enter salary amount');return;}
+  var sal={id:'sal'+Date.now(),month:month,driver:driver,amount:amount,note:note};
+  APP.salaries.push(sal); closeModal('mo-salary'); renderDrivers(); populateMonthDropdowns();
+  syncSt('save','Saving…');
+  apiPost(SHEET_SALARIES, sal, function(err){
+    if(!err){ syncSt('ok','Synced ✓'); toast('Salary saved for '+driver+' — '+fmt(amount)); }
+    else { syncSt('err','Sync error'); toast('Saved locally. Sync failed.'); }
+  });
+}
+function deleteSalary(id){
+  if(!confirm('Delete this salary entry?')) return;
+  APP.salaries=APP.salaries.filter(function(s){return String(s.id)!==String(id);});
+  renderDrivers(); syncSt('save','Saving…');
+  apiDelete(SHEET_SALARIES, id, function(err){ syncSt(err?'err':'ok',err?'Sync error':'Synced ✓'); toast('Salary deleted.'); });
+}
+function openVehicleExpModal(){
+  // Populate vehicle datalist
+  var dl=document.getElementById('ve-vehlist'); if(dl){dl.innerHTML='';[...new Set(APP.trips.map(function(t){return t.vehicle||'';}))].filter(Boolean).sort().forEach(function(v){var o=document.createElement('option');o.value=v;dl.appendChild(o);});}
+  document.getElementById('ve-month').value=today().slice(0,7);
+  document.getElementById('ve-vehicle').value='';
+  document.getElementById('ve-amount').value='';
+  document.getElementById('ve-note').value='';
+  document.getElementById('mo-vehexp').classList.add('open');
+}
+function saveVehicleExp(){
+  var month=document.getElementById('ve-month').value;
+  var vehicle=document.getElementById('ve-vehicle').value.trim();
+  var type=document.getElementById('ve-type').value;
+  var amount=+document.getElementById('ve-amount').value||0;
+  var note=document.getElementById('ve-note').value;
+  if(!month){toast('Please enter month');return;}
+  if(!vehicle){toast('Please enter vehicle number');return;}
+  if(!amount){toast('Please enter amount');return;}
+  var ve={id:'ve'+Date.now(),month:month,vehicle:vehicle,type:type,amount:amount,note:note};
+  APP.vehicleExpenses.push(ve); closeModal('mo-vehexp'); renderDrivers(); populateMonthDropdowns();
+  syncSt('save','Saving…');
+  apiPost(SHEET_VEHICLEEXP, ve, function(err){
+    if(!err){ syncSt('ok','Synced ✓'); toast('Saved: '+type+' '+fmt(amount)+' for '+vehicle); }
+    else { syncSt('err','Sync error'); toast('Saved locally. Sync failed — add VehicleExpenses sheet in SheetDB.'); }
+  });
+}
+function deleteVehicleExp(id){
+  if(!confirm('Delete this vehicle expense?')) return;
+  APP.vehicleExpenses=APP.vehicleExpenses.filter(function(v){return String(v.id)!==String(id);});
+  renderDrivers(); syncSt('save','Saving…');
+  apiDelete(SHEET_VEHICLEEXP, id, function(err){ syncSt(err?'err':'ok',err?'Sync error':'Synced ✓'); toast('Vehicle expense deleted.'); });
+}
+function totalVehExpForMonth(m){ return APP.vehicleExpenses.filter(function(v){return v.month===m;}).reduce(function(s,x){return s+(+x.amount||0);},0); }
+
+// ── AGENT FREIGHT ─────────────────────────────────
+function afNetIncome(a){
+  // Net income = advance + balance received (both already minus commission since advance = loading - commission - balance)
+  return (parseNum(a.advancePaid) + parseNum(a.balanceReceived));
+}
+function afTotalIncome(){ return APP.agentFreights.reduce(function(s,a){return s+afNetIncome(a);},0); }
+function afPendingBalance(){ return APP.agentFreights.reduce(function(s,a){return s+Math.max(0,parseNum(a.balanceDue)-parseNum(a.balanceReceived));},0); }
+function afStatus(a){
+  var bal=parseNum(a.balanceDue); var rcvd=parseNum(a.balanceReceived);
+  if(bal<=0) return 'Settled';
+  if(rcvd>=bal) return 'Settled';
+  if(rcvd>0) return 'Partial';
+  return 'Pending';
+}
+function updateAFBadge(){
+  var b=document.getElementById('afbadge');
+  var pending=APP.agentFreights.filter(function(a){return afStatus(a)!=='Settled';}).length;
+  if(b){ b.style.display=pending>0?'inline-block':'none'; b.textContent=pending; }
+}
+
+function renderAgentFreight(q){
+  q=q||'';
+  var pod=document.getElementById('af-filter-pod')?document.getElementById('af-filter-pod').value:'';
+  var data=APP.agentFreights.filter(function(a){
+    if(q&&[a.agent,a.vehicle,a.note].join(' ').toLowerCase().indexOf(q.toLowerCase())<0) return false;
+    if(pod){ var st=afStatus(a); if(pod==='Pending'&&st!=='Pending') return false; if(pod==='Partial'&&st!=='Partial') return false; if(pod==='Settled'&&st!=='Settled') return false; }
+    return true;
+  }).sort(function(a,b){return String(b.date).localeCompare(String(a.date));});
+
+  var totalLoading=APP.agentFreights.reduce(function(s,a){return s+parseNum(a.loadingAmount);},0);
+  var totalComm=APP.agentFreights.reduce(function(s,a){return s+parseNum(a.commissionAmt);},0);
+  var totalAdv=APP.agentFreights.reduce(function(s,a){return s+parseNum(a.advancePaid);},0);
+  var totalBalDue=APP.agentFreights.reduce(function(s,a){return s+parseNum(a.balanceDue);},0);
+  var totalBalRcvd=APP.agentFreights.reduce(function(s,a){return s+parseNum(a.balanceReceived);},0);
+  var totalNet=afTotalIncome();
+  var pendingBal=afPendingBalance();
+
+  document.getElementById('af-metrics').innerHTML=
+    '<div class="af-card"><div class="mlbl">Total Entries</div><div class="mval">'+APP.agentFreights.length+'</div></div>'
+    +'<div class="af-card"><div class="mlbl">Total Loading Amt</div><div class="mval" style="font-size:18px;color:var(--blue)">'+fmt(totalLoading)+'</div><div class="msub">Commission: '+fmt(totalComm)+'</div></div>'
+    +'<div class="af-card"><div class="mlbl">Advance Received</div><div class="mval" style="font-size:18px;color:var(--green)">'+fmt(totalAdv)+'</div></div>'
+    +'<div class="af-card"><div class="mlbl">Balance Pending</div><div class="mval" style="font-size:18px;color:'+(pendingBal>0?'var(--orange)':'var(--green)')+'">'+fmt(pendingBal)+'</div><div class="msub">of '+fmt(totalBalDue)+' due</div></div>'
+    +'<div class="af-card"><div class="mlbl">Net Income (in P&L)</div><div class="mval" style="font-size:18px;color:var(--green)">'+fmt(totalNet)+'</div><div class="msub">advance + bal received</div></div>';
+
+  var pendingAlert=APP.agentFreights.filter(function(a){return afStatus(a)!=='Settled'&&a.podStatus==='Submitted';});
+  var alertEl=document.getElementById('af-balance-alert');
+  if(alertEl) alertEl.innerHTML=pendingAlert.length>0?'<span style="color:var(--orange);font-weight:700">⚠ '+pendingAlert.length+' POD submitted — balance awaiting payment</span>':'';
+
+  document.getElementById('af-tbody').innerHTML=data.length===0?
+    '<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:28px">No agent freight entries. Click "+ Agent Freight" to add one.</td></tr>':
+    data.map(function(a){
+      var st=afStatus(a);
+      var stCls=st==='Settled'?'af-settled':st==='Partial'?'af-partial':'af-pending';
+      var net=afNetIncome(a);
+      var balRemain=Math.max(0,parseNum(a.balanceDue)-parseNum(a.balanceReceived));
+      return '<tr>'
+        +'<td>'+fmtDate(a.date)+'</td>'
+        +'<td><strong>'+a.agent+'</strong></td>'
+        +'<td class="tmon">'+a.vehicle+'</td>'
+        +'<td class="tamt">'+fmt(a.loadingAmount)+'</td>'
+        +'<td class="tamt" style="color:var(--red)">'+fmt(a.commissionAmt)+(a.commissionPct?' <span style="font-size:10px;color:var(--muted)">('+a.commissionPct+'%)</span>':'')+'</td>'
+        +'<td class="tamt" style="color:var(--blue)">'+fmt(a.advancePaid)+'</td>'
+        +'<td class="tamt" style="color:'+(balRemain>0?'var(--orange)':'var(--muted)')+'">'+fmt(balRemain)+'</td>'
+        +'<td class="tamt" style="color:var(--green)">'+(a.balanceReceived?fmt(a.balanceReceived):'-')+'</td>'
+        +'<td class="tpro">'+fmt(net)+'</td>'
+        +'<td><span class="'+stCls+'">'+st+'</span>'+(a.podStatus==='Submitted'?' <span style="font-size:10px;color:var(--green)">POD✓</span>':'')+'</td>'
+        +'<td><div class="acts">'
+          +'<button class="btn btns" onclick="openAFDetail(\''+a.id+'\')" style="background:var(--lblue);color:var(--blue);border-color:#93c5fd">Detail</button>'
+          +(balRemain>0?'<button class="btn btns" style="background:var(--lgreen);color:var(--green);border-color:#86efac" onclick="openReceiveBalance(\''+a.id+'\')">+Rcv</button>':'')
+          +'<button class="btn btns btno" onclick="openAgentFreightModal(\''+a.id+'\')">Edit</button>'
+          +'<button class="btn btns btnd" onclick="deleteAgentFreight(\''+a.id+'\')">Del</button>'
+        +'</div></td>'
+        +'</tr>';
+    }).join('');
+}
+
+function calcAF(){
+  var load=+document.getElementById('af-loading').value||0;
+  var cpct=+document.getElementById('af-cpct').value||0;
+  var camt=cpct>0?Math.round(load*cpct/100):(+document.getElementById('af-camt').value||0);
+  if(cpct>0) document.getElementById('af-camt').value=camt;
+  var adv=+document.getElementById('af-advance').value||0;
+  var balRcvd=+document.getElementById('af-balrcvd').value||0;
+  var bal=Math.max(0,load-camt-adv);
+  var net=adv+balRcvd;
+  var prev=document.getElementById('af-preview');
+  if(load||adv){
+    prev.style.display='flex';
+    document.getElementById('afp-load').textContent=fmt(load);
+    document.getElementById('afp-comm').textContent=fmt(camt)+(cpct?' ('+cpct+'%)':'');
+    document.getElementById('afp-adv').textContent=fmt(adv);
+    document.getElementById('afp-bal').textContent=fmt(bal);
+    document.getElementById('afp-net').textContent=fmt(net+(bal-balRcvd>0?bal-balRcvd:0));
+  } else { prev.style.display='none'; }
+}
+function calcAFFromAmt(){
+  var load=+document.getElementById('af-loading').value||0;
+  var camt=+document.getElementById('af-camt').value||0;
+  if(load&&camt){ document.getElementById('af-cpct').value=(camt/load*100).toFixed(2); }
+  calcAF();
+}
+
+function openAgentFreightModal(id){
+  var dl=document.getElementById('af-agentlist'); if(dl){dl.innerHTML='';[...new Set(APP.agentFreights.map(function(a){return a.agent;}))].sort().forEach(function(v){var o=document.createElement('option');o.value=v;dl.appendChild(o);});}
+  var vdl=document.getElementById('af-vehlist'); if(vdl){vdl.innerHTML='';[...new Set(APP.trips.map(function(t){return t.vehicle||'';}))].filter(Boolean).sort().forEach(function(v){var o=document.createElement('option');o.value=v;vdl.appendChild(o);});}
+  document.getElementById('af-mo-title').textContent=id?'Edit Agent Freight':'Add Agent Freight Entry';
+  document.getElementById('af-savebtn').dataset.editId=id||'';
+  if(id){
+    var a=APP.agentFreights.find(function(x){return String(x.id)===String(id);}); if(!a) return;
+    document.getElementById('af-date').value=a.date||'';
+    document.getElementById('af-agent').value=a.agent||'';
+    document.getElementById('af-vehicle').value=a.vehicle||'';
+    document.getElementById('af-note').value=a.note||'';
+    document.getElementById('af-loading').value=a.loadingAmount||0;
+    document.getElementById('af-cpct').value=a.commissionPct||0;
+    document.getElementById('af-camt').value=a.commissionAmt||0;
+    document.getElementById('af-advance').value=a.advancePaid||0;
+    document.getElementById('af-balrcvd').value=a.balanceReceived||0;
+    document.getElementById('af-pod').value=a.podStatus||'Pending';
+  } else {
+    document.getElementById('af-date').value=today();
+    ['af-agent','af-vehicle','af-note'].forEach(function(k){document.getElementById(k).value='';});
+    ['af-loading','af-cpct','af-camt','af-advance','af-balrcvd'].forEach(function(k){document.getElementById(k).value='';});
+    document.getElementById('af-pod').value='Pending';
+    document.getElementById('af-preview').style.display='none';
+  }
+  calcAF();
+  document.getElementById('mo-af').classList.add('open');
+}
+
+function saveAgentFreight(){
+  var editId=document.getElementById('af-savebtn').dataset.editId||'';
+  var load=+document.getElementById('af-loading').value||0;
+  var cpct=+document.getElementById('af-cpct').value||0;
+  var camt=+document.getElementById('af-camt').value||0;
+  var adv=+document.getElementById('af-advance').value||0;
+  var balRcvd=+document.getElementById('af-balrcvd').value||0;
+  var agent=document.getElementById('af-agent').value.trim();
+  if(!agent){toast('Please enter agent name');return;}
+  if(!load){toast('Please enter loading amount');return;}
+  var bal=Math.max(0,load-camt-adv);
+  var rec={
+    id:editId||('af'+Date.now()),
+    date:document.getElementById('af-date').value,
+    agent:agent, vehicle:document.getElementById('af-vehicle').value.trim(),
+    loadingAmount:load, commissionPct:cpct, commissionAmt:camt,
+    advancePaid:adv, balanceDue:bal, balanceReceived:balRcvd,
+    podStatus:document.getElementById('af-pod').value,
+    note:document.getElementById('af-note').value
+  };
+  if(editId){ APP.agentFreights=APP.agentFreights.map(function(a){return String(a.id)===String(editId)?rec:a;}); }
+  else { APP.agentFreights.push(rec); }
+  closeModal('mo-af'); renderAgentFreight(); updateAFBadge();
+  syncSt('save','Saving…');
+  var cb=function(err){ syncSt(err?'err':'ok',err?'Sync error':'Synced ✓'); toast(editId?'Entry updated!':'Agent freight saved! Net: '+fmt(adv+balRcvd)); };
+  if(editId) apiPatch(SHEET_AGENTFREIGHT,editId,rec,cb); else apiPost(SHEET_AGENTFREIGHT,rec,cb);
+}
+
+function deleteAgentFreight(id){
+  if(!confirm('Delete this agent freight entry?')) return;
+  APP.agentFreights=APP.agentFreights.filter(function(a){return String(a.id)!==String(id);});
+  renderAgentFreight(); updateAFBadge(); syncSt('save','Saving…');
+  apiDelete(SHEET_AGENTFREIGHT,id,function(err){ syncSt(err?'err':'ok',err?'Sync error':'Synced ✓'); toast('Deleted.'); });
+}
+
+function openAFDetail(id){
+  var a=APP.agentFreights.find(function(x){return String(x.id)===String(id);}); if(!a) return;
+  var st=afStatus(a); var balRemain=Math.max(0,parseNum(a.balanceDue)-parseNum(a.balanceReceived));
+  var stCls=st==='Settled'?'af-settled':st==='Partial'?'af-partial':'af-pending';
+  document.getElementById('af-detail-title').textContent='Agent Freight — '+a.agent;
+  document.getElementById('af-detail-body').innerHTML=
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">'
+    +'<div style="background:var(--lblue);border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase">Loading Amt</div><div style="font-size:18px;font-weight:700;color:var(--navy)">'+fmt(a.loadingAmount)+'</div></div>'
+    +'<div style="background:var(--lred);border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase">Commission</div><div style="font-size:18px;font-weight:700;color:var(--red)">'+fmt(a.commissionAmt)+(a.commissionPct?' ('+a.commissionPct+'%)':'')+'</div></div>'
+    +'<div style="background:var(--lgreen);border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase">Net Income</div><div style="font-size:18px;font-weight:700;color:var(--green)">'+fmt(afNetIncome(a))+'</div></div>'
+    +'</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:13px">'
+    +'<tr><td style="padding:7px 0;color:var(--muted);border-bottom:1px solid var(--border)">Date</td><td style="padding:7px 0;font-weight:600;border-bottom:1px solid var(--border);text-align:right">'+fmtDate(a.date)+'</td></tr>'
+    +'<tr><td style="padding:7px 0;color:var(--muted);border-bottom:1px solid var(--border)">Vehicle</td><td style="padding:7px 0;font-weight:600;border-bottom:1px solid var(--border);text-align:right;font-family:monospace">'+a.vehicle+'</td></tr>'
+    +'<tr><td style="padding:7px 0;color:var(--muted);border-bottom:1px solid var(--border)">Advance Paid</td><td style="padding:7px 0;font-weight:700;color:var(--blue);border-bottom:1px solid var(--border);text-align:right">'+fmt(a.advancePaid)+'</td></tr>'
+    +'<tr><td style="padding:7px 0;color:var(--muted);border-bottom:1px solid var(--border)">Balance Due (after POD)</td><td style="padding:7px 0;font-weight:700;border-bottom:1px solid var(--border);text-align:right">'+fmt(a.balanceDue)+'</td></tr>'
+    +'<tr><td style="padding:7px 0;color:var(--muted);border-bottom:1px solid var(--border)">Balance Received</td><td style="padding:7px 0;font-weight:700;color:var(--green);border-bottom:1px solid var(--border);text-align:right">'+fmt(a.balanceReceived)+'</td></tr>'
+    +'<tr><td style="padding:7px 0;color:var(--muted);border-bottom:1px solid var(--border)">Balance Still Pending</td><td style="padding:7px 0;font-weight:700;color:'+(balRemain>0?'var(--orange)':'var(--green)')+';border-bottom:1px solid var(--border);text-align:right">'+fmt(balRemain)+'</td></tr>'
+    +'<tr><td style="padding:7px 0;color:var(--muted)">POD / Settlement Status</td><td style="padding:7px 0;text-align:right"><span class="'+stCls+'">'+st+'</span></td></tr>'
+    +'</table>'
+    +(a.note?'<div style="margin-top:10px;font-size:12px;color:var(--muted);background:var(--bg);padding:8px 10px;border-radius:6px">'+a.note+'</div>':'');
+  document.getElementById('af-detail-editbtn').onclick=function(){closeModal('mo-af-detail');openAgentFreightModal(id);};
+  var rcvBtn=document.getElementById('af-detail-rcvbtn');
+  if(balRemain>0){ rcvBtn.style.display='inline-flex'; rcvBtn.onclick=function(){closeModal('mo-af-detail');openReceiveBalance(id);}; }
+  else { rcvBtn.style.display='none'; }
+  document.getElementById('mo-af-detail').classList.add('open');
+}
+
+function openReceiveBalance(id){
+  var a=APP.agentFreights.find(function(x){return String(x.id)===String(id);}); if(!a) return;
+  var balRemain=Math.max(0,parseNum(a.balanceDue)-parseNum(a.balanceReceived));
+  var amt=prompt('Receive balance payment for '+a.agent+'\n\nBalance due: '+fmt(a.balanceDue)+'\nAlready received: '+fmt(a.balanceReceived)+'\nStill pending: '+fmt(balRemain)+'\n\nEnter amount received now (Rs):');
+  if(amt===null) return;
+  var amtNum=parseFloat(amt)||0; if(!amtNum){toast('Invalid amount');return;}
+  var newRcvd=parseNum(a.balanceReceived)+amtNum;
+  a.balanceReceived=newRcvd;
+  a.podStatus=newRcvd>=parseNum(a.balanceDue)?'Submitted':'Pending';
+  renderAgentFreight(); updateAFBadge(); syncSt('save','Saving…');
+  apiPatch(SHEET_AGENTFREIGHT,id,a,function(err){ syncSt(err?'err':'ok',err?'Sync error':'Synced ✓'); toast('Balance received: '+fmt(amtNum)+'. New total: '+fmt(newRcvd)); });
+}
+
+// ── TRANSPORTERS / CUSTOMERS ──────────────────────
+function renderTrans(){
+  var m={}; APP.trips.forEach(function(t){if(!m[t.transporter])m[t.transporter]={trips:0,amount:0,cng:0,pl:0};m[t.transporter].trips++;m[t.transporter].amount+=(+t.amount||0);m[t.transporter].cng+=(+t.cng||0);m[t.transporter].pl+=(+t.pl||0);});
+  document.getElementById('transtbody').innerHTML=Object.entries(m).sort(function(a,b){return b[1].amount-a[1].amount;}).map(function(e){var n=e[0],v=e[1]; return '<tr><td><strong>'+n+'</strong></td><td style="text-align:center">'+v.trips+'</td><td class="tamt">'+fmt(v.amount)+'</td><td class="tamt" style="color:var(--orange)">'+fmt(v.cng)+'</td>'+plTD(v.pl)+'<td class="'+(v.pl/v.trips>0?'tpro':'tzer')+'">'+fmt(Math.round(v.pl/v.trips))+'</td><td style="text-align:center"><span class="pill '+(n==='BGSG Logistics'?'pbgsg':'pthrd')+'">'+(n==='BGSG Logistics'?'Own':'3rd Party')+'</span></td></tr>';}).join('');
+}
+function renderCust(q){
+  q=q||''; var m={}; APP.trips.forEach(function(t){var c=t.customer.split(',')[0].trim();if(!m[c])m[c]={trips:0,amount:0,routes:[]};m[c].trips++;m[c].amount+=(+t.amount||0);var r=t.from+' to '+t.to;if(m[c].routes.indexOf(r)<0)m[c].routes.push(r);});
+  var rows=Object.entries(m).sort(function(a,b){return b[1].amount-a[1].amount;});
+  if(q) rows=rows.filter(function(e){return e[0].toLowerCase().indexOf(q.toLowerCase())>=0;});
+  document.getElementById('custtbody').innerHTML=rows.map(function(e){return '<tr><td><strong>'+e[0]+'</strong></td><td style="text-align:center">'+e[1].trips+'</td><td class="tamt">'+fmt(Math.round(e[1].amount))+'</td><td class="tamt">'+fmt(Math.round(e[1].amount/e[1].trips))+'</td><td style="font-size:11px;color:var(--muted)">'+e[1].routes.slice(0,3).join(', ')+'</td></tr>';}).join('');
+}
+
+// ── REPORTS ───────────────────────────────────────
+function renderReports(){
+  var tA=APP.trips.reduce(function(s,t){return s+(+t.amount||0);},0);
+  var tP=APP.trips.reduce(function(s,t){return s+(+t.pl||0);},0);
+  var tSal=APP.salaries.reduce(function(s,x){return s+(+x.amount||0);},0);
+  var tVeh=APP.vehicleExpenses.reduce(function(s,x){return s+(+x.amount||0);},0);
+  var tAF=afTotalIncome();
+  document.getElementById('reportsummary').innerHTML=
+    '<div class="sbox2"><div class="slbl">Total Trips</div><div class="sval">'+APP.trips.length+'</div></div>'
+    +'<div class="sbox2"><div class="slbl">Total Revenue</div><div class="sval" style="color:var(--blue)">'+fmt(tA)+'</div></div>'
+    +'<div class="sbox2"><div class="slbl">Net P&L (all incl.)</div><div class="sval" style="color:'+(tP+tAF-tSal-tVeh>=0?'var(--green)':'var(--red)')+'">'+fmt(tP+tAF-tSal-tVeh)+'</div></div>';
+}
+function genReport(type){
+  var data=APP.trips,html='',m;
+  if(type==='summary'){
+    var tA=data.reduce(function(s,t){return s+(+t.amount||0);},0),tCN=data.reduce(function(s,t){return s+(+t.cng||0);},0),tMC=data.reduce(function(s,t){return s+(+t.mcd||0);},0),tOT=data.reduce(function(s,t){return s+(+t.other||0);},0),tIF=data.reduce(function(s,t){return s+(+t.infreight||0);},0),tPL=data.reduce(function(s,t){return s+(+t.pl||0);},0),xE=APP.expenses.reduce(function(s,e){return s+(+e.amount||0);},0),tSal=APP.salaries.reduce(function(s,x){return s+(+x.amount||0);},0),tVeh=APP.vehicleExpenses.reduce(function(s,x){return s+(+x.amount||0);},0),tAF=afTotalIncome();
+    html='<div class="card"><div class="cardh"><span class="cardt">Full P&L Summary</span></div><div class="cardb"><table><thead><tr><th>Metric</th><th style="text-align:right">Value</th></tr></thead><tbody>'
+      +'<tr><td>Total Trips</td><td class="tamt">'+data.length+'</td></tr>'
+      +'<tr><td>Total Out-Freight</td><td class="tpro">'+fmt(tA)+'</td></tr>'
+      +'<tr><td>Total CNG/Fuel</td><td class="tlos">'+fmt(tCN)+'</td></tr>'
+      +'<tr><td>Total MCD/Tax</td><td class="tlos">'+fmt(tMC)+'</td></tr>'
+      +'<tr><td>Total Other Expenses</td><td class="tlos">'+fmt(tOT)+'</td></tr>'
+      +'<tr><td>Total InFreight</td><td class="tpro">'+fmt(tIF)+'</td></tr>'
+      +'<tr><td>Extra Linked Expenses</td><td class="tlos">'+fmt(xE)+'</td></tr>'
+      +'<tr><td>Gross Trip P&L</td><td class="'+(tPL>=0?'tpro':'tlos')+'">'+fmt(tPL)+'</td></tr>'
+      +'<tr style="background:var(--lgreen)"><td><strong>Agent Freight Income</strong></td><td class="tpro"><strong>+'+fmt(tAF)+'</strong></td></tr>'
+      +'<tr><td>Total Driver Salaries</td><td class="tlos">'+fmt(tSal)+'</td></tr>'
+      +'<tr><td>Vehicle EMI &amp; Maintenance</td><td class="tlos">'+fmt(tVeh)+'</td></tr>'
+      +'<tr style="background:#f8fafc"><td><strong>Net P&L (all included)</strong></td><td class="'+(tPL+tAF-tSal-tVeh>=0?'tpro':'tlos')+'"><strong>'+fmt(tPL+tAF-tSal-tVeh)+'</strong></td></tr>'
+      +'</tbody></table></div></div>';
+  } else if(type==='vehicle'){
+    m={}; data.forEach(function(t){ var v=t.vehicle||'Unknown'; if(!m[v])m[v]={type:t.type,trips:0,amount:0,cng:0,mcd:0,other:0,infreight:0,pl:0}; m[v].trips++;m[v].amount+=(+t.amount||0);m[v].cng+=(+t.cng||0);m[v].mcd+=(+t.mcd||0);m[v].other+=(+t.other||0);m[v].infreight+=(+t.infreight||0);m[v].pl+=(+t.pl||0); });
+    html='<div class="card"><div class="cardh"><span class="cardt">Vehicle-wise P&L</span></div><div class="cardb"><table><thead><tr><th>Vehicle No</th><th>Type</th><th>Trips</th><th>Revenue</th><th>CNG</th><th>MCD</th><th>Other</th><th>InFreight</th><th>P&L</th><th>Avg P&L/Trip</th></tr></thead><tbody>'+Object.entries(m).sort(function(a,b){return b[1].pl-a[1].pl;}).map(function(e){ var v=e[0],d=e[1]; return '<tr><td><strong class="tmon">'+v+'</strong></td><td>'+tripPill(d.type)+'</td><td>'+d.trips+'</td><td class="tamt">'+fmt(d.amount)+'</td><td class="tamt" style="color:var(--orange)">'+fmt(d.cng)+'</td><td class="tamt">'+fmt(d.mcd)+'</td><td class="tamt">'+fmt(d.other)+'</td><td class="tamt" style="color:var(--green)">'+fmt(d.infreight)+'</td>'+plTD(d.pl)+'<td class="'+(d.pl/d.trips>0?'tpro':'tlos')+'">'+fmt(Math.round(d.pl/d.trips))+'</td></tr>'; }).join('')+'</tbody></table></div></div>';
+  } else if(type==='transporter'){
+    m={}; data.forEach(function(t){if(!m[t.transporter])m[t.transporter]={trips:0,amount:0,pl:0};m[t.transporter].trips++;m[t.transporter].amount+=(+t.amount||0);m[t.transporter].pl+=(+t.pl||0);});
+    html='<div class="card"><div class="cardh"><span class="cardt">Transporter P&L</span></div><div class="cardb"><table><thead><tr><th>Transporter</th><th>Trips</th><th>Amount</th><th>P&L</th></tr></thead><tbody>'+Object.entries(m).sort(function(a,b){return b[1].amount-a[1].amount;}).map(function(e){return '<tr><td><strong>'+e[0]+'</strong></td><td>'+e[1].trips+'</td><td class="tpro">'+fmt(e[1].amount)+'</td>'+plTD(e[1].pl)+'</tr>';}).join('')+'</tbody></table></div></div>';
+  } else if(type==='customer'){
+    m={}; data.forEach(function(t){var c=t.customer.split(',')[0].trim();if(!m[c])m[c]={trips:0,amount:0};m[c].trips++;m[c].amount+=(+t.amount||0);});
+    html='<div class="card"><div class="cardh"><span class="cardt">Customer Revenue</span></div><div class="cardb"><table><thead><tr><th>Customer</th><th>Trips</th><th>Total Amount</th><th>Avg/Trip</th></tr></thead><tbody>'+Object.entries(m).sort(function(a,b){return b[1].amount-a[1].amount;}).map(function(e){return '<tr><td><strong>'+e[0]+'</strong></td><td>'+e[1].trips+'</td><td class="tpro">'+fmt(e[1].amount)+'</td><td class="tamt">'+fmt(Math.round(e[1].amount/e[1].trips))+'</td></tr>';}).join('')+'</tbody></table></div></div>';
+  } else if(type==='route'){
+    m={}; data.forEach(function(t){var r=t.from+' to '+t.to;if(!m[r])m[r]={trips:0,amount:0};m[r].trips++;m[r].amount+=(+t.amount||0);});
+    html='<div class="card"><div class="cardh"><span class="cardt">Route Analysis</span></div><div class="cardb"><table><thead><tr><th>Route</th><th>Trips</th><th>Total Amount</th><th>Avg Freight</th></tr></thead><tbody>'+Object.entries(m).sort(function(a,b){return b[1].trips-a[1].trips;}).map(function(e){return '<tr><td><strong>'+e[0]+'</strong></td><td>'+e[1].trips+'</td><td class="tpro">'+fmt(e[1].amount)+'</td><td class="tamt">'+fmt(Math.round(e[1].amount/e[1].trips))+'</td></tr>';}).join('')+'</tbody></table></div></div>';
+  } else if(type==='salary'){
+    var months=getMonths();
+    html='<div class="card"><div class="cardh"><span class="cardt">Monthly P&L vs Salary, EMI &amp; Agent Freight</span></div><div class="cardb"><table><thead><tr><th>Month</th><th>Trips</th><th>Gross P&L</th><th>Agent Freight</th><th>Driver Salaries</th><th>EMI &amp; Maint.</th><th>Net P&L</th></tr></thead><tbody>'
+      +months.map(function(mo){
+        var md=APP.trips.filter(function(t){return String(t.date).slice(0,7)===mo;});
+        var mP=md.reduce(function(s,t){return s+(+t.pl||0);},0);
+        var mAF=APP.agentFreights.filter(function(a){return String(a.date).slice(0,7)===mo;}).reduce(function(s,a){return s+afNetIncome(a);},0);
+        var mSal=totalSalForMonth(mo); var mVeh=totalVehExpForMonth(mo); var mNet=mP+mAF-mSal-mVeh;
+        return '<tr><td><strong>'+mo+'</strong></td><td>'+md.length+'</td>'+plTD(mP)
+          +'<td class="tamt" style="color:var(--green)">'+(mAF?'+'+fmt(mAF):'-')+'</td>'
+          +'<td class="tamt" style="color:var(--purple)">'+fmt(mSal)+'</td>'
+          +'<td class="tamt" style="color:#0891b2">'+fmt(mVeh)+'</td>'
+          +'<td class="'+(mNet>=0?'tpro':'tlos')+'"><strong>'+fmt(mNet)+'</strong></td></tr>';
+      }).join('')+'</tbody></table></div></div>';
+  } else if(type==='daily'){
+    m={}; data.forEach(function(t){if(!m[t.date])m[t.date]={trips:0,amount:0,pl:0};m[t.date].trips++;m[t.date].amount+=(+t.amount||0);m[t.date].pl+=(+t.pl||0);});
+    html='<div class="card"><div class="cardh"><span class="cardt">Day-by-Day P&L</span></div><div class="cardb"><table><thead><tr><th>Date</th><th>Trips</th><th>Amount</th><th>P&L</th></tr></thead><tbody>'+Object.keys(m).sort().map(function(d){return '<tr><td>'+fmtDate(d)+'</td><td>'+m[d].trips+'</td><td class="tamt">'+fmt(m[d].amount)+'</td>'+plTD(m[d].pl)+'</tr>';}).join('')+'</tbody></table></div></div>';
+  }
+  document.getElementById('reportout').innerHTML=html;
+  document.getElementById('reportout').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── TRIP MODAL ────────────────────────────────────
+function openTripModal(id){
+  editTripId=id||null;
+  document.getElementById('tripmotitle').textContent=id?'Edit Trip':'Add New Trip';
+  if(id){
+    var t=APP.trips.find(function(x){return String(x.id)===String(id);}); if(!t) return;
+    document.getElementById('t-date').value=t.date||'';
+    document.getElementById('t-trans').value=t.transporter||'';
+    document.getElementById('t-from').value=t.from||'';
+    document.getElementById('t-to').value=t.to||'';
+    document.getElementById('t-vehicle').value=t.vehicle||'';
+    document.getElementById('t-type').value=t.type||'14FT';
+    document.getElementById('t-invoice').value=t.invoice||'';
+    document.getElementById('t-customer').value=t.customer||'';
+    document.getElementById('t-driver').value=t.driverno||'';
+    document.getElementById('t-status').value=t.status||'To Be Planned';
+    document.getElementById('t-pod').value=t.pod||'Pending';
+    document.getElementById('t-amount').value=t.amount||0;
+    document.getElementById('t-cng').value=t.cng||0;
+    document.getElementById('t-mcd').value=t.mcd||0;
+    document.getElementById('t-other').value=t.other||0;
+    document.getElementById('t-infreight').value=t.infreight||0;
+    calcPL();
+  } else {
+    document.getElementById('t-date').value=today();
+    ['t-trans','t-from','t-to','t-vehicle','t-invoice','t-customer','t-driver'].forEach(function(k){document.getElementById(k).value='';});
+    document.getElementById('t-status').value='To Be Planned';
+    document.getElementById('t-pod').value='Pending';
+    ['t-amount','t-cng','t-mcd','t-other','t-infreight'].forEach(function(k){document.getElementById(k).value='0';});
+    calcPL();
+  }
+  document.getElementById('mo-trip').classList.add('open');
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function calcPL(){
+  var g=function(id){return +document.getElementById(id).value||0;};
+  var amt=g('t-amount'),cng=g('t-cng'),mcd=g('t-mcd'),oth=g('t-other'),inf=g('t-infreight'),pl=amt-cng-mcd-oth+inf;
+  document.getElementById('pamt').textContent=fmt(amt);
+  document.getElementById('pexp').textContent=fmt(cng+mcd+oth);
+  document.getElementById('pinf').textContent=fmt(inf);
+  document.getElementById('ppl').textContent=fmt(pl);
+  document.getElementById('plbox').className='pli '+(pl>0?'pr':pl<0?'ls':'');
+}
+function saveTrip(){
+  var g=function(id){return document.getElementById(id).value||'';};
+  var gn=function(id){return +document.getElementById(id).value||0;};
+  if(!g('t-customer')){toast('Please enter customer name');return;}
+  var amt=gn('t-amount'),cng=gn('t-cng'),mcd=gn('t-mcd'),oth=gn('t-other'),inf=gn('t-infreight');
+  var trip={
+    id:editTripId||('r'+Date.now()), date:g('t-date'), transporter:g('t-trans'),
+    from:g('t-from'), to:g('t-to'), vehicle:g('t-vehicle'), type:g('t-type'),
+    invoice:g('t-invoice'), customer:g('t-customer'), driverno:g('t-driver'),
+    status:g('t-status'), pod:g('t-pod'),
+    amount:amt, cng:cng, mcd:mcd, other:oth, infreight:inf, pl:amt-cng-mcd-oth+inf
+  };
+  var btn=document.getElementById('tripsavebtn'); btn.disabled=true; btn.textContent='Saving…';
+  if(editTripId) APP.trips=APP.trips.map(function(t){return String(t.id)===String(editTripId)?trip:t;}); else APP.trips.push(trip);
+  closeModal('mo-trip'); renderPage(curPage); populateMonthDropdowns(); populateTripFilters();
+  syncSt('save','Saving…');
+  var done=function(err){
+    btn.disabled=false; btn.textContent='Save Trip';
+    if(!err){ syncSt('ok','Synced ✓'); toast(editTripId?'Trip updated!':'Trip added! P&L: '+fmt(trip.pl)); }
+    else { syncSt('err','Sync error'); toast('Saved locally. Sync to Sheet failed.'); }
+  };
+  if(editTripId) apiPatch(SHEET_TRIPS, editTripId, trip, done);
+  else apiPost(SHEET_TRIPS, trip, done);
+}
+function deleteTrip(tid){
+  if(!confirm('Delete this trip and all linked expenses?')) return;
+  APP.trips=APP.trips.filter(function(t){return String(t.id)!==String(tid);});
+  APP.expenses=APP.expenses.filter(function(e){return String(e.tripId)!==String(tid);});
+  renderPage(curPage); updateBadge(); syncSt('save','Saving…');
+  apiDelete(SHEET_TRIPS, tid, function(err){ syncSt(err?'err':'ok',err?'Sync error':'Synced ✓'); toast('Trip deleted.'); });
+}
+
+// ── EXPENSE MODAL ─────────────────────────────────
+function openExpModal(presetId){
+  var sel=document.getElementById('e-trip'); sel.innerHTML='<option value="">-- Select Trip --</option>';
+  APP.trips.forEach(function(t){var o=document.createElement('option');o.value=t.id;o.textContent=t.invoice+' | '+t.customer.split(',')[0].substring(0,22)+' | '+t.from+' to '+t.to;sel.appendChild(o);});
+  if(presetId){sel.value=presetId;onTripSelect();}else{document.getElementById('e-tripinfo').style.display='none';document.getElementById('e-plprev').style.display='none';}
+  document.getElementById('e-date').value=today(); document.getElementById('e-amount').value=''; document.getElementById('e-note').value='';
+  document.getElementById('mo-exp').classList.add('open');
+}
+function onTripSelect(){
+  var tid=document.getElementById('e-trip').value; var info=document.getElementById('e-tripinfo');
+  if(!tid){info.style.display='none';document.getElementById('e-plprev').style.display='none';return;}
+  var trip=APP.trips.find(function(t){return String(t.id)===String(tid);}); if(!trip) return;
+  info.style.display='block';
+  document.getElementById('e-triptext').innerHTML='<strong>'+trip.invoice+'</strong> | '+trip.customer.split(',')[0]+' | '+trip.from+' to '+trip.to+' | '+trip.vehicle+' | '+fmtDate(trip.date);
+  previewExpPL();
+}
+function previewExpPL(){
+  var tid=document.getElementById('e-trip').value; var amt=+document.getElementById('e-amount').value||0;
+  var prev=document.getElementById('e-plprev');
+  if(!tid||!amt){prev.style.display='none';return;}
+  var trip=APP.trips.find(function(t){return String(t.id)===String(tid);}); if(!trip) return;
+  var isI=document.getElementById('e-type').value==='InFreight'; var newPL=(+trip.pl||0)+(isI?amt:-amt);
+  prev.style.display='block';
+  var c=document.getElementById('e-curpl');c.textContent=fmt(trip.pl);c.style.color=(+trip.pl||0)>=0?'var(--green)':'var(--red)';
+  var th=document.getElementById('e-thisexp');th.textContent=(isI?'+':'-')+fmt(amt);th.style.color=isI?'var(--green)':'var(--red)';
+  var ne=document.getElementById('e-newpl');ne.textContent=fmt(newPL);ne.style.color=newPL>=0?'var(--green)':'var(--red)';
+}
+function saveExpense(){
+  var tid=document.getElementById('e-trip').value; var amt=+document.getElementById('e-amount').value||0;
+  if(!tid){toast('Please select a trip');return;} if(!amt){toast('Please enter amount');return;}
+  var exp={id:'exp'+Date.now(),tripId:tid,date:document.getElementById('e-date').value,type:document.getElementById('e-type').value,amount:amt,note:document.getElementById('e-note').value};
+  APP.expenses.push(exp); recompPL(tid); closeModal('mo-exp'); renderPage(curPage); updateBadge();
+  var trip=APP.trips.find(function(t){return String(t.id)===String(tid);});
+  syncSt('save','Saving…'); toast('Expense saved! Trip P&L: '+fmt(trip?trip.pl:0));
+  apiPost(SHEET_EXPENSES, exp, function(err){ syncSt(err?'err':'ok',err?'Sync error':'Synced ✓'); });
+}
+function deleteExpense(eid){
+  if(!confirm('Delete this expense?')) return;
+  var exp=APP.expenses.find(function(e){return String(e.id)===String(eid);});
+  APP.expenses=APP.expenses.filter(function(e){return String(e.id)!==String(eid);});
+  if(exp) recompPL(exp.tripId); renderPage(curPage); updateBadge(); syncSt('save','Saving…');
+  apiDelete(SHEET_EXPENSES, eid, function(err){ syncSt(err?'err':'ok',err?'Sync error':'Synced ✓'); toast('Expense deleted.'); });
+}
+
+// ── TRIP DETAIL MODAL ─────────────────────────────
+function openDetail(tid){
+  var trip=APP.trips.find(function(t){return String(t.id)===String(tid);}); if(!trip) return;
+  var exps=getTripExp(tid); var xTotal=exps.reduce(function(s,e){return s+(+e.amount||0);},0);
+  document.getElementById('detailtitle').textContent=trip.invoice;
+  document.getElementById('detailexpbtn').onclick=function(){closeModal('mo-detail');openExpModal(tid);};
+  var st=trip.status||'To Be Planned'; var stCls=st==='In Transit'?'st-transit':st==='Delivered'?'st-delivered':'st-planned';
+  var expRows=exps.map(function(e){return '<tr><td>'+fmtDate(e.date)+'</td><td><span style="background:var(--lorange);color:var(--orange);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px">'+e.type+'</span></td><td class="'+(e.type==='InFreight'?'tpro':'tlos')+'" style="text-align:right">'+fmt(e.amount)+'</td><td style="font-size:12px;color:var(--muted)">'+(e.note||'-')+'</td><td><button class="btn btns btnd" onclick="closeModal(\'mo-detail\');deleteExpense(\''+e.id+'\')">Del</button></td></tr>';}).join('');
+  document.getElementById('detailbody').innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;font-size:13px">'
+    +'<div><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">Transporter</div><div style="font-weight:500">'+trip.transporter+'</div></div>'
+    +'<div><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">Date</div><div style="font-weight:500">'+fmtDate(trip.date)+'</div></div>'
+    +'<div><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">Route</div><div style="font-weight:500">'+trip.from+' to '+trip.to+'</div></div>'
+    +'<div><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">Vehicle</div><div style="font-weight:500">'+trip.vehicle+' ('+trip.type+')</div></div>'
+    +'<div><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">Status</div><div><span class="'+stCls+'">'+st+'</span></div></div>'
+    +'<div><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">POD</div><div><span class="'+(trip.pod==='Received'?'pod-yes':'pod-no')+'">'+(trip.pod==='Received'?'✓ Received':'⏳ Pending')+'</span></div></div>'
+    +'<div style="grid-column:1/-1"><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">Customer</div><div style="font-weight:500">'+trip.customer+'</div></div>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px">'
+    +'<div style="background:var(--lgreen);border-radius:8px;padding:9px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase">Amount</div><div style="font-size:14px;font-weight:700;color:var(--green)">'+fmt(trip.amount)+'</div></div>'
+    +'<div style="background:var(--lred);border-radius:8px;padding:9px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase">CNG</div><div style="font-size:14px;font-weight:700;color:var(--red)">'+fmt(trip.cng)+'</div></div>'
+    +'<div style="background:var(--lred);border-radius:8px;padding:9px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase">MCD</div><div style="font-size:14px;font-weight:700;color:var(--red)">'+fmt(trip.mcd)+'</div></div>'
+    +'<div style="background:var(--lred);border-radius:8px;padding:9px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase">Other</div><div style="font-size:14px;font-weight:700;color:var(--red)">'+fmt(trip.other)+'</div></div>'
+    +'<div style="background:'+(trip.pl>=0?'var(--lgreen)':'var(--lred)')+';border-radius:8px;padding:9px;text-align:center"><div style="font-size:10px;font-weight:700;color:'+(trip.pl>=0?'var(--green)':'var(--red)')+';text-transform:uppercase">P&L</div><div style="font-size:14px;font-weight:700;color:'+(trip.pl>=0?'var(--green)':'var(--red)')+'">'+fmt(trip.pl)+'</div></div>'
+    +'</div>'
+    +'<div style="border-top:1.5px solid var(--border);padding-top:12px">'
+    +'<div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px">Linked Expenses ('+exps.length+')'+(xTotal>0?' <span style="font-size:12px;color:var(--red);font-weight:600;margin-left:6px">Total: '+fmt(xTotal)+'</span>':'')+'</div>'
+    +(exps.length===0?'<div style="color:var(--muted);font-size:13px;padding:10px 0">No extra expenses logged yet.</div>'
+    :'<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th style="text-align:left;padding:5px 8px;background:#f8fafc;border-bottom:1.5px solid var(--border);font-size:11px;color:var(--muted);text-transform:uppercase">Date</th><th style="text-align:left;padding:5px 8px;background:#f8fafc;border-bottom:1.5px solid var(--border);font-size:11px;color:var(--muted);text-transform:uppercase">Type</th><th style="text-align:right;padding:5px 8px;background:#f8fafc;border-bottom:1.5px solid var(--border);font-size:11px;color:var(--muted);text-transform:uppercase">Amount</th><th style="text-align:left;padding:5px 8px;background:#f8fafc;border-bottom:1.5px solid var(--border);font-size:11px;color:var(--muted);text-transform:uppercase">Note</th><th style="padding:5px 8px;background:#f8fafc;border-bottom:1.5px solid var(--border)"></th></tr></thead><tbody>'+expRows+'</tbody></table>')
+    +'</div>';
+  document.getElementById('mo-detail').classList.add('open');
+}
+
+document.querySelectorAll('.mover').forEach(function(mo){mo.addEventListener('click',function(e){if(e.target===mo)mo.classList.remove('open');});});
+
+// ── RESTORE ALL 61 TRIPS WITH STATUS=DELIVERED ────────────
+var ALL_TRIPS_DATA = [
+  {id:'r1',date:'2026-03-02',transporter:'Amit Transport',from:'BGSG BLR',to:'Tumkur',vehicle:'KA51AL2086',type:'17FT',invoice:'BLR/25-26/0364',customer:'SPROUTLIFE FOODS PRIVATE LIMITED',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r2',date:'2026-03-02',transporter:'RCB Transport',from:'BGSG BLR',to:'Hyderabad, Vijaywada',vehicle:'KA42B0152',type:'20FT',invoice:'HR/25-26/2621, BLR/25-26/0365',customer:'CONNEDIT BUSINESS, MANASH E-COMMERCE',driverno:'',amount:36000,cng:36000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r3',date:'2026-03-02',transporter:'BGSG Logistics',from:'Jhajjar',to:'Faridabad',vehicle:'DL01LY8139',type:'14FT',invoice:'HR/25-26/2615',customer:'SHOPPERS STOP LIMITED',driverno:'',amount:6500,cng:0,mcd:0,other:1150,infreight:0,pl:5350,status:'Delivered',pod:'Pending'},
+  {id:'r4',date:'2026-03-02',transporter:'BGSG Logistics',from:'Jhajjar',to:'Howrah',vehicle:'DL01MB4318',type:'22FT',invoice:'HR/25-26/2622',customer:'MANASH E-COMMERCE PRIVATE LIMITED',driverno:'',amount:58000,cng:44334,mcd:10500,other:0,infreight:22500,pl:25666,status:'Delivered',pod:'Pending'},
+  {id:'r5',date:'2026-03-02',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gurgaon',vehicle:'HR63G9386',type:'22FT',invoice:'HR/25-26/2609,10,11,12,13,14',customer:'VISAGE LINES PERSONAL CARE PRIVATE LIMITED',driverno:'',amount:4500,cng:0,mcd:1500,other:0,infreight:0,pl:3000,status:'Delivered',pod:'Pending'},
+  {id:'r6',date:'2026-03-02',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gautam Buddha Nagar',vehicle:'HR63G9386',type:'22FT',invoice:'HR/25-26/2623',customer:'DAIWA KASEI INDIA PVT LTD',driverno:'',amount:7500,cng:5999,mcd:0,other:400,infreight:0,pl:1101,status:'Delivered',pod:'Pending'},
+  {id:'r7',date:'2026-03-03',transporter:'Amit Transport',from:'BGSG BLR',to:'Bangalore',vehicle:'KA51AL2085',type:'17FT',invoice:'HR/25-26/2627',customer:'VISAGE LINES PERSONAL CARE PRIVATE LIMITED',driverno:'',amount:5500,cng:5500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r8',date:'2026-03-03',transporter:'Amit Transport',from:'BGSG BLR',to:'Bangalore',vehicle:'KA51AL2085',type:'17FT',invoice:'BLR/25-26/0369',customer:'MANASH E-COMMERCE PRIVATE LIMITED',driverno:'',amount:4500,cng:4500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r9',date:'2026-03-04',transporter:'Ravi Tata Ace',from:'Jhajjar',to:'Sonipat',vehicle:'PICKUP',type:'Bolero',invoice:'HR/25-26/2631',customer:'SRT10 ATHLEISURE PRIVATE LIMITED',driverno:'',amount:3500,cng:3500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r10',date:'2026-03-04',transporter:'RCB Transport',from:'BGSG BLR',to:'Tumkur',vehicle:'KA51AG9924',type:'20FT',invoice:'BLR/25-26/0371, 73',customer:'SPROUTLIFE FOODS PRIVATE LIMITED',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r11',date:'2026-03-05',transporter:'Ravi Tata Ace',from:'Jhajjar',to:'Sonipat',vehicle:'HR63G3137',type:'Bolero',invoice:'HR/25-26/2632',customer:'SRT10 ATHLEISURE PRIVATE LIMITED',driverno:'',amount:3000,cng:3000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r12',date:'2026-03-05',transporter:'Amit Transport',from:'BGSG BLR',to:'Bangalore Rural',vehicle:'KA51AL2085',type:'17FT',invoice:'BLR/25-26/0374',customer:'Shiprocket Limited',driverno:'',amount:6000,cng:6000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r13',date:'2026-03-06',transporter:'RCB Transport',from:'BGSG BLR',to:'Tumkur',vehicle:'KA51AG3753',type:'20FT',invoice:'BLR/25-26/0375,76,77',customer:'SPROUTLIFE FOODS PRIVATE LIMITED',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r14',date:'2026-03-06',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gautam Buddha Nagar',vehicle:'HR63G9386',type:'22FT',invoice:'HR/25-26/2634',customer:'DAIWA KASEI INDIA PVT LTD',driverno:'',amount:7500,cng:5000,mcd:0,other:400,infreight:0,pl:2100,status:'Delivered',pod:'Pending'},
+  {id:'r15',date:'2026-03-07',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gurgaon',vehicle:'DL01LY8139',type:'14FT',invoice:'HR/25-26/2639',customer:'BLUPIN TECHNOLOGIES PRIVATE LIMITED',driverno:'',amount:4500,cng:2489,mcd:0,other:0,infreight:0,pl:2011,status:'Delivered',pod:'Pending'},
+  {id:'r16',date:'2026-03-07',transporter:'Amit Transport',from:'BGSG BLR',to:'Bangalore',vehicle:'KA51AL2086',type:'17FT',invoice:'BLR/25-26/0379',customer:'MANASH E-COMMERCE PRIVATE LIMITED',driverno:'',amount:6500,cng:6500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r17',date:'2026-03-07',transporter:'Amit Transport',from:'BGSG BLR',to:'Bangalore',vehicle:'KA51AL2086',type:'17FT',invoice:'HR/25-26/2640',customer:'VISAGE LINES PERSONAL CARE PRIVATE LIMITED',driverno:'',amount:5500,cng:5500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r18',date:'2026-03-08',transporter:'BGSG Logistics',from:'Jhajjar',to:'Sonipat',vehicle:'DL01LY8139',type:'14FT',invoice:'HR/25-26/2646',customer:'SRT10 ATHLEISURE PRIVATE LIMITED',driverno:'',amount:5500,cng:2504,mcd:0,other:0,infreight:0,pl:2996,status:'Delivered',pod:'Pending'},
+  {id:'r19',date:'2026-03-08',transporter:'RCB Transport',from:'Amar Jyothi',to:'Ernakulam',vehicle:'KA51AM0588',type:'20FT',invoice:'BLR/25-26/0380',customer:'MANASH E-COMMERCE PRIVATE LIMITED',driverno:'',amount:25000,cng:25000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r20',date:'2026-03-08',transporter:'BGSG Logistics',from:'Jhajjar',to:'Allahabad',vehicle:'HR63G9386',type:'22FT',invoice:'HR/25-26/2647',customer:'AROGYAWARDHAK AUSHADHALAY',driverno:'',amount:38000,cng:19998,mcd:2000,other:0,infreight:0,pl:16002,status:'Delivered',pod:'Pending'},
+  {id:'r21',date:'2026-03-09',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gurgaon',vehicle:'DL01LY8139',type:'14FT',invoice:'HR/25-26/2651,52',customer:'BLUPIN TECHNOLOGIES, Shiprocket Limited',driverno:'',amount:4500,cng:1806,mcd:0,other:0,infreight:0,pl:2694,status:'Delivered',pod:'Pending'},
+  {id:'r22',date:'2026-03-09',transporter:'Amit Transport',from:'BGSG BLR',to:'Bangalore Rural',vehicle:'KA51AL2085',type:'17FT',invoice:'BLR/25-26/0381',customer:'HAPPILO INTERNATIONAL PRIVATE LIMITED',driverno:'',amount:4500,cng:4500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r23',date:'2026-03-10',transporter:'BGSG Logistics',from:'Jhajjar',to:'Karnal',vehicle:'DL01LY8139',type:'14FT',invoice:'HR/25-26/2661,62',customer:'SUVIDHA STORES PRIVATE LIMITED',driverno:'',amount:6500,cng:4505,mcd:1003,other:0,infreight:0,pl:992,status:'Delivered',pod:'Pending'},
+  {id:'r24',date:'2026-03-10',transporter:'JAGESWAR',from:'BGSG BLR',to:'Bangalore Rural',vehicle:'KA52C5063',type:'14FT',invoice:'BLR/25-26/0382',customer:'HAPPILO INTERNATIONAL PRIVATE LIMITED',driverno:'',amount:4500,cng:4500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r25',date:'2026-03-10',transporter:'Amit Transport',from:'BGSG BLR',to:'Tumkur',vehicle:'KA51AL2086',type:'17FT',invoice:'BLR/25-26/0383',customer:'SPROUTLIFE FOODS PRIVATE LIMITED',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r26',date:'2026-03-10',transporter:'Shree Ganesh Road Carrier',from:'Jhajjar',to:'Gautam Buddha Nagar',vehicle:'HR55AN7682',type:'14FT',invoice:'HR/25-26/2664',customer:'DAIWA KASEI INDIA PVT LTD',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r27',date:'2026-03-11',transporter:'RCB Transport',from:'BGSG BLR',to:'Tumkur',vehicle:'KA51AG3753',type:'20FT',invoice:'BLR/25-26/0385',customer:'SPROUTLIFE FOODS PRIVATE LIMITED',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r28',date:'2026-03-11',transporter:'Amit Transport',from:'BGSG BLR',to:'Bangalore',vehicle:'KA51AL2085',type:'17FT',invoice:'BLR/25-26/0386',customer:'MANASH E-COMMERCE PRIVATE LIMITED',driverno:'',amount:6500,cng:6500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r29',date:'2026-03-11',transporter:'RCB Transport',from:'BGSG BLR',to:'Bhiwandi, Thane',vehicle:'KA52B7411',type:'22FT',invoice:'HR/25-26/2668,69',customer:'GLOBAL SS BEAUTY, VISAGE',driverno:'',amount:5500,cng:5500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r30',date:'2026-03-12',transporter:'BGSG Logistics',from:'Jhajjar',to:'Sonipat',vehicle:'DL01LAL0970',type:'17FT',invoice:'HR/25-26/2673',customer:'SRT10 ATHLEISURE PRIVATE LIMITED',driverno:'',amount:5500,cng:2510,mcd:0,other:0,infreight:0,pl:2990,status:'Delivered',pod:'Pending'},
+  {id:'r31',date:'2026-03-13',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gurgaon',vehicle:'DL01LAL0970',type:'17FT',invoice:'HR/25-26/2687,88',customer:'SANGRILA LIFESTYLE PRIVATE LIMITED',driverno:'',amount:3500,cng:2007,mcd:1000,other:0,infreight:0,pl:493,status:'Delivered',pod:'Pending'},
+  {id:'r32',date:'2026-03-12',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gurgaon',vehicle:'DL01LY8139',type:'14FT',invoice:'HR/25-26/2689,90',customer:'VISAGE LINES PERSONAL CARE PRIVATE LIMITED',driverno:'',amount:4500,cng:2006,mcd:0,other:1200,infreight:0,pl:1294,status:'Delivered',pod:'Pending'},
+  {id:'r33',date:'2026-03-12',transporter:'BGSG Logistics',from:'Jhajjar',to:'Thane',vehicle:'HR63G9386',type:'22FT',invoice:'HR/25-26/2674,76,77,78,79,80,81',customer:'SHOPPERS STOP, Vera Moda, Best United',driverno:'',amount:37000,cng:38948,mcd:8000,other:6000,infreight:40000,pl:24052,status:'Delivered',pod:'Pending'},
+  {id:'r34',date:'2026-03-13',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gautam Buddha Nagar',vehicle:'DL01LAL0970',type:'17FT',invoice:'HR/25-26/2693',customer:'DAIWA KASEI INDIA PVT LTD',driverno:'',amount:7500,cng:3219,mcd:2220,other:400,infreight:0,pl:1661,status:'Delivered',pod:'Pending'},
+  {id:'r35',date:'2026-03-13',transporter:'BGSG Logistics',from:'Noida',to:'Jhajjar',vehicle:'DL01LAL0970',type:'17FT',invoice:'inward freight',customer:'Accurate Multiplayer Papers LLP',driverno:'',amount:6500,cng:0,mcd:0,other:0,infreight:0,pl:6500,status:'Delivered',pod:'Pending'},
+  {id:'r36',date:'2026-03-13',transporter:'Routeredar-Divya',from:'BGSG BLR',to:'Coimbatore',vehicle:'KA02AH9639',type:'20FT',invoice:'BLR/25-26/0389,90',customer:'MANASH E-COMMERCE PRIVATE LIMITED',driverno:'',amount:18000,cng:18000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r37',date:'2026-03-13',transporter:'Khan Transport',from:'BGSG BLR',to:'Tumkur',vehicle:'KA01AA2213',type:'20FT',invoice:'BLR/25-26/0392',customer:'SPROUTLIFE FOODS PRIVATE LIMITED',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r38',date:'2026-03-14',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gurgaon',vehicle:'DL01LY8139',type:'14FT',invoice:'HR/25-26/2694',customer:'VISAGE LINES PERSONAL CARE PRIVATE LIMITED',driverno:'',amount:4500,cng:3006,mcd:55,other:0,infreight:0,pl:1439,status:'Delivered',pod:'Pending'},
+  {id:'r39',date:'2026-03-14',transporter:'RCB Transport',from:'BGSG BLR',to:'Tumkur',vehicle:'KA52B6241',type:'20FT',invoice:'BLR/25-26/0394',customer:'SPROUTLIFE FOODS PRIVATE LIMITED',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r40',date:'2026-03-14',transporter:'Surindera Transport',from:'Jhajjar',to:'Khordha',vehicle:'HR55AW9978',type:'22FT',invoice:'HR/25-26/2699,700,701',customer:'MANASH E-COMMERCE PRIVATE LIMITED',driverno:'',amount:68000,cng:68000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r41',date:'2026-03-14',transporter:'RCB Transport',from:'BGSG BLR',to:'Tumkur',vehicle:'KA52B6241',type:'20FT',invoice:'BLR/25-26/0394b',customer:'SPROUTLIFE FOODS PRIVATE LIMITED',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r42',date:'2026-03-14',transporter:'Khan Transport',from:'BGSG BLR',to:'Tumkur',vehicle:'KA01AA2213',type:'20FT',invoice:'BLR/25-26/0396',customer:'SPROUTLIFE FOODS PRIVATE LIMITED',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r43',date:'2026-03-14',transporter:'Routeredar-Divya',from:'BGSG BLR',to:'Bengaluru',vehicle:'KA52C3807',type:'14FT',invoice:'BLR/25-26/0397',customer:'MANASH E-COMMERCE PRIVATE LIMITED',driverno:'',amount:5000,cng:5000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r44',date:'2026-03-14',transporter:'OM LOGISTICS LTD.',from:'Jhajjar',to:'KOLKATA',vehicle:'HR63F9444',type:'14FT',invoice:'HR/25-26/2696',customer:'CONNEDIT BUSINESS SOLUTIONS PRIVATE LIMITED',driverno:'',amount:0,cng:0,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r45',date:'2026-03-14',transporter:'BGSG Logistics',from:'EPW',to:'Farrukhnagar',vehicle:'DL01LY8139',type:'14FT',invoice:'EPW invoice',customer:'Shiprocket Limited',driverno:'',amount:5500,cng:1000,mcd:0,other:0,infreight:0,pl:4500,status:'Delivered',pod:'Pending'},
+  {id:'r46',date:'2026-03-16',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gurgaon',vehicle:'DL01LY8139',type:'14FT',invoice:'HR/25-26/2702',customer:'CONNEDIT BUSINESS SOLUTIONS PRIVATE LIMITED',driverno:'',amount:3500,cng:1002,mcd:1750,other:0,infreight:0,pl:748,status:'Delivered',pod:'Pending'},
+  {id:'r47',date:'2026-03-16',transporter:'BGSG Logistics',from:'Jhajjar',to:'Thane',vehicle:'DL01MB4318',type:'22FT',invoice:'HR/25-26/2706,07,08',customer:'FRUVEGGIE TECHNOLOGY, Vera Moda, Best United',driverno:'',amount:40000,cng:14886,mcd:3003,other:2000,infreight:0,pl:20111,status:'Delivered',pod:'Pending'},
+  {id:'r48',date:'2026-03-16',transporter:'Khan Transport',from:'BGSG BLR',to:'Bangalore',vehicle:'14FT',type:'14FT',invoice:'HR/25-26/2709,10',customer:'SHOPPERS STOP LIMITED',driverno:'',amount:4000,cng:4000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r49',date:'2026-03-17',transporter:'RCB Transport',from:'BGSG BLR',to:'Vijayawada',vehicle:'KA51AG1259',type:'20FT',invoice:'BLR/25-26/0401,102,103',customer:'MANASH E-COMMERCE PRIVATE LIMITED',driverno:'',amount:26000,cng:26000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r50',date:'2026-03-17',transporter:'BGSG Logistics',from:'Jhajjar',to:'Dadri Toye',vehicle:'DL01LAL0970',type:'17FT',invoice:'internal movement',customer:'Arihant (for REELS)',driverno:'',amount:1500,cng:1116,mcd:0,other:0,infreight:0,pl:384,status:'Delivered',pod:'Pending'},
+  {id:'r51',date:'2026-03-17',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gautam Buddha Nagar',vehicle:'DL01LAL0970',type:'17FT',invoice:'HR/25-26/2720',customer:'DAIWA KASEI INDIA PVT LTD',driverno:'',amount:7500,cng:3208,mcd:0,other:400,infreight:0,pl:3892,status:'Delivered',pod:'Pending'},
+  {id:'r52',date:'2026-03-17',transporter:'BGSG Logistics',from:'Noida',to:'Jhajjar',vehicle:'DL01LAL0970',type:'17FT',invoice:'inward freight 2',customer:'Accurate Multiplayer Papers LLP',driverno:'',amount:6500,cng:1001,mcd:0,other:0,infreight:0,pl:5499,status:'Delivered',pod:'Pending'},
+  {id:'r53',date:'2026-03-18',transporter:'Shree Ganesh Road Carrier',from:'Jhajjar',to:'Gurgaon',vehicle:'HR55AH9928',type:'14FT',invoice:'HR/25-26/2728',customer:'Shiprocket Limited',driverno:'',amount:5500,cng:5500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r54',date:'2026-03-18',transporter:'Amit Transport',from:'BGSG BLR',to:'Bangalore',vehicle:'KA51AL2085',type:'17FT',invoice:'HR/25-26/2729',customer:'VISAGE LINES PERSONAL CARE PRIVATE LIMITED',driverno:'',amount:5500,cng:5500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r55',date:'2026-03-18',transporter:'Chinar Packaging',from:'BGSG BLR',to:'Tumkur',vehicle:'KA01D4950',type:'14FT',invoice:'BLR/25-26/0404',customer:'SPROUTLIFE FOODS PRIVATE LIMITED',driverno:'',amount:7500,cng:7500,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r56',date:'2026-03-19',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gurgaon',vehicle:'DL01LY8139',type:'14FT',invoice:'HR/25-26/2730,31',customer:'SANGRILA LIFESTYLE PRIVATE LIMITED',driverno:'',amount:3500,cng:1995,mcd:0,other:0,infreight:0,pl:1505,status:'Delivered',pod:'Pending'},
+  {id:'r57',date:'2026-03-19',transporter:'Wheelz EYE',from:'BGSG BLR',to:'Ernakulam',vehicle:'KA01AM6439',type:'20FT',invoice:'BLR/25-26/0405,06',customer:'MANASH E-COMMERCE, MANASH LIFESTYLE PVT LTD',driverno:'',amount:25000,cng:25000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r58',date:'2026-03-20',transporter:'BGSG Logistics',from:'Jhajjar',to:'Patna',vehicle:'DL01LAL0970',type:'17FT',invoice:'HR/25-26/2741,42',customer:'MANASH E-COMMERCE PRIVATE LIMITED',driverno:'',amount:45000,cng:7599,mcd:2000,other:1000,infreight:0,pl:34401,status:'Delivered',pod:'Pending'},
+  {id:'r59',date:'2026-03-20',transporter:'BGSG Logistics',from:'Jhajjar',to:'Gautam Buddha Nagar',vehicle:'DL01LY8139',type:'14FT',invoice:'HR/25-26/2745',customer:'DAIWA KASEI INDIA PVT LTD',driverno:'',amount:7500,cng:3000,mcd:0,other:400,infreight:0,pl:4100,status:'Delivered',pod:'Pending'},
+  {id:'r60',date:'2026-03-20',transporter:'OM LOGISTICS LTD.',from:'Jhajjar',to:'Thane',vehicle:'HR63F9444',type:'Bolero',invoice:'HR/25-26/2746,47,50,56',customer:'Best United India, Freedom Tree Retail, OVS INDIA RETAIL',driverno:'',amount:0,cng:0,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'},
+  {id:'r61',date:'2026-03-21',transporter:'DS INDIA LOGISTICS',from:'Jhajjar',to:'Karnataka',vehicle:'MH46CU1680',type:'32FT',invoice:'HR/25-26/2752',customer:'BGSG SOLUTIONS PRIVATE LIMITED',driverno:'',amount:99000,cng:99000,mcd:0,other:0,infreight:0,pl:0,status:'Delivered',pod:'Pending'}
+];
+
+// Restore all 61 trips to SheetDB - call this once from browser console
+// or click the hidden restore button
+function restoreAllData(){
+  if(!confirm('This will DELETE all current Trips data and restore all 61 trips with status=Delivered. Continue?')) return;
+  syncSt('save','Restoring data…');
+  document.getElementById('ldm').textContent='Deleting old data…';
+  document.getElementById('ld').style.display='flex';
+
+  // Step 1: Delete all rows in Trips sheet
+  fetch(API+'/all?sheet='+SHEET_TRIPS, {method:'DELETE'})
+    .then(function(r){ return r.json(); })
+    .then(function(){
+      document.getElementById('ldm').textContent='Uploading 61 trips…';
+      // Step 2: Post all 61 trips at once
+      return fetch(API+'?sheet='+SHEET_TRIPS, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({data: ALL_TRIPS_DATA})
+      });
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(){
+      APP.trips = ALL_TRIPS_DATA.map(normalizeTrip);
+      document.getElementById('ld').style.display='none';
+      populateMonthDropdowns(); populateTripFilters();
+      renderPage('dashboard'); updateBadge();
+      syncSt('ok','Restored ✓');
+      toast('All 61 trips restored with status = Delivered!');
+    })
+    .catch(function(e){
+      document.getElementById('ld').style.display='none';
+      syncSt('err','Restore failed');
+      toast('Error: '+e.message);
+    });
+}
+
+window.onload=init;
+</script>
+</body>
+</html>
