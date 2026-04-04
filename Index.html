@@ -746,10 +746,26 @@ var editTripId = null;
 
 // ── Supabase REST ─────────────────────────────────
 function sbGet(table, cb){
+  var done=false;
+  var timer=setTimeout(function(){
+    if(done) return;
+    done=true;
+    cb(new Error(table+' GET: timeout'),[]);
+  }, 4500);
   fetch(SUPA_URL+'/rest/v1/'+table+'?select=*&order=id.asc', {headers:SB_HDR})
     .then(function(r){ if(!r.ok) return r.text().then(function(t){throw new Error(table+' GET: '+t);}); return r.json(); })
-    .then(function(d){ cb(null, Array.isArray(d)?d:[]); })
-    .catch(function(e){ cb(e,[]); });
+    .then(function(d){
+      if(done) return;
+      done=true;
+      clearTimeout(timer);
+      cb(null, Array.isArray(d)?d:[]);
+    })
+    .catch(function(e){
+      if(done) return;
+      done=true;
+      clearTimeout(timer);
+      cb(e,[]);
+    });
 }
 function sbInsert(table, row, cb){
   fetch(SUPA_URL+'/rest/v1/'+table, {method:'POST', headers:SB_HDR, body:JSON.stringify(row)})
@@ -825,6 +841,20 @@ function tripPill(t){ var m={'14FT':'p14','17FT':'p17','20FT':'p20','22FT':'p22'
 function plTD(v){ v=+v||0; if(v>0)return '<td class="tpro">'+fmt(v)+'</td>'; if(v<0)return '<td class="tlos">'+fmt(v)+'</td>'; return '<td class="tzer">-</td>'; }
 function getTripExp(tid){ return APP.expenses.filter(function(e){return String(e.tripId)===String(tid);}); }
 function parseNum(v){ return parseFloat(v)||0; }
+function tripSortValue(t){
+  var s=String((t&&t.date)||'').slice(0,10);
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  var dt=new Date((t&&t.date)||'');
+  if(!isNaN(dt.getTime())) return dt.toISOString().slice(0,10);
+  return '';
+}
+function compareTripsRecent(a,b){
+  var da=tripSortValue(a), db=tripSortValue(b);
+  if(db!==da) return db.localeCompare(da);
+  var ia=parseInt(a&&a.id,10), ib=parseInt(b&&b.id,10);
+  if(!isNaN(ia) && !isNaN(ib) && ib!==ia) return ib-ia;
+  return String((b&&b.id)||'').localeCompare(String((a&&a.id)||''));
+}
 
 var CASH_LOCAL_ENTRY_KEY='bgsg_cash_entries';
 var CASH_LOCAL_TRANSFER_KEY='bgsg_cash_transfers';
@@ -1053,45 +1083,150 @@ function updateVehicleDocBadge(){
 
 loadCashLocal();
 
+var APP_CACHE_KEY='bgsg_app_cache_v2';
+function saveAppCache(){
+  try{
+    localStorage.setItem(APP_CACHE_KEY, JSON.stringify({
+      trips:APP.trips||[],
+      expenses:APP.expenses||[],
+      salaries:APP.salaries||[],
+      vehicleExpenses:APP.vehicleExpenses||[],
+      agentFreights:APP.agentFreights||[],
+      vehicleDocs:APP.vehicleDocs||[],
+      drivers:DRIVERS||[],
+      ts:Date.now()
+    }));
+  }catch(err){}
+}
+function loadAppCache(){
+  try{
+    var raw=localStorage.getItem(APP_CACHE_KEY);
+    if(!raw) return false;
+    var c=JSON.parse(raw);
+    if(!c||typeof c!=='object') return false;
+    if(Array.isArray(c.trips)) APP.trips=c.trips.map(normalizeTrip);
+    if(Array.isArray(c.expenses)) APP.expenses=c.expenses.map(normalizeExp);
+    if(Array.isArray(c.salaries)) APP.salaries=c.salaries.map(normalizeSal);
+    if(Array.isArray(c.vehicleExpenses)) APP.vehicleExpenses=c.vehicleExpenses.map(normalizeVehicleExp);
+    if(Array.isArray(c.agentFreights)) APP.agentFreights=c.agentFreights.map(normalizeAgentFreight);
+    if(Array.isArray(c.vehicleDocs) && c.vehicleDocs.length){ APP.vehicleDocs=c.vehicleDocs.map(normalizeVehicleDoc); saveVehicleDocsLocal(); }
+    if(Array.isArray(c.drivers) && c.drivers.length){
+      DRIVERS=c.drivers.filter(function(x){return x && x.name;}).map(function(x){return {id:String(x.id),name:x.name};});
+    }
+    return true;
+  }catch(err){
+    return false;
+  }
+}
+function refreshAppUI(){
+  if(DRIVERS.length===0) DRIVERS=[{id:'drv1',name:'Driver 1'}];
+  updateDriverSelect();
+  populateMonthDropdowns();
+  populateTripFilters();
+  refreshVehicleDocUI();
+  populateFundDropdowns();
+  renderPage(curPage||'dashboard');
+  updateBadge();
+  updateAFBadge();
+  updateVehicleDocBadge();
+}
+function hideLoader(){
+  var ld=document.getElementById('ld');
+  if(ld) ld.style.display='none';
+}
+window.addEventListener('beforeunload', saveAppCache);
+document.addEventListener('visibilitychange', function(){ if(document.hidden) saveAppCache(); });
+
 // ── INIT ──────────────────────────────────────────
 function init(){
   document.getElementById('ldm').textContent='Connecting to database…';
   syncSt('save','Loading…');
-  var total=9, loaded=0, hasErr=false;
-  function done(err){
-    if(err){ hasErr=true; console.error('Supabase load error:',err.message||err); }
-    if(++loaded < total) return;
-    document.getElementById('ld').style.display='none';
-    if(DRIVERS.length===0) DRIVERS=[{id:'drv1',name:'Driver 1'}];
-    updateDriverSelect();
-    populateMonthDropdowns(); populateTripFilters(); refreshVehicleDocUI(); populateFundDropdowns();
-    renderPage('dashboard'); updateBadge(); updateAFBadge(); updateVehicleDocBadge();
-    if(hasErr){ syncSt('err','Load error — check console'); toast('⚠ Some tables missing. Run SQL setup first.'); }
-    else { syncSt('ok','Supabase ✓'); toast('Loaded '+APP.trips.length+' trips!'); }
+
+  var cacheUsed=loadAppCache();
+  var loadState={trips:false,expenses:false,salaries:false,vehicleExpenses:false,agentFreights:false,vehicleDocs:false,cashEntries:false,cashTransfers:false,drivers:false};
+  var total=9, loaded=0, hasErr=false, firstPaintDone=false, refreshTimer=null;
+
+  function safeRefreshUI(){
+    try{ refreshAppUI(); }catch(err){ console.error('UI refresh error:', err); }
   }
-  sbGet('trips',            function(e,d){ if(!e) APP.trips=d.map(normalizeTrip); done(e); });
-  sbGet('expenses',         function(e,d){ if(!e) APP.expenses=d.map(normalizeExp); done(e); });
-  sbGet('salaries',         function(e,d){ if(!e) APP.salaries=d.map(normalizeSal); done(e); });
-  sbGet('vehicle_expenses', function(e,d){ if(!e) APP.vehicleExpenses=d.map(normalizeVehicleExp); done(e); });
-  sbGet('agent_freights',   function(e,d){ if(!e) APP.agentFreights=d.map(normalizeAgentFreight); done(e); });
+  function firstPaint(label){
+    if(firstPaintDone) return;
+    firstPaintDone=true;
+    safeRefreshUI();
+    hideLoader();
+    if(label) syncSt('save',label);
+  }
+  if(cacheUsed){
+    firstPaint('Opening cache…');
+  }
+
+  var emergencyTimer=setTimeout(function(){
+    firstPaint(cacheUsed ? 'Syncing latest data…' : 'Opening…');
+  }, cacheUsed ? 120 : 900);
+
+  function queueRefresh(){
+    if(!firstPaintDone) return;
+    clearTimeout(refreshTimer);
+    refreshTimer=setTimeout(function(){
+      safeRefreshUI();
+      saveAppCache();
+    },80);
+  }
+  function maybeFirstPaint(){
+    if(firstPaintDone) return;
+    if(loadState.trips || loadState.cashEntries || loadState.drivers || loadState.expenses){
+      firstPaint('Syncing latest data…');
+    }
+  }
+  function done(name, err){
+    loadState[name]=true;
+    if(err){ hasErr=true; console.error('Supabase load error:', name, err.message||err); }
+    loaded++;
+    maybeFirstPaint();
+    queueRefresh();
+    if(loaded < total) return;
+    clearTimeout(emergencyTimer);
+    saveCashLocal();
+    saveAppCache();
+    safeRefreshUI();
+    hideLoader();
+    if(hasErr){
+      syncSt('err','Some tables offline');
+      if(!cacheUsed) toast('Opened fast. Some tables will sync later/offline.');
+    }else{
+      syncSt('ok','Supabase ✓');
+      if(!cacheUsed) toast('Loaded '+APP.trips.length+' trips!');
+    }
+  }
+
+  sbGet('trips', function(e,d){ if(!e) APP.trips=d.map(normalizeTrip); done('trips', e); });
+  sbGet('expenses', function(e,d){ if(!e) APP.expenses=d.map(normalizeExp); done('expenses', e); });
+  sbGet('salaries', function(e,d){ if(!e) APP.salaries=d.map(normalizeSal); done('salaries', e); });
+  sbGet('vehicle_expenses', function(e,d){ if(!e) APP.vehicleExpenses=d.map(normalizeVehicleExp); done('vehicleExpenses', e); });
+  sbGet('agent_freights', function(e,d){ if(!e) APP.agentFreights=d.map(normalizeAgentFreight); done('agentFreights', e); });
   sbGet('vehicle_documents', function(e,d){
     if(!e){ APP.vehicleDocs=d.map(normalizeVehicleDoc); saveVehicleDocsLocal(); }
-    else { APP.vehicleDocs=loadVehicleDocsLocal(); console.warn('vehicle_documents table not ready, using local storage only'); }
-    done(null);
+    else if(!(APP.vehicleDocs||[]).length){ APP.vehicleDocs=loadVehicleDocsLocal(); console.warn('vehicle_documents table not ready, using local storage only'); }
+    done('vehicleDocs', null);
   });
   sbGet('cash_entries', function(e,d){
-    if(!e){ APP.cashEntries=d.map(normalizeCashEntry); APP.cashEntries.forEach(function(x){ ensureCashVehicle(x.vehicle); }); saveCashLocal(); }
-    else { console.warn('cash_entries table not ready, using local storage only'); }
-    done(null);
+    if(!e){
+      APP.cashEntries=d.map(normalizeCashEntry);
+      APP.cashEntries.forEach(function(x){ ensureCashVehicle(x.vehicle); });
+      saveCashLocal();
+    }else{
+      console.warn('cash_entries table not ready, using local storage only');
+    }
+    done('cashEntries', null);
   });
   sbGet('cash_transfers', function(e,d){
     if(!e){ APP.cashTransfers=d.map(normalizeCashTransfer); saveCashLocal(); }
     else { console.warn('cash_transfers table not ready, using local storage only'); }
-    done(null);
+    done('cashTransfers', null);
   });
-  sbGet('drivers',          function(e,d){
-    if(!e&&d.length>0) DRIVERS=d.filter(function(x){return x.name;}).map(function(x){return {id:String(x.id),name:x.name};});
-    done(e);
+  sbGet('drivers', function(e,d){
+    if(!e && d.length>0) DRIVERS=d.filter(function(x){return x.name;}).map(function(x){return {id:String(x.id),name:x.name};});
+    done('drivers', e);
   });
 }
 // ── Navigation ────────────────────────────────────
@@ -1190,7 +1325,7 @@ function renderDash(){
   });
   if(months.length>1) mbody+='<tr style="background:#f8fafc"><td><strong>TOTAL</strong></td><td style="text-align:center"><strong>'+APP.trips.length+'</strong></td><td class="tamt"><strong>'+fmt(tR)+'</strong></td><td class="tamt" style="color:var(--red)"><strong>'+fmt(tC)+'</strong></td><td class="tamt" style="color:var(--green)"><strong>'+fmt(tIF)+'</strong></td><td class="'+(tGP>0?'tpro':'tlos')+'"><strong>'+fmt(tGP)+'</strong></td><td class="tamt" style="color:var(--purple)"><strong>'+fmt(tSL)+'</strong></td><td class="tamt" style="color:#0891b2"><strong>'+fmt(tVL)+'</strong></td><td class="'+(tGP-tSL-tVL>0?'tpro':'tlos')+'"><strong>'+fmt(tGP-tSL-tVL)+'</strong></td></tr>';
   document.getElementById('month-summary-body').innerHTML=mbody||'<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">No data</td></tr>';
-  var recent=data.slice(-8).reverse();
+  var recent=data.slice().sort(compareTripsRecent).slice(0,8);
   document.getElementById('dashtripsbody').innerHTML=recent.map(function(t){
     var st=t.status||'To Be Planned';
     var stCls=st==='In Transit'?'st-transit':st==='Delivered'?'st-delivered':'st-planned';
@@ -1230,11 +1365,7 @@ function renderTrips(){
     if(fSt&&(t.status||'To Be Planned')!==fSt) return false;
     if(fTy&&t.type!==fTy) return false;
     return true;
-  }).sort(function(a,b){
-    var byDate=String(b.date).localeCompare(String(a.date));
-    if(byDate!==0) return byDate;
-    return String(b.id||'').localeCompare(String(a.id||''));
-  });
+  }).sort(compareTripsRecent);
   var totA=data.reduce(function(s,t){return s+(+t.amount||0);},0);
   var totP=data.reduce(function(s,t){return s+(+t.pl||0);},0);
   document.getElementById('trip-filter-summary').innerHTML='Showing <strong>'+data.length+'</strong> trips &nbsp;|&nbsp; Revenue: <strong style="color:var(--blue)">'+fmt(totA)+'</strong> &nbsp;|&nbsp; P&L: <strong style="color:'+(totP>=0?'var(--green)':'var(--red)')+'">'+fmt(totP)+'</strong>';
