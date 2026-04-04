@@ -1102,11 +1102,11 @@ function gp(name,el){
   document.getElementById('pg-'+name).classList.add('active');
   if(el) el.classList.add('active');
   document.getElementById('ptitle').textContent=pageNames[name]||name;
-  document.getElementById('expbtn').style.display=(name==='expenses'||name==='trips'||name==='fundtracker')?'inline-flex':'none';
+  document.getElementById('expbtn').style.display=(name==='expenses'||name==='trips')?'inline-flex':'none';
   var mb=document.getElementById('mainbtn');
   var eb=document.getElementById('expbtn');
   if(name==='expenses'){ eb.textContent='+ Expense'; eb.onclick=function(){openExpModal();}; mb.textContent='+ Expense'; mb.onclick=function(){openExpModal();}; }
-  else if(name==='fundtracker'){ eb.textContent='+ Transfer'; eb.onclick=function(){openCashTransferModal();}; mb.textContent='+ Cash Entry'; mb.onclick=function(){openCashEntryModal();}; }
+  else if(name==='fundtracker'){ mb.textContent='+ Cash Entry'; mb.onclick=function(){openCashEntryModal();}; }
   else if(name==='drivers'){ mb.textContent='Setup Drivers'; mb.onclick=function(){openDrvSetup();}; }
   else if(name==='vehdocs'){ mb.textContent='+ Vehicle Record'; mb.onclick=function(){openVehicleDocModal();}; }
   else if(name==='agentfreight'){ mb.textContent='+ Agent Freight'; mb.onclick=function(){openAgentFreightModal();}; }
@@ -1420,16 +1420,16 @@ function renderFundTracker(){
   var data=fundFilteredEntries();
   var totalReceipts=cashTotal('Receipt');
   var totalExpenses=cashTotal('Expense');
-  var totalTransfers=(APP.cashTransfers||[]).reduce(function(s,t){ return s+(+t.amount||0); },0);
   var pBal=cashBalance('Pawan');
   var kBal=cashBalance('Karan');
+  var totalBalance=pBal+kBal;
 
   document.getElementById('fund-metrics').innerHTML=
     '<div class="mcard"><div class="mlbl">Total Receipts</div><div class="mval" style="color:var(--green)">'+fmt(totalReceipts)+'</div></div>'
     +'<div class="mcard"><div class="mlbl">Total Expenses</div><div class="mval" style="color:var(--red)">'+fmt(totalExpenses)+'</div></div>'
-    +'<div class="mcard" style="cursor:pointer" onclick="filterFundByAccount(\'Pawan\')"><div class="mlbl">Pawan Balance</div><div class="mval" style="color:'+(pBal>=0?'var(--green)':'var(--red)')+'">'+fmt(pBal)+'</div><div class="msub">Click to view Pawan entries</div></div>'
-    +'<div class="mcard" style="cursor:pointer" onclick="filterFundByAccount(\'Karan\')"><div class="mlbl">Karan Balance</div><div class="mval" style="color:'+(kBal>=0?'var(--green)':'var(--red)')+'">'+fmt(kBal)+'</div><div class="msub">Click to view Karan entries</div></div>'
-    +'<div class="mcard"><div class="mlbl">Transfers</div><div class="mval">'+fmt(totalTransfers)+'</div><div class="msub">'+(APP.cashTransfers||[]).length+' entries</div></div>';
+    +'<div class="mcard"><div class="mlbl">Total Balance</div><div class="mval" style="color:'+(totalBalance>=0?'var(--green)':'var(--red)')+'">'+fmt(totalBalance)+'</div><div class="msub">Pawan + Karan</div></div>'
+    +'<div class="mcard" style="cursor:pointer" onclick="filterFundByAccount(&quot;Pawan&quot;)"><div class="mlbl">Pawan Balance</div><div class="mval" style="color:'+(pBal>=0?'var(--green)':'var(--red)')+'">'+fmt(pBal)+'</div><div class="msub">Click to view Pawan entries</div></div>'
+    +'<div class="mcard" style="cursor:pointer" onclick="filterFundByAccount(&quot;Karan&quot;)"><div class="mlbl">Karan Balance</div><div class="mval" style="color:'+(kBal>=0?'var(--green)':'var(--red)')+'">'+fmt(kBal)+'</div><div class="msub">Click to view Karan entries</div></div>';
 
   var activeAccount=(document.getElementById('fund-account')||{}).value||'';
   var summary='Showing <strong>'+data.length+'</strong> of <strong>'+all.length+'</strong> entries';
