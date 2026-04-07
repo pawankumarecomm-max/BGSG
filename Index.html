@@ -837,11 +837,15 @@ function afToRow(a){
     balance_due:a.balanceDue, balance_received:a.balanceReceived,
     pod_status:a.podStatus, note:a.note };
 }
+function cleanDateVal(v){
+  var s=String(v||'').trim();
+  return s ? s.slice(0,10) : null;
+}
 function vdocToRow(v){
   return { id:v.id, vehicle:v.vehicle, record_type:v.recordType, item_name:v.itemName,
-    ref_no:v.refNo, issue_date:v.issueDate, expiry_date:v.expiryDate,
-    last_maintenance_date:v.lastMaintenanceDate, next_due_date:v.nextDueDate,
-    alert_days:v.alertDays, note:v.note };
+    ref_no:v.refNo, issue_date:cleanDateVal(v.issueDate), expiry_date:cleanDateVal(v.expiryDate),
+    last_maintenance_date:cleanDateVal(v.lastMaintenanceDate), next_due_date:cleanDateVal(v.nextDueDate),
+    alert_days:(parseInt(v.alertDays,10)||30), note:v.note };
 }
 
 function cashEntryToRow(e){
@@ -1244,13 +1248,13 @@ function syncAllFromSupabase(silent, mode){
     {name:'expenses', query:'select=id,trip_id,date,type,amount,note&order=date.desc.nullslast,id.desc', apply:function(d){ APP.expenses=(d||[]).map(normalizeExp).sort(function(a,b){ var bd=String(b.date||'').localeCompare(String(a.date||'')); if(bd!==0) return bd; return String(b.id||'').localeCompare(String(a.id||'')); }); }},
     {name:'cash_entries', query:'select=id,entry_date,account_name,entry_type,source_party,category,vehicle,particulars,payment_mode,amount,note&order=entry_date.desc.nullslast,id.desc', apply:function(d){ APP.cashEntries=(d||[]).map(normalizeCashEntry).sort(function(a,b){ var bd=String(b.date||'').localeCompare(String(a.date||'')); if(bd!==0) return bd; return String(b.id||'').localeCompare(String(a.id||'')); }); APP.cashEntries.forEach(function(x){ ensureCashVehicle(x.vehicle); }); saveCashLocal(); }, soft:true},
     {name:'cash_transfers', query:'select=id,transfer_date,from_account,to_account,amount,note&order=transfer_date.desc.nullslast,id.desc', apply:function(d){ APP.cashTransfers=(d||[]).map(normalizeCashTransfer).sort(function(a,b){ var bd=String(b.date||'').localeCompare(String(a.date||'')); if(bd!==0) return bd; return String(b.id||'').localeCompare(String(a.id||'')); }); saveCashLocal(); }, soft:true},
-    {name:'drivers', query:'select=id,name&order=name.asc', apply:function(d){ DRIVERS=(d||[]).filter(function(x){return x && x.name;}).map(function(x){return {id:String(x.id),name:x.name};}); }, soft:true}
+    {name:'drivers', query:'select=id,name&order=name.asc', apply:function(d){ DRIVERS=(d||[]).filter(function(x){return x && x.name;}).map(function(x){return {id:String(x.id),name:x.name};}); }, soft:true},
+    {name:'vehicle_documents', query:'select=id,vehicle,record_type,item_name,ref_no,issue_date,expiry_date,last_maintenance_date,next_due_date,alert_days,note&order=expiry_date.asc.nullslast,next_due_date.asc.nullslast,id.desc', apply:function(d){ APP.vehicleDocs=(d||[]).map(normalizeVehicleDoc); saveVehicleDocsLocal(); }, soft:true}
   ];
   var optionalTasks=[
     {name:'salaries', query:'select=id,month,driver,amount,note&order=month.desc,id.desc', apply:function(d){ APP.salaries=(d||[]).map(normalizeSal).sort(function(a,b){ return String(b.month||'').localeCompare(String(a.month||'')); }); }, soft:true},
     {name:'vehicle_expenses', query:'select=id,month,vehicle,type,amount,note&order=month.desc,id.desc', apply:function(d){ APP.vehicleExpenses=(d||[]).map(normalizeVehicleExp).sort(function(a,b){ return String(b.month||'').localeCompare(String(a.month||'')); }); }, soft:true},
-    {name:'agent_freights', query:'select=id,date,agent,vehicle,loading_amount,advance_paid,commission_pct,commission_amt,balance_due,balance_received,pod_status,note&order=date.desc.nullslast,id.desc', apply:function(d){ APP.agentFreights=(d||[]).map(normalizeAgentFreight).sort(function(a,b){ var bd=String(b.date||'').localeCompare(String(a.date||'')); if(bd!==0) return bd; return String(b.id||'').localeCompare(String(a.id||'')); }); }, soft:true},
-    {name:'vehicle_documents', query:'select=id,vehicle,record_type,item_name,ref_no,issue_date,expiry_date,last_maintenance_date,next_due_date,alert_days,note&order=expiry_date.asc.nullslast,next_due_date.asc.nullslast,id.desc', apply:function(d){ APP.vehicleDocs=(d||[]).map(normalizeVehicleDoc); saveVehicleDocsLocal(); }, soft:true}
+    {name:'agent_freights', query:'select=id,date,agent,vehicle,loading_amount,advance_paid,commission_pct,commission_amt,balance_due,balance_received,pod_status,note&order=date.desc.nullslast,id.desc', apply:function(d){ APP.agentFreights=(d||[]).map(normalizeAgentFreight).sort(function(a,b){ var bd=String(b.date||'').localeCompare(String(a.date||'')); if(bd!==0) return bd; return String(b.id||'').localeCompare(String(a.id||'')); }); }, soft:true}
   ];
   var tasks = mode==='optional' ? optionalTasks : coreTasks;
   if(!tasks.length){ if(markBusy) SYNC_BUSY=false; return; }
@@ -1307,7 +1311,7 @@ function gp(name,el){
   if(name==='expenses'){ eb.textContent='+ Expense'; eb.onclick=function(){openExpModal();}; mb.textContent='+ Expense'; mb.onclick=function(){openExpModal();}; }
   else if(name==='fundtracker'){ mb.textContent='+ Cash Entry'; mb.onclick=function(){openCashEntryModal();}; }
   else if(name==='drivers'){ mb.textContent='Setup Drivers'; mb.onclick=function(){openDrvSetup();}; }
-  else if(name==='vehdocs'){ mb.textContent='+ Vehicle Record'; mb.onclick=function(){openVehicleDocModal();}; }
+  else if(name==='vehdocs'){ mb.textContent='+ Vehicle Record'; mb.onclick=function(){openVehicleDocModal();}; setTimeout(function(){ syncAllFromSupabase(true,'optional'); }, 50); }
   else if(name==='agentfreight'){ mb.textContent='+ Agent Freight'; mb.onclick=function(){openAgentFreightModal();}; }
   else { eb.textContent='+ Expense'; eb.onclick=function(){openExpModal();}; mb.textContent='+ Add Trip'; mb.onclick=function(){openTripModal();}; }
   curPage=name; renderPage(name);
@@ -2005,8 +2009,14 @@ function saveVehicleDoc(){
   saveVehicleDocsLocal(); closeModal('mo-vehdoc'); refreshVehicleDocUI(); renderVehicleDocs();
   syncSt('save','Saving…');
   var cb=function(err){
-    if(err){ syncSt('save','Local save only'); toast('Saved locally. Create vehicle_documents table in Supabase for cloud sync.'); }
-    else { saveVehicleDocsLocal(); syncSt('ok','Synced ✓'); toast(editId?'Vehicle record updated!':'Vehicle record saved!'); }
+    if(err){
+      var msg=sbErrText(err);
+      syncSt('save','Local save only');
+      if(isMissingTableError(err)) toast('Saved locally. Create vehicle_documents table in Supabase for cloud sync.');
+      else if(/invalid input syntax for type date/i.test(msg)) toast('Saved locally. Vehicle tracker cloud sync failed because one of the date fields is invalid.');
+      else toast('Saved locally. Vehicle tracker cloud sync error: '+msg.slice(0,90));
+    }
+    else { saveVehicleDocsLocal(); saveAppCache(); syncSt('ok','Synced ✓'); toast(editId?'Vehicle record updated!':'Vehicle record saved!'); }
   };
   if(editId) sbUpdate('vehicle_documents', editId, vdocToRow(rec), cb); else sbInsert('vehicle_documents', vdocToRow(rec), cb);
 }
@@ -2015,8 +2025,13 @@ function deleteVehicleDoc(id){
   APP.vehicleDocs=APP.vehicleDocs.filter(function(v){ return String(v.id)!==String(id); });
   saveVehicleDocsLocal(); renderVehicleDocs(); refreshVehicleDocUI(); syncSt('save','Saving…');
   sbDelete('vehicle_documents', id, function(err){
-    if(err){ syncSt('save','Local save only'); toast('Deleted locally. Cloud table not ready.'); }
-    else { syncSt('ok','Synced ✓'); toast('Vehicle record deleted.'); }
+    if(err){
+      var msg=sbErrText(err);
+      syncSt('save','Local save only');
+      if(isMissingTableError(err)) toast('Deleted locally. Cloud table not ready.');
+      else toast('Deleted locally. Vehicle tracker cloud delete error: '+msg.slice(0,90));
+    }
+    else { saveAppCache(); syncSt('ok','Synced ✓'); toast('Vehicle record deleted.'); }
   });
 }
 
