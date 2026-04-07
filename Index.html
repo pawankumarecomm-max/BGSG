@@ -340,7 +340,7 @@ tr:hover td{background:#f8fafc}
       <div class="card" id="fund-entries-card" style="padding:0">
         <div class="cardh"><span class="cardt">All Cashbook Entries</span></div>
         <div class="tw"><table>
-          <thead><tr><th>Date</th><th>Account</th><th>Type</th><th>Source / Party</th><th>Category</th><th>Vehicle</th><th>Particulars</th><th>Payment Mode</th><th>Note</th><th>Amount</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Date</th><th>Account</th><th>Type</th><th>Source / Party</th><th>Category</th><th>Vehicle</th><th>Particulars</th><th>Payment Mode</th><th>Note</th><th>Amount</th><th>Avail. Balance</th><th>Actions</th></tr></thead>
           <tbody id="fund-body"></tbody>
         </table></div>
       </div>
@@ -958,6 +958,44 @@ function cashTotal(entryType, account){
 function cashTransferIn(account){ return APP.cashTransfers.filter(function(t){return t.toAccount===account;}).reduce(function(s,t){return s+(+t.amount||0);},0); }
 function cashTransferOut(account){ return APP.cashTransfers.filter(function(t){return t.fromAccount===account;}).reduce(function(s,t){return s+(+t.amount||0);},0); }
 function cashBalance(account){ return cashTotal('Receipt',account)-cashTotal('Expense',account)+cashTransferIn(account)-cashTransferOut(account); }
+function cashEventSort(a,b){
+  var da=String(a.date||'');
+  var db=String(b.date||'');
+  if(da!==db) return da.localeCompare(db);
+  var na=+a.id, nb=+b.id;
+  if(!isNaN(na) && !isNaN(nb) && na!==nb) return na-nb;
+  return String(a.id||'').localeCompare(String(b.id||''));
+}
+function getCashEntryBalanceMap(){
+  var ledger={};
+  ['Pawan','Karan'].forEach(function(account){
+    var events=[];
+    (APP.cashEntries||[]).forEach(function(e){
+      if(e.account!==account) return;
+      events.push({
+        id:e.id,
+        date:e.date||'',
+        type:'entry',
+        delta:e.entryType==='Receipt'?(+e.amount||0):-(+e.amount||0)
+      });
+    });
+    (APP.cashTransfers||[]).forEach(function(t){
+      if(t.fromAccount===account){
+        events.push({ id:'to-'+String(t.id||''), date:t.date||'', type:'transfer', delta:-(+t.amount||0) });
+      }
+      if(t.toAccount===account){
+        events.push({ id:'ti-'+String(t.id||''), date:t.date||'', type:'transfer', delta:(+t.amount||0) });
+      }
+    });
+    events.sort(cashEventSort);
+    var bal=0;
+    events.forEach(function(ev){
+      bal += (+ev.delta||0);
+      if(ev.type==='entry') ledger[String(ev.id)] = bal;
+    });
+  });
+  return ledger;
+}
 function fundFilteredEntries(){
   var q=(document.getElementById('fund-search')||{}).value||'';
   var d1=(document.getElementById('fund-date-from')||{}).value||'';
@@ -1577,16 +1615,17 @@ function renderFundTracker(){
   var data=fundFilteredEntries();
   var totalReceipts=cashTotal('Receipt');
   var totalExpenses=cashTotal('Expense');
-  var totalTransfers=(APP.cashTransfers||[]).reduce(function(s,t){ return s+(+t.amount||0); },0);
   var pBal=cashBalance('Pawan');
   var kBal=cashBalance('Karan');
+  var combinedBal=pBal+kBal;
+  var balanceMap=getCashEntryBalanceMap();
 
   document.getElementById('fund-metrics').innerHTML=
     '<div class="mcard"><div class="mlbl">Total Receipts</div><div class="mval" style="color:var(--green)">'+fmt(totalReceipts)+'</div></div>'
     +'<div class="mcard"><div class="mlbl">Total Expenses</div><div class="mval" style="color:var(--red)">'+fmt(totalExpenses)+'</div></div>'
+    +'<div class="mcard"><div class="mlbl">Total Balance</div><div class="mval" style="color:'+(combinedBal>=0?'var(--green)':'var(--red)')+'">'+fmt(combinedBal)+'</div><div class="msub">Pawan + Karan combined</div></div>'
     +'<div class="mcard" style="cursor:pointer" onclick="filterFundByAccount(\'Pawan\')"><div class="mlbl">Pawan Balance</div><div class="mval" style="color:'+(pBal>=0?'var(--green)':'var(--red)')+'">'+fmt(pBal)+'</div><div class="msub">Click to view Pawan entries</div></div>'
-    +'<div class="mcard" style="cursor:pointer" onclick="filterFundByAccount(\'Karan\')"><div class="mlbl">Karan Balance</div><div class="mval" style="color:'+(kBal>=0?'var(--green)':'var(--red)')+'">'+fmt(kBal)+'</div><div class="msub">Click to view Karan entries</div></div>'
-    +'<div class="mcard"><div class="mlbl">Transfers</div><div class="mval">'+fmt(totalTransfers)+'</div><div class="msub">'+(APP.cashTransfers||[]).length+' entries</div></div>';
+    +'<div class="mcard" style="cursor:pointer" onclick="filterFundByAccount(\'Karan\')"><div class="mlbl">Karan Balance</div><div class="mval" style="color:'+(kBal>=0?'var(--green)':'var(--red)')+'">'+fmt(kBal)+'</div><div class="msub">Click to view Karan entries</div></div>';
 
   var activeAccount=(document.getElementById('fund-account')||{}).value||'';
   var summary='Showing <strong>'+data.length+'</strong> of <strong>'+all.length+'</strong> entries';
@@ -1594,11 +1633,13 @@ function renderFundTracker(){
   document.getElementById('fund-summary').innerHTML=summary;
 
   document.getElementById('fund-body').innerHTML=data.length===0
-    ? '<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:28px">No cash entries found for this filter.</td></tr>'
+    ? '<tr><td colspan="12" style="text-align:center;color:var(--muted);padding:28px">No cash entries found for this filter.</td></tr>'
     : data.map(function(e){
         var typeCls=e.entryType==='Receipt'?'tpro':'tlos';
         var typeBg=e.entryType==='Receipt'?'var(--lgreen)':'var(--lred)';
         var typeCol=e.entryType==='Receipt'?'var(--green)':'var(--red)';
+        var runBal=+balanceMap[String(e.id)]||0;
+        var balCls=runBal>=0?'tpro':'tlos';
         return '<tr>'
           +'<td>'+fmtDate(e.date)+'</td>'
           +'<td><strong>'+e.account+'</strong></td>'
@@ -1610,6 +1651,7 @@ function renderFundTracker(){
           +'<td>'+(e.paymentMode||'-')+'</td>'
           +'<td>'+(e.note||'-')+'</td>'
           +'<td class="'+typeCls+'">'+fmt(e.amount)+'</td>'
+          +'<td class="'+balCls+'">'+fmt(runBal)+'</td>'
           +'<td><div class="acts"><button class="btn btns btno" onclick="openCashEntryModal(\''+e.id+'\')">Edit</button><button class="btn btns btnd" onclick="deleteCashEntry(\''+e.id+'\')">Del</button></div></td>'
         +'</tr>';
       }).join('');
