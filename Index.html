@@ -287,6 +287,34 @@ tr:hover td{background:#f8fafc}
 .party-mini strong{color:var(--navy)}
 .party-mini .muted{color:var(--muted)}
 
+
+/* ── AI Assistant & WhatsApp Update Builder ───────── */
+.ai-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);gap:16px}
+.ai-chatbox{height:420px;overflow-y:auto;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.ai-msg{display:flex}
+.ai-msg.user{justify-content:flex-end}
+.ai-bubble{max-width:88%;padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.5;border:1px solid var(--border);background:#fff;white-space:pre-wrap}
+.ai-msg.user .ai-bubble{background:var(--blue);color:#fff;border-color:var(--blue)}
+.ai-msg.bot .ai-bubble{background:#fff;color:var(--text)}
+.ai-tools{display:flex;gap:8px;margin-top:10px}
+.ai-quick{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.ai-chip{border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
+.ai-chip:hover{background:#dbeafe}
+.ai-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.ai-kpi{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px}
+.ai-kpi .mlbl{margin-bottom:4px}
+.ai-textarea{width:100%;min-height:170px;resize:vertical;font-family:var(--fn);line-height:1.45}
+.ai-note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:8px}
+.ai-wa-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.ai-warning{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;border-radius:8px;padding:9px 11px;font-size:12px;line-height:1.45;margin-top:10px}
+.ai-config{display:grid;grid-template-columns:120px minmax(220px,1fr) auto auto;gap:8px;align-items:center;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:10px;margin:0 0 10px}
+.ai-config label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.ai-status{font-size:12px;font-weight:700;color:var(--muted)}
+.ai-status.ok{color:var(--green)}
+.ai-status.bad{color:var(--red)}
+.ai-table-actions{display:flex;gap:6px;justify-content:center}
+@media (max-width:1100px){.ai-layout,.ai-kpis{grid-template-columns:1fr}.ai-wa-actions{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -311,6 +339,7 @@ tr:hover td{background:#f8fafc}
     <div class="ni" onclick="gp('drivers',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Drivers &amp; Salary</div>
     <div class="ni" onclick="gp('vehdocs',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 12H6v-2h12v2zm0-4H6V7h12v4z"/></svg>Vehicle Tracker<span id="vehdocbadge" style="margin-left:auto;background:#f97316;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700;display:none">0</span></div>
     <div class="ni" onclick="gp('agentfreight',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Agent Freight<span id="afbadge" style="margin-left:auto;background:#f59e0b;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700;display:none">0</span></div>
+    <div class="ni" onclick="gp('aiassistant',this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a8 8 0 0 0-8 8v3.5A3.5 3.5 0 0 0 7.5 17H8v3l4-3h4.5A3.5 3.5 0 0 0 20 13.5V10a8 8 0 0 0-8-8zm-3 9.5a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm6 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg>AI Assistant</div>
   </div>
   <div class="ng">
     <div class="nl">Billing & Docs</div>
@@ -706,6 +735,71 @@ tr:hover td{background:#f8fafc}
             </table>
           </div>
         </div>
+      </div>
+    </div>
+
+
+    <!-- AI ASSISTANT -->
+    <div id="pg-aiassistant" class="pg">
+      <div class="ai-kpis" id="ai-kpis"></div>
+      <div class="ai-layout">
+        <div class="card">
+          <div class="cardh">
+            <span class="cardt">AI Software Assistant</span>
+            <button class="btn btns" onclick="aiResetChat()">Reset Chat</button>
+          </div>
+          <div class="cardb">
+            <div class="ai-quick">
+              <button class="ai-chip" onclick="aiQuick('How do I send client WhatsApp update?')">WhatsApp update</button>
+              <button class="ai-chip" onclick="aiQuick('Show me in transit shipments')">In-transit shipments</button>
+              <button class="ai-chip" onclick="aiQuick('How to create LR and Invoice?')">LR / Invoice help</button>
+              <button class="ai-chip" onclick="aiQuick('Why data is not syncing?')">Sync help</button>
+              <button class="ai-chip" onclick="aiQuick('What can this software do?')">Software help</button>
+            </div>
+            <div class="ai-config">
+              <label>Real AI URL</label>
+              <input class="sbox" id="ai-backend-url" placeholder="https://your-ai-backend.onrender.com/ai">
+              <button class="btn btns" onclick="aiSaveBackendUrl()">Save</button>
+              <button class="btn btns btnp" onclick="aiTestBackend()">Test</button>
+              <span class="ai-status" id="ai-backend-status">Local mode</span>
+            </div>
+            <div id="ai-chat" class="ai-chatbox"></div>
+            <div class="ai-tools">
+              <input class="sbox" id="ai-question" placeholder="Ask anything about this software or shipment data…" onkeydown="if(event.key==='Enter') aiAsk()">
+              <button class="btn btnp" onclick="aiAsk()">Ask</button>
+            </div>
+            <div class="ai-note">Real AI mode uses your secure backend URL and sends a compact copy of your saved software data to the backend for answers. Local mode remains available as backup. Never paste OpenAI/Gemini/Claude API keys directly into this HTML.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardh"><span class="cardt">WhatsApp In-Transit Update Builder</span><button class="btn btns" onclick="renderAIAssistant()">Refresh</button></div>
+          <div class="cardb">
+            <div class="fgrid">
+              <div class="fgrp full"><label class="flbl">Select In-Transit Shipment</label><select class="finp" id="ai-ship-select" onchange="aiOnShipmentChange()"></select></div>
+              <div class="fgrp"><label class="flbl">Client WhatsApp No.</label><input class="finp" id="ai-wa-phone" placeholder="91XXXXXXXXXX"></div>
+              <div class="fgrp"><label class="flbl">Driver Contact No.</label><input class="finp" id="ai-driver-phone" placeholder="+91XXXXXXXXXX"></div>
+              <div class="fgrp"><label class="flbl">ETA Date</label><input class="finp" type="date" id="ai-eta-date"></div>
+              <div class="fgrp"><label class="flbl">ETA Time</label><input class="finp" type="time" id="ai-eta-time"></div>
+              <div class="fgrp full"><label class="flbl">Generated WhatsApp Message</label><textarea class="finp ai-textarea" id="ai-wa-message"></textarea></div>
+            </div>
+            <div class="ai-wa-actions">
+              <button class="btn btnp" onclick="aiGenerateUpdate()">Create Message</button>
+              <button class="btn" onclick="aiCopyMessage()">Copy Message</button>
+              <button class="btn btno" onclick="aiOpenWhatsApp()">Open WhatsApp</button>
+              <button class="btn" onclick="aiShareNoNumber()">Choose Contact in WhatsApp</button>
+            </div>
+            <div class="ai-warning">WhatsApp will open with this message pre-filled. You must press Send yourself on your phone or WhatsApp Web; browsers cannot silently send WhatsApp messages for security reasons.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="cardh"><span class="cardt">In-Transit Shipments Ready for Client Update</span></div>
+        <div class="tw"><table>
+          <thead style="background:var(--navy)"><tr><th>Trip ID</th><th>Date</th><th>Invoice</th><th>Party</th><th>Route</th><th>Vehicle</th><th>Driver No.</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="ai-transit-tbody"></tbody>
+        </table></div>
       </div>
     </div>
 
@@ -1883,6 +1977,599 @@ var BILL_FROM_COMPANY='BGSG PACKAGING SOLUTIONS PRIVATE LIMITED';
 var BILL_FROM_ADDRESS='Plot No-12, Sector-7A, Street No-04, Reliance Model Economic Township, Jhajjar, (Haryana - 6), India - 124103';
 var BILL_FROM_GST='06AAICB2190H1ZS';
 
+
+// ── AI ASSISTANT & WHATSAPP CLIENT UPDATE ─────────
+var AI_CHAT_STARTED=false;
+
+function aiTransitTrips(){
+  return sortedTrips((APP.trips||[]).filter(function(t){ return (t.status||'To Be Planned')==='In Transit'; }));
+}
+function aiDeliveredTrips(){ return (APP.trips||[]).filter(function(t){ return (t.status||'')==='Delivered'; }); }
+function aiPlannedTrips(){ return (APP.trips||[]).filter(function(t){ return (t.status||'To Be Planned')==='To Be Planned'; }); }
+function aiTripRoute(t){ return [t&&t.from,t&&t.to].filter(Boolean).join(' to ') || '-'; }
+function aiTripTitle(t){ return (t.tripCode||t.id||'-')+' | '+(t.invoice||'No Invoice')+' | '+aiTripRoute(t)+' | '+(t.vehicle||'No Vehicle'); }
+function aiPartyForTrip(t){ return getTripConsignee(t)||(t.customer||''); }
+function aiPartyPhone(t){
+  var party=getPartyMasterByName(aiPartyForTrip(t));
+  if(party && party.phone) return party.phone;
+  return '';
+}
+function aiCleanPhone(v){
+  var d=String(v||'').replace(/\D/g,'');
+  if(d.length===10) d='91'+d;
+  if(d.length>10 && d.charAt(0)==='0') d=d.replace(/^0+/,'');
+  return d;
+}
+function aiFormatEta(){
+  var d=(document.getElementById('ai-eta-date')||{}).value||'';
+  var tm=(document.getElementById('ai-eta-time')||{}).value||'';
+  if(!d && !tm) return '';
+  var datePart=d;
+  if(d && /^\d{4}-\d{2}-\d{2}$/.test(d)) datePart=d.slice(8,10)+'-'+d.slice(5,7)+'-'+d.slice(0,4);
+  var timePart='';
+  if(tm){
+    var parts=tm.split(':'), h=parseInt(parts[0]||'0',10), m=parts[1]||'00', ap=h>=12?'PM':'AM';
+    h=h%12; if(h===0) h=12;
+    timePart=String(h)+':'+m+ap;
+  }
+  return (datePart+' '+timePart).trim();
+}
+function aiBuildShipmentMessage(t, etaText, driverNo){
+  return 'Dear Team,\n'
+    +'This is to update you on the delivery of your shipment.\n'
+    +'Details are as follows:\n'
+    +'• Invoice No.: *'+(t.invoice||'-')+'*\n'
+    +'• Vehicle No.: '+(t.vehicle||'-')+'\n'
+    +'• Driver Contact No.: *'+(driverNo||t.driverno||'-')+'*\n'
+    +'• ETA at Your Location: *'+(etaText||'-')+'*\n'
+    +'• Shipment Details.: *'+aiTripRoute(t)+'*';
+}
+function aiSelectedTrip(){
+  var id=(document.getElementById('ai-ship-select')||{}).value||'';
+  return (APP.trips||[]).find(function(t){ return String(t.id)===String(id); }) || null;
+}
+function aiOnShipmentChange(){
+  var t=aiSelectedTrip();
+  if(!t) return;
+  var driver=document.getElementById('ai-driver-phone'), ph=document.getElementById('ai-wa-phone');
+  if(driver) driver.value=t.driverno||'';
+  if(ph && !ph.value) ph.value=aiPartyPhone(t)||'';
+  aiGenerateUpdate(true);
+}
+function aiGenerateUpdate(silent){
+  var t=aiSelectedTrip();
+  if(!t){ if(!silent) toast('Select an in-transit shipment first'); return ''; }
+  var eta=aiFormatEta();
+  var driver=(document.getElementById('ai-driver-phone')||{}).value || t.driverno || '';
+  var msg=aiBuildShipmentMessage(t, eta, driver);
+  var out=document.getElementById('ai-wa-message'); if(out) out.value=msg;
+  if(!silent) toast('WhatsApp message created.');
+  return msg;
+}
+function aiCopyMessage(){
+  var msg=(document.getElementById('ai-wa-message')||{}).value || aiGenerateUpdate(true);
+  if(!msg){ toast('No message to copy'); return; }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(msg).then(function(){toast('Message copied.');}).catch(function(){aiCopyFallback(msg);});
+  } else aiCopyFallback(msg);
+}
+function aiCopyFallback(msg){
+  var t=document.createElement('textarea'); t.value=msg; document.body.appendChild(t); t.select();
+  try{ document.execCommand('copy'); toast('Message copied.'); }catch(e){ toast('Copy failed. Select and copy manually.'); }
+  document.body.removeChild(t);
+}
+function aiOpenWhatsApp(){
+  var msg=(document.getElementById('ai-wa-message')||{}).value || aiGenerateUpdate(true);
+  if(!msg){ toast('Create message first'); return; }
+  var phone=aiCleanPhone((document.getElementById('ai-wa-phone')||{}).value||'');
+  if(!phone){ toast('Enter client WhatsApp number or use Choose Contact.'); return; }
+  window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(msg),'_blank');
+}
+function aiShareNoNumber(){
+  var msg=(document.getElementById('ai-wa-message')||{}).value || aiGenerateUpdate(true);
+  if(!msg){ toast('Create message first'); return; }
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+function aiUseShipment(id){
+  var sel=document.getElementById('ai-ship-select'); if(!sel) return;
+  sel.value=String(id); aiOnShipmentChange();
+  var msg=document.getElementById('ai-wa-message'); if(msg) msg.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function renderAIAssistant(){
+  aiLoadBackendUrl();
+  var trans=aiTransitTrips(), delivered=aiDeliveredTrips(), planned=aiPlannedTrips();
+  var revenue=(APP.trips||[]).reduce(function(s,t){ return s+parseNum(t.amount); },0);
+  var k=document.getElementById('ai-kpis');
+  if(k) k.innerHTML=
+    '<div class="ai-kpi"><div class="mlbl">All Trips</div><div class="mval">'+(APP.trips||[]).length+'</div></div>'
+    +'<div class="ai-kpi"><div class="mlbl">In Transit</div><div class="mval" style="color:var(--orange)">'+trans.length+'</div></div>'
+    +'<div class="ai-kpi"><div class="mlbl">Delivered</div><div class="mval" style="color:var(--green)">'+delivered.length+'</div></div>'
+    +'<div class="ai-kpi"><div class="mlbl">Revenue</div><div class="mval" style="font-size:18px;color:var(--blue)">'+fmt(revenue)+'</div></div>';
+
+  var sel=document.getElementById('ai-ship-select');
+  if(sel){
+    var old=sel.value;
+    sel.innerHTML=trans.length?trans.map(function(t){ return '<option value="'+escHtml(t.id)+'">'+escHtml(aiTripTitle(t))+'</option>'; }).join(''):'<option value="">No in-transit shipment found</option>';
+    if(old && trans.some(function(t){return String(t.id)===String(old);})) sel.value=old;
+  }
+  var tb=document.getElementById('ai-transit-tbody');
+  if(tb) tb.innerHTML=trans.length?trans.map(function(t){
+    return '<tr>'
+      +'<td class="tmon" style="font-weight:700;color:var(--blue)">'+escHtml(t.tripCode||t.id||'-')+'</td>'
+      +'<td>'+fmtDate(t.date)+'</td>'
+      +'<td class="tmon">'+escHtml(t.invoice||'-')+'</td>'
+      +'<td>'+escHtml(aiPartyForTrip(t)||'-')+'</td>'
+      +'<td>'+escHtml(aiTripRoute(t))+'</td>'
+      +'<td class="tmon">'+escHtml(t.vehicle||'-')+'</td>'
+      +'<td class="tmon">'+escHtml(t.driverno||'-')+'</td>'
+      +'<td><span class="st-transit">In Transit</span></td>'
+      +'<td><div class="ai-table-actions"><button class="btn btns btnp" onclick="aiUseShipment(\''+escHtml(t.id)+'\')">Use</button><button class="btn btns btno" onclick="aiUseShipment(\''+escHtml(t.id)+'\');aiGenerateUpdate()">Message</button></div></td>'
+      +'</tr>';
+  }).join(''):'<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:28px">No in-transit shipment found. Mark shipment status as In Transit first.</td></tr>';
+
+  if(!AI_CHAT_STARTED){ aiResetChat(); }
+  if(trans.length) aiOnShipmentChange();
+}
+
+var AI_BACKEND_URL_KEY='BGSG_AI_BACKEND_URL';
+function aiGetBackendUrl(){
+  try{return (localStorage.getItem(AI_BACKEND_URL_KEY)||'').trim();}catch(e){return '';}
+}
+function aiSetBackendStatus(text, cls){
+  var el=document.getElementById('ai-backend-status'); if(!el) return;
+  el.className='ai-status '+(cls||''); el.textContent=text;
+}
+function aiLoadBackendUrl(){
+  var inp=document.getElementById('ai-backend-url'); if(inp) inp.value=aiGetBackendUrl();
+  aiSetBackendStatus(aiGetBackendUrl()?'Real AI ready':'Local mode', aiGetBackendUrl()?'ok':'');
+}
+function aiSaveBackendUrl(){
+  var url=((document.getElementById('ai-backend-url')||{}).value||'').trim();
+  if(url && !/^https?:\/\//i.test(url)){ toast('Backend URL must start with http:// or https://'); return; }
+  try{ localStorage.setItem(AI_BACKEND_URL_KEY,url); }catch(e){}
+  aiSetBackendStatus(url?'Real AI saved':'Local mode', url?'ok':'');
+  toast(url?'Real AI backend saved.':'AI backend removed. Using local mode.');
+}
+function aiLimit(arr, n){ return (arr||[]).slice(0,n); }
+function aiBuildDataSnapshot(){
+  var trips=sortedTrips(APP.trips||[]).map(function(t){return {
+    id:t.id||'', tripCode:t.tripCode||'', date:aiDateFromAny(t.date)||t.date||'', status:t.status||'', invoice:t.invoice||'', customer:t.customer||'', billTo:getTripConsignee(t)||'', billToGst:t.billToGst||'', from:t.from||'', to:t.to||'', vehicle:t.vehicle||'', driverNo:t.driverno||'', amount:+t.amount||0, cng:+t.cng||0, mcd:+t.mcd||0, other:+t.other||0, infreight:+t.infreight||0, pl:+t.pl||0, pod:t.pod||''
+  };});
+  var cash=(APP.cashEntries||[]).slice().sort(function(a,b){return aiCompareDate(b.date,a.date);}).map(function(e){return {
+    id:e.id||'', date:aiDateFromAny(e.date||e.entry_date)||e.date||'', account:e.account||'', type:e.type||'', source:e.source||'', category:e.category||'', vehicle:e.vehicle||'', particulars:e.particulars||'', paymentMode:e.paymentMode||'', note:e.note||'', amount:+e.amount||0
+  };});
+  var lrs=(APP.lrs||[]).slice().sort(sortByDateDesc).map(function(x){return {id:x.id||'', date:aiDateFromAny(x.date)||x.date||'', lrNo:x.lrNo||'', tripId:x.tripId||'', partyInvoiceNo:x.partyInvoiceNo||'', vehicleNo:x.vehicleNo||'', from:x.fromLoc||'', to:x.toLoc||'', consignor:x.consignor||'', consignee:x.consignee||'', freightAmount:+x.freightAmount||0, billingType:x.billingType||'', status:x.status||''};});
+  var invoices=(APP.invoices||[]).slice().sort(sortByDateDesc).map(function(x){return {id:x.id||'', date:aiDateFromAny(x.date)||x.date||'', invoiceNo:x.invoiceNo||'', customer:x.customer||'', gst:x.customerGst||'', tripId:x.tripId||'', tripIds:x.tripIds||[], taxable:+x.taxableAmount||0, gstAmount:+x.gstAmount||0, total:+x.totalAmount||0, received:+x.receivedAmount||0, dueDate:x.dueDate||'', status:x.status||''};});
+  var vendorPayments=(APP.vendorPayments||[]).slice().sort(sortByDateDesc).map(function(x){return {id:x.id||'', date:aiDateFromAny(x.date)||x.date||'', tripId:x.tripId||'', lrId:x.lrId||'', vendor:x.vendorName||'', vendorInvoiceNo:x.vendorInvoiceNo||'', vehicleNo:x.vehicleNo||'', payable:+x.payableAmount||0, paid:+x.paidAmount||0, balance:+x.balanceAmount||0, dueDate:x.dueDate||'', status:x.status||''};});
+  var parties=(APP.partyMasters||[]).map(function(p){return {partyName:p.partyName||'', address:p.address||'', gst:p.gstNo||'', contactPerson:p.contactPerson||'', phone:p.phone||'', email:p.email||'', status:p.status||''};});
+  var vehicleDocs=(APP.vehicleDocs||[]).map(function(x){return {vehicle:x.vehicle||'', recordType:x.recordType||'', itemName:x.itemName||'', refNo:x.refNo||'', issueDate:x.issueDate||'', expiryDate:x.expiryDate||'', lastMaintenanceDate:x.lastMaintenanceDate||'', nextDueDate:x.nextDueDate||'', note:x.note||''};});
+  var totals={
+    trips:trips.length, inTransit:aiTransitTrips().length, delivered:aiDeliveredTrips().length, planned:aiPlannedTrips().length,
+    cashEntries:cash.length, lrs:lrs.length, invoices:invoices.length, vendorPayments:vendorPayments.length, parties:parties.length, vehicleDocs:vehicleDocs.length,
+    revenue:trips.reduce(function(s,t){return s+(+t.amount||0);},0), pl:trips.reduce(function(s,t){return s+(+t.pl||0);},0)
+  };
+  return {
+    software:'BGSG Logistics FTL Manager', generatedAt:(new Date()).toISOString(), today:today(), totals:totals,
+    notes:'Data is normalized from the browser app. Amounts are INR. Use this data only; do not invent missing records.',
+    limits:{trips:1200,cashEntries:1200,lrs:600,invoices:600,vendorPayments:600,parties:500,vehicleDocs:800},
+    trips:aiLimit(trips,1200), cashEntries:aiLimit(cash,1200), lrs:aiLimit(lrs,600), invoices:aiLimit(invoices,600), vendorPayments:aiLimit(vendorPayments,600), parties:aiLimit(parties,500), vehicleDocs:aiLimit(vehicleDocs,800)
+  };
+}
+function aiAskBackend(q, localAnswer, thinkingEl){
+  var url=aiGetBackendUrl();
+  if(!url){ if(thinkingEl&&thinkingEl.parentNode) thinkingEl.parentNode.removeChild(thinkingEl); aiSay('bot', localAnswer); return; }
+  aiSetBackendStatus('Asking real AI…','ok');
+  fetch(url, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({question:q, localAnswer:localAnswer, data:aiBuildDataSnapshot()})
+  }).then(function(r){
+    if(!r.ok) throw new Error('Backend HTTP '+r.status);
+    return r.json();
+  }).then(function(out){
+    if(thinkingEl&&thinkingEl.parentNode) thinkingEl.parentNode.removeChild(thinkingEl);
+    aiSetBackendStatus('Real AI connected','ok');
+    aiSay('bot', out && out.answer ? String(out.answer) : 'AI backend replied but no answer was returned.');
+  }).catch(function(err){
+    if(thinkingEl&&thinkingEl.parentNode) thinkingEl.parentNode.removeChild(thinkingEl);
+    aiSetBackendStatus('Backend failed','bad');
+    aiSay('bot','Real AI backend is not reachable, so I am using local software logic.\n\n'+localAnswer+'\n\nBackend error: '+(err&&err.message?err.message:err));
+  });
+}
+function aiTestBackend(){
+  aiSaveBackendUrl();
+  var url=aiGetBackendUrl(); if(!url){ toast('Enter backend URL first.'); return; }
+  aiSetBackendStatus('Testing…','ok');
+  fetch(url.replace(/\/ai\/?$/,'/health'), {method:'GET'}).then(function(r){return r.json();}).then(function(){ aiSetBackendStatus('Real AI connected','ok'); toast('AI backend connected.'); }).catch(function(){ aiSetBackendStatus('Test failed','bad'); toast('Backend test failed. Check URL/server.'); });
+}
+
+function aiResetChat(){
+  AI_CHAT_STARTED=true;
+  var c=document.getElementById('ai-chat'); if(!c) return;
+  c.innerHTML='';
+  aiSay('bot','Namaste Pawan ji. I can answer questions about this BGSG software and help create WhatsApp updates for in-transit shipments.\n\nTry: “show in transit shipments”, “how to create invoice”, “why sync failed”, or use the WhatsApp builder on the right.');
+}
+function aiSay(role, text){
+  var c=document.getElementById('ai-chat'); if(!c) return;
+  var d=document.createElement('div'); d.className='ai-msg '+role;
+  d.innerHTML='<div class="ai-bubble">'+escHtml(text)+'</div>';
+  c.appendChild(d); c.scrollTop=c.scrollHeight;
+  return d;
+}
+function aiQuick(q){ var i=document.getElementById('ai-question'); if(i) i.value=q; aiAsk(); }
+function aiAsk(){
+  var i=document.getElementById('ai-question'); if(!i) return;
+  var q=(i.value||'').trim(); if(!q) return;
+  aiSay('user',q); i.value='';
+  var localAnswer=aiAnswer(q);
+  if(aiGetBackendUrl()){
+    var thinking=aiSay('bot','Thinking with real AI on your software data…');
+    aiAskBackend(q, localAnswer, thinking);
+  } else {
+    setTimeout(function(){ aiSay('bot', localAnswer); }, 80);
+  }
+}
+
+function aiIsoDateObj(d){
+  var y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
+function aiDateFromAny(v){
+  if(!v) return '';
+  if(v instanceof Date && !isNaN(v.getTime())) return aiIsoDateObj(v);
+  var s=String(v||'').trim();
+  if(!s) return '';
+  var m=s.match(/(\d{4})[-\/\.](\d{1,2})[-\/\.](\d{1,2})/);
+  if(m) return m[1]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');
+  m=s.match(/(\d{1,2})[-\/\.](\d{1,2})[-\/\.](\d{2,4})/);
+  if(m){
+    var yy=m[3].length===2 ? '20'+m[3] : m[3];
+    return yy+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');
+  }
+  m=s.match(/(\d{1,2})(?:st|nd|rd|th)?[-\s]+([A-Za-z]{3,9})[-,\s]*(\d{2,4})?/i);
+  if(m){
+    var mi=aiMonthNo(m[2]);
+    if(mi){
+      var y=(m[3]||String((new Date()).getFullYear()));
+      if(String(y).length===2) y='20'+y;
+      return y+'-'+String(mi).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');
+    }
+  }
+  var d=new Date(s);
+  if(!isNaN(d.getTime())) return aiIsoDateObj(d);
+  return '';
+}
+function aiMaxIso(a,b){ a=aiDateFromAny(a); b=aiDateFromAny(b); if(!a) return b||''; if(!b) return a||''; return a>b?a:b; }
+function aiMinIso(a,b){ a=aiDateFromAny(a); b=aiDateFromAny(b); if(!a) return b||''; if(!b) return a||''; return a<b?a:b; }
+function aiAddDaysIso(iso, days){
+  var d=new Date((aiDateFromAny(iso)||today())+'T00:00:00');
+  if(isNaN(d.getTime())) d=new Date(today()+'T00:00:00');
+  d.setDate(d.getDate()+days);
+  return aiIsoDateObj(d);
+}
+function aiCompareDate(a,b){
+  a=aiDateFromAny(a); b=aiDateFromAny(b);
+  if(!a && !b) return 0;
+  if(!a) return -1;
+  if(!b) return 1;
+  return a.localeCompare(b);
+}
+function aiMonthNo(v){
+  var map={jan:1,january:1,feb:2,february:2,mar:3,march:3,apr:4,april:4,may:5,jun:6,june:6,jul:7,july:7,aug:8,august:8,sep:9,sept:9,september:9,oct:10,october:10,nov:11,november:11,dec:12,december:12};
+  return map[String(v||'').toLowerCase()]||0;
+}
+function aiDataAnchorDate(){
+  var latest='';
+  (APP.cashEntries||[]).forEach(function(e){ var d=aiDateFromAny(e.date||e.entry_date); if(d && (!latest || d>latest)) latest=d; });
+  (APP.trips||[]).forEach(function(t){ var d=aiDateFromAny(t.date); if(d && (!latest || d>latest)) latest=d; });
+  return latest || today();
+}
+function aiCashAnchorDate(){
+  var latest='';
+  (APP.cashEntries||[]).forEach(function(e){ var d=aiDateFromAny(e.date||e.entry_date); if(d && (!latest || d>latest)) latest=d; });
+  return latest || today();
+}
+function aiMonthStart(iso){ return String(aiDateFromAny(iso)||today()).slice(0,7)+'-01'; }
+function aiPrevMonthRange(anchor){
+  anchor=aiDateFromAny(anchor)||today();
+  var d=new Date(anchor+'T00:00:00');
+  d.setDate(1); d.setMonth(d.getMonth()-1);
+  var start=aiIsoDateObj(d);
+  d.setMonth(d.getMonth()+1); d.setDate(0);
+  return {from:start, to:aiIsoDateObj(d), label:'last month', anchor:anchor};
+}
+function aiNumberWordToNum(v){
+  var map={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10};
+  v=String(v||'').toLowerCase();
+  return map[v] || (parseInt(v,10)||0);
+}
+function aiDateTokenToIso(token, anchor){
+  token=String(token||'').trim();
+  anchor=aiDateFromAny(anchor)||today();
+  var yr=String(anchor).slice(0,4);
+  var m=token.match(/\b(\d{4})[-\/\.](\d{1,2})[-\/\.](\d{1,2})\b/);
+  if(m) return m[1]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');
+  m=token.match(/\b(\d{1,2})[-\/\.](\d{1,2})[-\/\.](\d{2,4})\b/);
+  if(m){ var yy=m[3].length===2?'20'+m[3]:m[3]; return yy+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0'); }
+  m=token.match(/\b(\d{1,2})(?:st|nd|rd|th)?[\s\-]+(jan|january|feb|february|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|sept|september|oct|october|nov|november|dec|december)(?:[\s,\-]+(\d{2,4}))?\b/i);
+  if(m){
+    var mi=aiMonthNo(m[2]); var y=m[3]||yr; if(String(y).length===2) y='20'+y;
+    return y+'-'+String(mi).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');
+  }
+  m=token.match(/\b(jan|january|feb|february|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|sept|september|oct|october|nov|november|dec|december)[\s\-]+(\d{1,2})(?:st|nd|rd|th)?(?:[\s,\-]+(\d{2,4}))?\b/i);
+  if(m){
+    var mi2=aiMonthNo(m[1]); var y2=m[3]||yr; if(String(y2).length===2) y2='20'+y2;
+    return y2+'-'+String(mi2).padStart(2,'0')+'-'+String(m[2]).padStart(2,'0');
+  }
+  return aiDateFromAny(token);
+}
+function aiExtractDates(text, anchor){
+  var s=String(text||''), out=[], seen={};
+  var patterns=[
+    /\b\d{4}[-\/\.]\d{1,2}[-\/\.]\d{1,2}\b/g,
+    /\b\d{1,2}[-\/\.]\d{1,2}[-\/\.]\d{2,4}\b/g,
+    /\b\d{1,2}(?:st|nd|rd|th)?[\s\-]+(?:jan|january|feb|february|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|sept|september|oct|october|nov|november|dec|december)(?:[\s,\-]+\d{2,4})?\b/gi,
+    /\b(?:jan|january|feb|february|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|sept|september|oct|october|nov|november|dec|december)[\s\-]+\d{1,2}(?:st|nd|rd|th)?(?:[\s,\-]+\d{2,4})?\b/gi
+  ];
+  patterns.forEach(function(rx){
+    var m; while((m=rx.exec(s))!==null){
+      var iso=aiDateTokenToIso(m[0], anchor);
+      if(iso && !seen[iso]){ seen[iso]=1; out.push(iso); }
+    }
+  });
+  out.sort();
+  return out;
+}
+function aiParseDateRangeFromText(text, mode){
+  var s=String(text||'').toLowerCase();
+  var anchor=(mode==='cash') ? aiCashAnchorDate() : aiDataAnchorDate();
+  var todayIso=today();
+  var endAnchor=aiMaxIso(anchor, todayIso);
+  var m=s.match(/(?:last|past|previous)\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*(day|days|d)\b/);
+  if(m){
+    var n=Math.max(1, aiNumberWordToNum(m[1])||1);
+    return {from:aiAddDaysIso(anchor, -(n-1)), to:anchor, label:'last '+n+' day'+(n>1?'s':''), anchor:anchor};
+  }
+  m=s.match(/(?:last|past|previous)\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*(week|weeks|wk|w)\b/);
+  if(m){
+    var w=Math.max(1, aiNumberWordToNum(m[1])||1);
+    return {from:aiAddDaysIso(anchor, -(w*7-1)), to:anchor, label:'last '+w+' week'+(w>1?'s':''), anchor:anchor};
+  }
+  var dates=aiExtractDates(text, endAnchor);
+  if(dates.length>=2){
+    return {from:aiMinIso(dates[0],dates[1]), to:aiMaxIso(dates[0],dates[1]), label:aiMinIso(dates[0],dates[1])+' to '+aiMaxIso(dates[0],dates[1]), anchor:anchor};
+  }
+  if(dates.length===1){
+    var one=dates[0];
+    if(/\b(from|since|after|onwards|onward)\b/.test(s)){
+      return {from:one, to:endAnchor, label:'from '+one+' to '+endAnchor, anchor:anchor};
+    }
+    if(/\b(before|until|till|upto|up to)\b/.test(s)){
+      return {from:'', to:one, label:'up to '+one, anchor:anchor};
+    }
+    return {from:one, to:one, label:one, anchor:anchor};
+  }
+  if(/\byesterday\b/.test(s)){ var y=aiAddDaysIso(anchor,-1); return {from:y,to:y,label:'yesterday',anchor:anchor}; }
+  if(/\btoday\b/.test(s)){ return {from:anchor,to:anchor,label:'today / latest saved date',anchor:anchor}; }
+  if(/this month|current month|month to date|mtd/.test(s)){ return {from:aiMonthStart(anchor), to:anchor, label:'this month', anchor:anchor}; }
+  if(/last month|previous month/.test(s)){ return aiPrevMonthRange(anchor); }
+  return {from:'', to:'', label:'all dates', anchor:anchor};
+}
+function aiNormVehicle(v){ return String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
+function aiVehicleTail(v){ var m=aiNormVehicle(v).match(/(\d{2,5})$/); return m ? String(parseInt(m[1],10)) : ''; }
+function aiVehicleBody(v){ return aiNormVehicle(v).replace(/0*(\d{2,5})$/,''); }
+function aiVehicleLooseMatch(value, queryVehicle){
+  var ev=aiNormVehicle(value), qv=aiNormVehicle(queryVehicle);
+  if(!qv) return true;
+  if(!ev) return false;
+  if(ev===qv || ev.indexOf(qv)>=0 || qv.indexOf(ev)>=0) return true;
+  var et=aiVehicleTail(ev), qt=aiVehicleTail(qv);
+  if(et && qt && et===qt){
+    var eb=aiVehicleBody(ev), qb=aiVehicleBody(qv);
+    if(!qb || !eb || eb===qb || eb.indexOf(qb)>=0 || qb.indexOf(eb)>=0) return true;
+  }
+  return false;
+}
+function aiKnownVehicles(){
+  var all=[];
+  try{ all=(cashVehicles&&cashVehicles())||[]; }catch(err){ all=[]; }
+  (APP.trips||[]).forEach(function(t){ if(t.vehicle) all.push(t.vehicle); });
+  (APP.cashEntries||[]).forEach(function(e){ if(e.vehicle) all.push(e.vehicle); });
+  return [...new Set(all.map(function(v){return String(v||'').trim().toUpperCase();}).filter(Boolean))];
+}
+function aiFindVehicleInQuestion(q){
+  var nq=aiNormVehicle(q), all=aiKnownVehicles(), best='';
+  all.forEach(function(v){
+    var nv=aiNormVehicle(v);
+    if(nv && nq.indexOf(nv)>=0 && nv.length>(aiNormVehicle(best).length||0)) best=v;
+  });
+  if(best) return best;
+  var m=nq.match(/[A-Z]{2}\d{1,2}[A-Z]{1,3}\d{3,5}/);
+  if(m){
+    var raw=m[0];
+    for(var i=0;i<all.length;i++){ if(aiVehicleLooseMatch(all[i], raw)) return all[i]; }
+    return raw;
+  }
+  m=nq.match(/\d{3,5}/);
+  if(m){
+    var tail=String(parseInt(m[0],10));
+    for(var j=0;j<all.length;j++){ if(aiVehicleTail(all[j])===tail) return all[j]; }
+  }
+  return '';
+}
+function aiExpenseCategoryFromQuestion(q){
+  var s=String(q||'').toLowerCase();
+  if(/fuel|fule|diesel|petrol|cng/.test(s)) return 'Fuel';
+  if(/toll|fastag|fast tag/.test(s)) return 'Toll Tax';
+  if(/food|fooding|driver food|meal|dinner|tea|snack/.test(s)) return 'Driver Fooding';
+  if(/maint|repair|service|garage/.test(s)) return 'Maintenance';
+  if(/unloading|loader|loading/.test(s)) return 'Unloading';
+  if(/porter|labour|labor/.test(s)) return 'Porter';
+  return '';
+}
+function aiExpenseIntent(q){
+  var s=String(q||'').toLowerCase();
+  return /(expense|expenses|expnse|expnses|exps|exp|kharcha|kharch|fuel|fule|diesel|petrol|cng|toll|fastag|fooding|food|maintenance|repair|spend|spent|cost|share|report|detail|total|kitna|amount|payment)/.test(s);
+}
+function aiAccountFromQuestion(q){
+  var s=String(q||'').toLowerCase();
+  if(/\bpawan\b/.test(s)) return 'Pawan';
+  if(/\bkaran\b/.test(s)) return 'Karan';
+  return '';
+}
+function aiCashEntryIsExpense(e){
+  var t=String(e.entryType||e.entry_type||'Expense').toLowerCase();
+  return t!=='receipt' && t!=='fund received' && t!=='income';
+}
+function aiCashEntryMatchesCategory(e, cat, q){
+  if(!cat) return true;
+  var c=String(e.category||'').toLowerCase();
+  var hay=[e.category,e.particulars,e.note,e.source].join(' ').toLowerCase();
+  if(cat==='Fuel') return c==='fuel' || /fuel|fule|diesel|petrol|cng/.test(hay);
+  if(cat==='Toll Tax') return c==='toll tax' || c==='toll' || /toll|fastag|fast tag/.test(hay);
+  if(cat==='Driver Fooding') return c==='driver fooding' || c==='fooding' || /food|fooding|meal|dinner|tea|snack/.test(hay);
+  if(cat==='Maintenance') return c==='maintenance' || /maint|repair|service|garage/.test(hay);
+  if(cat==='Unloading') return c==='unloading' || /unloading|loader|loading/.test(hay);
+  if(cat==='Porter') return c==='porter' || /porter|labour|labor/.test(hay);
+  return c===String(cat||'').toLowerCase();
+}
+function aiFundDiagnostics(vehicle, category, rng, account){
+  var entries=APP.cashEntries||[];
+  var expenseEntries=entries.filter(aiCashEntryIsExpense);
+  var vRows=vehicle?expenseEntries.filter(function(e){return aiVehicleLooseMatch(e.vehicle||'',vehicle);}):expenseEntries;
+  var dRows=vRows.filter(function(e){ var d=aiDateFromAny(e.date||e.entry_date); if(rng.from && (!d||d<rng.from)) return false; if(rng.to && (!d||d>rng.to)) return false; return true; });
+  var cRows=dRows.filter(function(e){return aiCashEntryMatchesCategory(e,category,'');});
+  var vehicles=[...new Set(expenseEntries.map(function(e){return e.vehicle||'';}).filter(Boolean))].slice(0,12).join(', ') || '-';
+  return 'Diagnostics: Fund entries '+entries.length+', expense entries '+expenseEntries.length+', vehicle matches '+vRows.length+', date matches '+dRows.length+', category matches '+cRows.length+'.\nAvailable Fund vehicles: '+vehicles;
+}
+function aiAnswerFundExpenseQuery(q){
+  var s=String(q||'').toLowerCase();
+  if(!aiExpenseIntent(q) && !/(fund|cash|pawan|karan)/.test(s)) return null;
+  var vehicle=aiFindVehicleInQuestion(q);
+  var category=aiExpenseCategoryFromQuestion(q);
+  var account=aiAccountFromQuestion(q);
+  if(!vehicle && !category && !account && !/(fund|cash|expense|expenses|expnse|expnses|kharcha|cost|total|report|detail)/.test(s)) return null;
+  var rng=aiParseDateRangeFromText(q,'cash');
+  var rows=(APP.cashEntries||[]).filter(function(e){
+    var d=aiDateFromAny(e.date||e.entry_date);
+    if(!aiCashEntryIsExpense(e)) return false;
+    if(account && String(e.account||'')!==account) return false;
+    if(vehicle && !aiVehicleLooseMatch(e.vehicle||'', vehicle)) return false;
+    if(rng.from && (!d || d<rng.from)) return false;
+    if(rng.to && (!d || d>rng.to)) return false;
+    if(!aiCashEntryMatchesCategory(e, category, q)) return false;
+    return true;
+  }).sort(function(a,b){ var x=aiCompareDate(b.date,a.date); if(x!==0) return x; return String(b.id||'').localeCompare(String(a.id||'')); });
+  var total=rows.reduce(function(sum,e){ return sum+(+e.amount||0); },0);
+  var title=(category||'Total')+' expense'+(vehicle?' for '+vehicle:'')+(account?' / '+account:'')+' ('+rng.label+')';
+  if(!rows.length){
+    return 'No matching '+title+' found.\n'
+      +'Date range: '+(rng.from||'start')+' to '+(rng.to||'latest')+'\n'
+      +(vehicle?'Vehicle checked: '+vehicle+'\n':'')
+      +(category?'Category checked: '+category+'\n':'')
+      +(account?'Account checked: '+account+'\n':'')
+      +aiFundDiagnostics(vehicle, category, rng, account)
+      +'\n\nI did not show shipments because your question is an expense question. Please check Fund Tracker vehicle/date/category spelling.';
+  }
+  var catTotals={}, vehTotals={}, acctTotals={};
+  rows.forEach(function(e){
+    var c=e.category||'Other', v=e.vehicle||'No Vehicle', a=e.account||'-';
+    catTotals[c]=(catTotals[c]||0)+(+e.amount||0);
+    vehTotals[v]=(vehTotals[v]||0)+(+e.amount||0);
+    acctTotals[a]=(acctTotals[a]||0)+(+e.amount||0);
+  });
+  function topLine(obj){
+    return Object.keys(obj).sort(function(a,b){return obj[b]-obj[a];}).map(function(k){return k+': '+fmt(obj[k]);}).join(', ');
+  }
+  var lines=[];
+  lines.push(title);
+  lines.push('Date range: '+(rng.from||'start')+' to '+(rng.to||'latest')+' | Data anchor: '+(rng.anchor||'-'));
+  lines.push('Total: '+fmt(total)+' | Entries: '+rows.length);
+  if(Object.keys(catTotals).length>1) lines.push('Category breakup: '+topLine(catTotals));
+  if(!vehicle && Object.keys(vehTotals).length>1) lines.push('Vehicle breakup: '+topLine(vehTotals));
+  if(Object.keys(acctTotals).length>1) lines.push('Account breakup: '+topLine(acctTotals));
+  lines.push('\nEntry details:');
+  rows.slice(0,25).forEach(function(e,i){
+    lines.push((i+1)+'. '+(aiDateFromAny(e.date)||fmtDate(e.date)||'-')+' | '+(e.account||'-')+' | '+(e.vehicle||'-')+' | '+(e.category||'-')+' | '+fmt(e.amount)+' | '+(e.particulars||e.source||e.note||'-'));
+  });
+  if(rows.length>25) lines.push('+'+(rows.length-25)+' more entries. Use Fund Tracker filters to see full list.');
+  return lines.join('\n');
+}
+function aiAnswerTripSearch(q){
+  var s=String(q||'').toLowerCase();
+  if(aiExpenseIntent(q) || /(fund|cash|kharcha|kharch|cost|spent|spend|payment|amount)/.test(s)) return null;
+  if(!/(trip|shipment|vehicle|invoice|lr|status|where|route|delivered|transit|planned)/.test(s)) return null;
+  var vehicle=aiFindVehicleInQuestion(q);
+  var inv=(q.match(/[A-Z]{1,5}\/?\d{2}-\d{2}\/\d{1,6}|HR\/\d{2}-\d{2}\/\d{1,6}/i)||[''])[0];
+  var status='';
+  if(/in\s*transit|transit/.test(s)) status='In Transit';
+  else if(/delivered/.test(s)) status='Delivered';
+  else if(/planned|to\s*be\s*planned/.test(s)) status='To Be Planned';
+  if(!vehicle && !inv && !status) return null;
+  var rng=aiParseDateRangeFromText(q,'trip');
+  var rows=(APP.trips||[]).filter(function(t){
+    var d=aiDateFromAny(t.date);
+    if(vehicle && !aiVehicleLooseMatch(t.vehicle||'', vehicle)) return false;
+    if(inv && String(t.invoice||'').toLowerCase().indexOf(inv.toLowerCase())<0) return false;
+    if(status && String(t.status||'To Be Planned')!==status) return false;
+    if(rng.from && (!d || d<rng.from)) return false;
+    if(rng.to && (!d || d>rng.to)) return false;
+    return true;
+  }).sort(function(a,b){return aiCompareDate(b.date,a.date);});
+  if(!rows.length) return 'No matching trip/shipment found for '+(vehicle||inv||status)+'.';
+  return 'Matching shipments: '+rows.length+'\n\n'+rows.slice(0,15).map(function(t,i){
+    return (i+1)+'. '+(t.tripCode||t.id||'-')+' | '+fmtDate(t.date)+' | '+(t.invoice||'-')+' | '+aiTripRoute(t)+' | '+(t.vehicle||'-')+' | '+(t.status||'-');
+  }).join('\n')+(rows.length>15?'\n+'+(rows.length-15)+' more.':'');
+}
+
+function aiAnswer(q){
+  var s=q.toLowerCase(), trips=APP.trips||[], trans=aiTransitTrips(), delivered=aiDeliveredTrips(), planned=aiPlannedTrips();
+  var fundAns=aiAnswerFundExpenseQuery(q); if(fundAns) return fundAns;
+  var tripAns=aiAnswerTripSearch(q); if(tripAns) return tripAns;
+  if(/whatsapp|client update|update message|send message|intrasit|in transit message/.test(s)){
+    return 'Use the WhatsApp Update Builder on the right:\n1. Select an In-Transit shipment.\n2. Enter ETA date/time and client WhatsApp number.\n3. Click Create Message.\n4. Click Open WhatsApp and press Send from your device.\n\nCurrent in-transit shipments: '+trans.length+'.';
+  }
+  if(/in transit|transit|on road|handover|handovered/.test(s)){
+    if(!trans.length) return 'No shipment is currently marked In Transit. In All Trips, edit a shipment and set Status = In Transit after handover.';
+    return 'Currently In Transit: '+trans.length+'\n\n'+trans.slice(0,8).map(function(t,i){return (i+1)+'. '+aiTripTitle(t);}).join('\n');
+  }
+  if(/delivered/.test(s)){
+    return 'Delivered shipments: '+delivered.length+'. Use Dashboard → Delivered tile or All Trips → Status filter = Delivered to see the list.';
+  }
+  if(/planned|to be planned|planning/.test(s)){
+    return 'To Be Planned shipments: '+planned.length+'. These are trips not yet marked In Transit or Delivered.';
+  }
+  if(/lr|lorry receipt|bilty|bility/.test(s)){
+    return 'To create LR: open LR tab → Add LR → select linked Trip → system auto-fills route, customer, vehicle and freight basics → verify consignor/consignee → Save LR → Print LR.';
+  }
+  if(/invoice|billing|bill to|consolidated/.test(s)){
+    return 'For customer invoice: first maintain Party Master with GST/address. Then open Invoice tab → Add Invoice → select party/consignee → select unbilled trips → system calculates taxable amount, GST and total. Bill From uses BGSG Packaging details already saved in this file.';
+  }
+  if(/vendor|payment|transporter bill/.test(s)){
+    return 'Vendor Payment tab is for transporter/vendor bill tracking. Select linked trip/LR, enter vendor invoice, payable, paid amount and due date. The balance and status help you track unpaid/partial/paid bills.';
+  }
+  if(/party|gst|consignee|customer master/.test(s)){
+    return 'Use Party Master to save party name, address, GST, contact person, phone and email. LR and Invoice can then auto-pick party details. For WhatsApp updates, the assistant also tries to use the party phone from Party Master.';
+  }
+  if(/vehicle tracker|expiry|permit|insurance|fitness|pollution|national permit/.test(s)){
+    return 'Vehicle Tracker stores vehicle documents and maintenance records. It highlights expired records in red and near-expiry records in orange. Use + Vehicle Record to add Insurance, Fitness, Pollution, National Permit and other records.';
+  }
+  if(/fund|cash|pawan|karan|expense/.test(s)){
+    return 'Fund Tracker records money received by Pawan/Karan, transfers, and expenses by vehicle/category. You can ask data questions like:\n• fuel expense of DL1LAL0970 last 2 days\n• toll expense for HR55BA667 this month\n• total expense of 0970 today\n\nI will read saved Fund Tracker entries and show total plus entry details.';
+  }
+  if(/sync|cloud|supabase|not saving|local save|rls|permission/.test(s)){
+    return 'Sync checklist:\n1. Confirm Supabase URL/key are correct.\n2. Check the Sync status on top right.\n3. If it says Local save only, the browser saved data locally but cloud rejected it.\n4. Common causes: missing table/column, RLS policy blocking insert/update, or internet issue.\n5. Do not clear browser data before cloud sync is fixed.';
+  }
+  if(/trip id|shipment id|bgsg/.test(s)){
+    return 'Trips use simple IDs like BGSG0001, BGSG0002, etc. New ID is generated when you add a trip. You can still edit the Trip ID field before saving if needed.';
+  }
+  if(/how many|count|summary|dashboard|software do|features|help/.test(s)){
+    var rev=trips.reduce(function(a,t){return a+parseNum(t.amount);},0), pl=trips.reduce(function(a,t){return a+parseNum(t.pl);},0);
+    return 'Current software summary:\n• Total trips: '+trips.length+'\n• In Transit: '+trans.length+'\n• Delivered: '+delivered.length+'\n• To Be Planned: '+planned.length+'\n• Total revenue: '+fmt(rev)+'\n• Gross P&L: '+fmt(pl)+'\n\nModules: Dashboard, All Trips, Fund Tracker, P&L, Drivers & Salary, Vehicle Tracker, Agent Freight, Party Master, LR, Invoice, Vendor Payment, Reports, and this AI Assistant.';
+  }
+  return 'I can help with trips, in-transit status, WhatsApp client updates, LR, invoice, vendor payment, party master, vehicle tracker, fund tracker, reports, and sync issues.\n\nFor this question, try adding one of these words: trip, invoice, LR, WhatsApp, sync, vehicle, fund, party, or in transit.';
+}
+
+
 // ── INIT ──────────────────────────────────────────
 function init(){
   document.getElementById('ldm').textContent='Opening software…';
@@ -1967,7 +2654,7 @@ function syncAllFromSupabase(silent, mode){
   });
 }
 // ── Navigation ────────────────────────────────────
-var pageNames={dashboard:'Dashboard',trips:'All Trips',fundtracker:'Fund Tracker',pl:'P&L Analysis',drivers:'Drivers & Salary',vehdocs:'Vehicle Tracker',agentfreight:'Agent Freight',trans:'Transporters',cust:'Customers',partymaster:'Party Master',lr:'LR',invoicing:'Invoice',vendorpay:'Vendor Payment',reports:'Reports'};
+var pageNames={dashboard:'Dashboard',trips:'All Trips',fundtracker:'Fund Tracker',pl:'P&L Analysis',drivers:'Drivers & Salary',vehdocs:'Vehicle Tracker',agentfreight:'Agent Freight',aiassistant:'AI Assistant',trans:'Transporters',cust:'Customers',partymaster:'Party Master',lr:'LR',invoicing:'Invoice',vendorpay:'Vendor Payment',reports:'Reports'};
 function gp(name,el){
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('active');});
@@ -1982,6 +2669,7 @@ function gp(name,el){
   else if(name==='drivers'){ mb.textContent='Setup Drivers'; mb.onclick=function(){openDrvSetup();}; }
   else if(name==='vehdocs'){ mb.textContent='+ Vehicle Record'; mb.onclick=function(){openVehicleDocModal();}; setTimeout(function(){ syncAllFromSupabase(true,'optional'); }, 50); }
   else if(name==='agentfreight'){ mb.textContent='+ Agent Freight'; mb.onclick=function(){openAgentFreightModal();}; }
+  else if(name==='aiassistant'){ mb.textContent='Refresh AI'; mb.onclick=function(){renderAIAssistant();}; }
   else if(name==='partymaster'){ mb.textContent='+ Add Party'; mb.onclick=function(){openPartyMasterModal();}; setTimeout(function(){ syncAllFromSupabase(true,'optional'); }, 50); }
   else if(name==='lr'){ mb.textContent='+ Add LR'; mb.onclick=function(){openLrModal();}; setTimeout(function(){ syncAllFromSupabase(true,'optional'); }, 50); }
   else if(name==='invoicing'){ mb.textContent='+ Add Invoice'; mb.onclick=function(){openInvoiceModal();}; setTimeout(function(){ syncAllFromSupabase(true,'optional'); }, 50); }
@@ -1990,7 +2678,7 @@ function gp(name,el){
   curPage=name; renderPage(name);
 }
 function renderPage(name){
-  var fns={dashboard:renderDash,trips:renderTrips,fundtracker:renderFundTracker,pl:renderPL,drivers:renderDrivers,vehdocs:renderVehicleDocs,agentfreight:renderAgentFreight,trans:renderTrans,cust:renderCust,partymaster:renderPartyMasters,lr:renderLR,invoicing:renderInvoices,vendorpay:renderVendorPayments,reports:renderReports};
+  var fns={dashboard:renderDash,trips:renderTrips,fundtracker:renderFundTracker,pl:renderPL,drivers:renderDrivers,vehdocs:renderVehicleDocs,agentfreight:renderAgentFreight,aiassistant:renderAIAssistant,trans:renderTrans,cust:renderCust,partymaster:renderPartyMasters,lr:renderLR,invoicing:renderInvoices,vendorpay:renderVendorPayments,reports:renderReports};
   if(fns[name]) fns[name]();
 }
 function populateMonthDropdowns(){
