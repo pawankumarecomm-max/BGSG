@@ -315,6 +315,72 @@ tr:hover td{background:#f8fafc}
 .ai-table-actions{display:flex;gap:6px;justify-content:center}
 @media (max-width:1100px){.ai-layout,.ai-kpis{grid-template-columns:1fr}.ai-wa-actions{grid-template-columns:1fr}}
 
+
+/* ── All Trips: fixed header + better screen fit ───────── */
+#pg-trips.pg.active{
+  display:flex;
+  flex-direction:column;
+  height:calc(100vh - 94px);
+  min-height:0;
+}
+#pg-trips .trip-filter-panel{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px 14px;
+  margin-bottom:10px;
+  flex-shrink:0;
+}
+#pg-trips .trip-filter-grid{display:grid;gap:8px}
+#pg-trips .trip-filter-grid-main{
+  grid-template-columns:minmax(220px,1.6fr) minmax(220px,1.25fr) repeat(3,minmax(128px,.8fr));
+  margin-bottom:8px;
+}
+#pg-trips .trip-filter-grid-sub{grid-template-columns:repeat(5,minmax(128px,1fr))}
+#pg-trips .trip-filter-panel .sbox,#pg-trips .trip-filter-panel .flt{height:34px;font-size:12px}
+#pg-trips #trip-filter-summary{margin:0 0 8px!important;flex-shrink:0}
+#pg-trips .trips-table-card{flex:1;min-height:260px;overflow:hidden;border-radius:10px}
+#pg-trips .trips-table-wrap{height:100%;max-height:100%;overflow:auto}
+#pg-trips .trips-table{min-width:1480px;table-layout:fixed}
+#pg-trips .trips-table th{
+  position:sticky;top:0;z-index:7;background:var(--navy)!important;color:#fff!important;
+  padding:7px 6px;font-size:10px;box-shadow:0 1px 0 rgba(255,255,255,.12),0 2px 6px rgba(15,33,55,.12);
+}
+#pg-trips .trips-table td{padding:6px 6px;font-size:12px;line-height:1.25}
+#pg-trips .trips-table td:not(:last-child){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pg-trips .trips-table th:nth-child(1),#pg-trips .trips-table td:nth-child(1){width:86px;min-width:86px}
+#pg-trips .trips-table th:nth-child(2),#pg-trips .trips-table td:nth-child(2){width:76px;min-width:76px}
+#pg-trips .trips-table th:nth-child(3),#pg-trips .trips-table td:nth-child(3){width:108px;min-width:108px}
+#pg-trips .trips-table th:nth-child(4),#pg-trips .trips-table td:nth-child(4),#pg-trips .trips-table th:nth-child(5),#pg-trips .trips-table td:nth-child(5){width:78px;min-width:78px}
+#pg-trips .trips-table th:nth-child(6),#pg-trips .trips-table td:nth-child(6){width:94px;min-width:94px}
+#pg-trips .trips-table th:nth-child(7),#pg-trips .trips-table td:nth-child(7){width:58px;min-width:58px}
+#pg-trips .trips-table th:nth-child(8),#pg-trips .trips-table td:nth-child(8){width:96px;min-width:96px}
+#pg-trips .trips-table th:nth-child(9),#pg-trips .trips-table td:nth-child(9){width:116px;min-width:116px}
+#pg-trips .trips-table th:nth-child(10),#pg-trips .trips-table td:nth-child(10){width:132px;min-width:132px}
+#pg-trips .trips-table th:nth-child(11),#pg-trips .trips-table td:nth-child(11),#pg-trips .trips-table th:nth-child(15),#pg-trips .trips-table td:nth-child(15),#pg-trips .trips-table th:nth-child(16),#pg-trips .trips-table td:nth-child(16){width:78px;min-width:78px}
+#pg-trips .trips-table th:nth-child(12),#pg-trips .trips-table td:nth-child(12),#pg-trips .trips-table th:nth-child(13),#pg-trips .trips-table td:nth-child(13),#pg-trips .trips-table th:nth-child(14),#pg-trips .trips-table td:nth-child(14){width:62px;min-width:62px}
+#pg-trips .trips-table th:nth-child(17),#pg-trips .trips-table td:nth-child(17){width:96px;min-width:96px}
+#pg-trips .trips-table th:nth-child(18),#pg-trips .trips-table td:nth-child(18){width:82px;min-width:82px}
+#pg-trips .trips-table th:nth-child(19),#pg-trips .trips-table td:nth-child(19){width:178px;min-width:178px}
+#pg-trips .trips-table th:first-child,#pg-trips .trips-table td:first-child{position:sticky;left:0}
+#pg-trips .trips-table th:first-child{z-index:11}
+#pg-trips .trips-table td:first-child{z-index:4;background:#fff;box-shadow:1px 0 0 var(--border)}
+#pg-trips .trips-table th:last-child,#pg-trips .trips-table td:last-child{position:sticky;right:0}
+#pg-trips .trips-table th:last-child{z-index:11}
+#pg-trips .trips-table td:last-child{z-index:4;background:#fff;box-shadow:-1px 0 0 var(--border)}
+#pg-trips .trips-table tr:hover td:first-child,#pg-trips .trips-table tr:hover td:last-child{background:#f8fafc}
+#pg-trips .trips-table .acts{justify-content:center;gap:3px;flex-wrap:nowrap}
+#pg-trips .trips-table .acts .btn{padding:4px 6px;font-size:11px;line-height:1}
+@media (max-width:1200px){
+  #pg-trips.pg.active{height:auto;min-height:calc(100vh - 94px)}
+  #pg-trips .trip-filter-grid-main,#pg-trips .trip-filter-grid-sub{grid-template-columns:repeat(3,minmax(150px,1fr))}
+  #pg-trips .trips-table-card{height:calc(100vh - 310px);flex:0 0 auto}
+}
+@media (max-width:760px){
+  #pg-trips .trip-filter-grid-main,#pg-trips .trip-filter-grid-sub{grid-template-columns:1fr}
+  #pg-trips .trips-table-card{height:420px}
+}
+
 </style>
 </head>
 <body>
@@ -428,9 +494,9 @@ tr:hover td{background:#f8fafc}
 
     <!-- ALL TRIPS -->
     <div id="pg-trips" class="pg">
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+      <div class="trip-filter-panel">
         <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🔍 Filters</div>
-        <div style="display:grid;grid-template-columns:1.8fr 1.4fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="trip-filter-grid trip-filter-grid-main">
           <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Search</div><input class="sbox" style="width:100%" placeholder="Invoice, customer, vehicle…" id="trip-search" oninput="renderTrips()"></div>
           <div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Date Range</div>
@@ -448,7 +514,7 @@ tr:hover td{background:#f8fafc}
           <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Transporter</div><select class="flt" style="width:100%" id="tf-trans" onchange="renderTrips()"><option value="">All Transporters</option></select></div>
           <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Vehicle Number</div><select class="flt" style="width:100%" id="tf-vehicle" onchange="renderTrips()"><option value="">All Vehicles</option></select></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px">
+        <div class="trip-filter-grid trip-filter-grid-sub">
           <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Origin (From)</div><select class="flt" style="width:100%" id="tf-from" onchange="renderTrips()"><option value="">All Origins</option><option>BGSG BLR</option><option>Jhajjar</option><option>Amar Jyothi</option><option>Noida</option><option>EPW</option></select></div>
           <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Customer</div><select class="flt" style="width:100%" id="tf-cust" onchange="renderTrips()"><option value="">All Customers</option></select></div>
           <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Vehicle Type</div><select class="flt" style="width:100%" id="tf-type" onchange="renderTrips()"><option value="">All Types</option><option>14FT</option><option>17FT</option><option>20FT</option><option>22FT</option><option>32FT</option><option>Bolero</option></select></div>
@@ -457,8 +523,8 @@ tr:hover td{background:#f8fafc}
         </div>
       </div>
       <div id="trip-filter-summary" style="margin-bottom:10px;font-size:13px;color:var(--muted)"></div>
-      <div class="card" style="padding:0"><div class="tw"><table>
-        <thead><tr><th>Trip ID</th><th>Date</th><th>Transporter</th><th>From</th><th>To</th><th>Vehicle</th><th>Type</th><th>Invoice</th><th>Customer</th><th>Bill To / Consignee</th><th>Amount</th><th>CNG</th><th>MCD</th><th>Other</th><th>InFreight</th><th>P&L</th><th>Status</th><th>POD</th><th>Actions</th></tr></thead>
+      <div class="card trips-table-card" style="padding:0"><div class="tw trips-table-wrap"><table class="trips-table">
+        <thead><tr><th>Trip ID</th><th>Date</th><th>Transporter</th><th>From</th><th>To</th><th>Vehicle</th><th>Type</th><th>Invoice</th><th>Customer</th><th>Consignee</th><th>Amount</th><th>CNG</th><th>MCD</th><th>Other</th><th>In-Freight</th><th>P&L</th><th>Status</th><th>POD</th><th>Actions</th></tr></thead>
         <tbody id="tripstbody"></tbody>
       </table></div></div>
     </div>
@@ -1333,6 +1399,9 @@ function cashTransferToRow(t){
 
 // ── Helpers ───────────────────────────────────────
 function fmt(n){ return 'Rs '+Math.round(+n||0).toLocaleString('en-IN'); }
+function showAmt(v){
+  return (v===0 || v==='0' || v) ? fmt(v) : '-';
+}
 function fmtDate(d){
   if(!d) return '';
   var s=String(d).slice(0,10); if(s.length<10) return s;
@@ -1346,7 +1415,7 @@ function today(){ return new Date().toISOString().slice(0,10); }
 function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.className='show'; setTimeout(function(){t.className='';},2800); }
 function syncSt(col,msg){ var el=document.getElementById('syncst'); el.textContent=msg; el.style.color=col==='ok'?'var(--green)':col==='err'?'var(--red)':'var(--orange)'; }
 function tripPill(t){ var m={'14FT':'p14','17FT':'p17','20FT':'p20','22FT':'p22','32FT':'p32','Bolero':'pbol'}; return '<span class="pill '+(m[t]||'pbol')+'">'+(t||'-')+'</span>'; }
-function plTD(v){ v=+v||0; if(v>0)return '<td class="tpro">'+fmt(v)+'</td>'; if(v<0)return '<td class="tlos">'+fmt(v)+'</td>'; return '<td class="tzer">-</td>'; }
+function plTD(v){ v=+v||0; if(v>0)return '<td class="tpro">'+fmt(v)+'</td>'; if(v<0)return '<td class="tlos">'+fmt(v)+'</td>'; return '<td class="tzer">'+fmt(0)+'</td>'; }
 function getTripExp(tid){ return APP.expenses.filter(function(e){return String(e.tripId)===String(tid);}); }
 function parseNum(v){ return parseFloat(v)||0; }
 
@@ -2853,11 +2922,11 @@ function renderTrips(){
       +'<td class="tmon" style="font-size:11px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escHtml(t.invoice||'')+'">'+escHtml(t.invoice||'-')+'</td>'
       +'<td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escHtml(t.customer||'')+'">'+escHtml(t.customer||'-')+'</td>'
       +'<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escHtml(getTripConsignee(t)||'')+'">'+escHtml(getTripConsignee(t)||'-')+'</td>'
-      +'<td class="tamt">'+(t.amount?fmt(t.amount):'-')+'</td>'
-      +'<td class="tamt" style="color:var(--orange)">'+(t.cng?fmt(t.cng):'-')+'</td>'
-      +'<td class="tamt">'+(t.mcd?fmt(t.mcd):'-')+'</td>'
-      +'<td class="tamt">'+(t.other?fmt(t.other):'-')+'</td>'
-      +'<td class="tamt" style="color:var(--green)">'+(t.infreight?fmt(t.infreight):'-')+'</td>'
+      +'<td class="tamt">'+showAmt(t.amount)+'</td>'
+      +'<td class="tamt" style="color:var(--orange)">'+showAmt(t.cng)+'</td>'
+      +'<td class="tamt">'+showAmt(t.mcd)+'</td>'
+      +'<td class="tamt">'+showAmt(t.other)+'</td>'
+      +'<td class="tamt" style="color:var(--green)">'+showAmt(t.infreight)+'</td>'
       +plTD(t.pl)
       +'<td><span class="'+stCls+'">'+st+'</span></td>'
       +'<td><span class="'+(pod==='Received'?'pod-yes':'pod-no')+'">'+(pod==='Received'?'✓ Rcvd':'⏳ Pending')+'</span></td>'
@@ -2902,7 +2971,7 @@ function renderPL(q){
     +'<div class="sbox2"><div class="slbl">Driver Salaries</div><div class="sval" style="color:var(--purple)">'+fmt(tSal)+'</div></div>'
     +'<div class="sbox2"><div class="slbl">EMI &amp; Maintenance</div><div class="sval" style="color:#0891b2">'+fmt(tVeh)+'</div></div>'
     +'<div class="sbox2"><div class="slbl">Net P&L (after salary+EMI)</div><div class="sval" style="color:'+(netPLtotal>=0?'var(--green)':'var(--red)')+'">'+fmt(netPLtotal)+'</div></div>';
-  document.getElementById('pltbody').innerHTML=data.map(function(t){ var mg=t.amount?Math.round(t.pl/t.amount*100):0; var ec=getTripExp(t.id).length; return '<tr><td>'+fmtDate(t.date)+'</td><td class="tmon" style="font-size:11px">'+String(t.invoice).slice(0,20)+'</td><td>'+t.transporter+'</td><td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.customer+'</td><td style="font-size:12px">'+t.from+' to '+t.to+'</td><td class="tamt">'+(t.amount?fmt(t.amount):'-')+'</td><td class="tamt" style="color:var(--orange)">'+(t.cng?fmt(t.cng):'-')+'</td><td class="tamt">'+(t.mcd?fmt(t.mcd):'-')+'</td><td class="tamt">'+(t.other?fmt(t.other):'-')+'</td><td class="tamt" style="color:var(--green)">'+(t.infreight?fmt(t.infreight):'-')+'</td>'+plTD(t.pl)+'<td class="'+(+t.pl>0?'tpro':+t.pl<0?'tlos':'tzer')+'">'+mg+'%</td><td><button class="btn btns" onclick="openDetail(\''+t.id+'\')" style="font-size:11px">'+(ec>0?ec+' exp':'+Exp')+'</button></td></tr>'; }).join('')||'<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:22px">No trips.</td></tr>';
+  document.getElementById('pltbody').innerHTML=data.map(function(t){ var mg=t.amount?Math.round(t.pl/t.amount*100):0; var ec=getTripExp(t.id).length; return '<tr><td>'+fmtDate(t.date)+'</td><td class="tmon" style="font-size:11px">'+String(t.invoice).slice(0,20)+'</td><td>'+t.transporter+'</td><td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.customer+'</td><td style="font-size:12px">'+t.from+' to '+t.to+'</td><td class="tamt">'+showAmt(t.amount)+'</td><td class="tamt" style="color:var(--orange)">'+showAmt(t.cng)+'</td><td class="tamt">'+showAmt(t.mcd)+'</td><td class="tamt">'+showAmt(t.other)+'</td><td class="tamt" style="color:var(--green)">'+showAmt(t.infreight)+'</td>'+plTD(t.pl)+'<td class="'+(+t.pl>0?'tpro':+t.pl<0?'tlos':'tzer')+'">'+mg+'%</td><td><button class="btn btns" onclick="openDetail(\''+t.id+'\')" style="font-size:11px">'+(ec>0?ec+' exp':'+Exp')+'</button></td></tr>'; }).join('')||'<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:22px">No trips.</td></tr>';
 }
 
 // ── DRIVERS & SALARY ──────────────────────────────
