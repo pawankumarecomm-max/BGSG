@@ -341,44 +341,88 @@ tr:hover td{background:#f8fafc}
 #pg-trips #trip-filter-summary{margin:0 0 8px!important;flex-shrink:0}
 #pg-trips .trips-table-card{flex:1;min-height:260px;overflow:hidden;border-radius:10px}
 #pg-trips .trips-table-wrap{height:100%;max-height:100%;overflow:auto}
-#pg-trips .trips-table{min-width:1480px;table-layout:fixed}
+#pg-trips .trips-table{min-width:1200px;table-layout:fixed}
 #pg-trips .trips-table th{
   position:sticky;top:0;z-index:7;background:var(--navy)!important;color:#fff!important;
   padding:7px 6px;font-size:10px;box-shadow:0 1px 0 rgba(255,255,255,.12),0 2px 6px rgba(15,33,55,.12);
 }
-#pg-trips .trips-table td{padding:6px 6px;font-size:12px;line-height:1.25}
-#pg-trips .trips-table td:not(:last-child){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#pg-trips .trips-table th:nth-child(1),#pg-trips .trips-table td:nth-child(1){width:86px;min-width:86px}
-#pg-trips .trips-table th:nth-child(2),#pg-trips .trips-table td:nth-child(2){width:76px;min-width:76px}
-#pg-trips .trips-table th:nth-child(3),#pg-trips .trips-table td:nth-child(3){width:108px;min-width:108px}
-#pg-trips .trips-table th:nth-child(4),#pg-trips .trips-table td:nth-child(4),#pg-trips .trips-table th:nth-child(5),#pg-trips .trips-table td:nth-child(5){width:78px;min-width:78px}
-#pg-trips .trips-table th:nth-child(6),#pg-trips .trips-table td:nth-child(6){width:94px;min-width:94px}
-#pg-trips .trips-table th:nth-child(7),#pg-trips .trips-table td:nth-child(7){width:58px;min-width:58px}
+#pg-trips .trips-table td{padding:7px 8px;font-size:12px;line-height:1.25}
+#pg-trips .trips-table td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Clickable row styles */
+#pg-trips .trips-table tbody tr{cursor:pointer;transition:background .12s}
+#pg-trips .trips-table tbody tr:hover td{background:#eff6ff!important}
+#pg-trips .trips-table tbody tr.trip-row-selected td{background:#dbeafe!important;border-left:0}
+#pg-trips .trips-table tbody tr.trip-row-selected td:first-child{box-shadow:3px 0 0 var(--blue),1px 0 0 var(--border)}
+/* Column widths — no consignee, no actions col */
+/* 1: Trip ID */
+#pg-trips .trips-table th:nth-child(1),#pg-trips .trips-table td:nth-child(1){width:88px;min-width:88px}
+/* 2: Date */
+#pg-trips .trips-table th:nth-child(2),#pg-trips .trips-table td:nth-child(2){width:82px;min-width:82px}
+/* 3: Transporter */
+#pg-trips .trips-table th:nth-child(3),#pg-trips .trips-table td:nth-child(3){width:110px;min-width:110px}
+/* 4: From  5: To */
+#pg-trips .trips-table th:nth-child(4),#pg-trips .trips-table td:nth-child(4),#pg-trips .trips-table th:nth-child(5),#pg-trips .trips-table td:nth-child(5){width:80px;min-width:80px}
+/* 6: Vehicle */
+#pg-trips .trips-table th:nth-child(6),#pg-trips .trips-table td:nth-child(6){width:96px;min-width:96px}
+/* 7: Type */
+#pg-trips .trips-table th:nth-child(7),#pg-trips .trips-table td:nth-child(7){width:56px;min-width:56px}
+/* 8: Invoice */
 #pg-trips .trips-table th:nth-child(8),#pg-trips .trips-table td:nth-child(8){width:96px;min-width:96px}
-#pg-trips .trips-table th:nth-child(9),#pg-trips .trips-table td:nth-child(9){width:116px;min-width:116px}
-#pg-trips .trips-table th:nth-child(10),#pg-trips .trips-table td:nth-child(10){width:132px;min-width:132px}
-#pg-trips .trips-table th:nth-child(11),#pg-trips .trips-table td:nth-child(11),#pg-trips .trips-table th:nth-child(15),#pg-trips .trips-table td:nth-child(15),#pg-trips .trips-table th:nth-child(16),#pg-trips .trips-table td:nth-child(16){width:78px;min-width:78px}
-#pg-trips .trips-table th:nth-child(12),#pg-trips .trips-table td:nth-child(12),#pg-trips .trips-table th:nth-child(13),#pg-trips .trips-table td:nth-child(13),#pg-trips .trips-table th:nth-child(14),#pg-trips .trips-table td:nth-child(14){width:62px;min-width:62px}
-#pg-trips .trips-table th:nth-child(17),#pg-trips .trips-table td:nth-child(17){width:96px;min-width:96px}
-#pg-trips .trips-table th:nth-child(18),#pg-trips .trips-table td:nth-child(18){width:82px;min-width:82px}
-#pg-trips .trips-table th:nth-child(19),#pg-trips .trips-table td:nth-child(19){width:178px;min-width:178px}
+/* 9: Customer */
+#pg-trips .trips-table th:nth-child(9),#pg-trips .trips-table td:nth-child(9){width:110px;min-width:110px}
+/* 10: Amount  14: In-Freight  15: P&L */
+#pg-trips .trips-table th:nth-child(10),#pg-trips .trips-table td:nth-child(10),
+#pg-trips .trips-table th:nth-child(14),#pg-trips .trips-table td:nth-child(14),
+#pg-trips .trips-table th:nth-child(15),#pg-trips .trips-table td:nth-child(15){width:88px;min-width:88px}
+/* 11: CNG  12: MCD  13: Other — wider to fit "Rs 25,000" */
+#pg-trips .trips-table th:nth-child(11),#pg-trips .trips-table td:nth-child(11),
+#pg-trips .trips-table th:nth-child(12),#pg-trips .trips-table td:nth-child(12),
+#pg-trips .trips-table th:nth-child(13),#pg-trips .trips-table td:nth-child(13){width:84px;min-width:84px}
+/* 16: Status */
+#pg-trips .trips-table th:nth-child(16),#pg-trips .trips-table td:nth-child(16){width:98px;min-width:98px}
+/* 17: POD — wide enough for "⏳ Pending" */
+#pg-trips .trips-table th:nth-child(17),#pg-trips .trips-table td:nth-child(17){width:94px;min-width:94px}
 #pg-trips .trips-table th:first-child,#pg-trips .trips-table td:first-child{position:sticky;left:0}
 #pg-trips .trips-table th:first-child{z-index:11}
 #pg-trips .trips-table td:first-child{z-index:4;background:#fff;box-shadow:1px 0 0 var(--border)}
-#pg-trips .trips-table th:last-child,#pg-trips .trips-table td:last-child{position:sticky;right:0}
-#pg-trips .trips-table th:last-child{z-index:11}
-#pg-trips .trips-table td:last-child{z-index:4;background:#fff;box-shadow:-1px 0 0 var(--border)}
-#pg-trips .trips-table tr:hover td:first-child,#pg-trips .trips-table tr:hover td:last-child{background:#f8fafc}
-#pg-trips .trips-table .acts{justify-content:center;gap:3px;flex-wrap:nowrap}
-#pg-trips .trips-table .acts .btn{padding:4px 6px;font-size:11px;line-height:1}
+#pg-trips .trips-table tr:hover td:first-child{background:#eff6ff!important}
+#pg-trips .trips-table tbody tr.trip-row-selected td:first-child{background:#dbeafe!important}
+
+/* ── Trip Action Drawer ── */
+#trip-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(15,33,55,.35);z-index:190;transition:opacity .2s}
+#trip-drawer-overlay.open{display:block}
+#trip-drawer{position:fixed;top:0;right:-380px;width:360px;height:100vh;background:var(--card);box-shadow:-6px 0 28px rgba(0,0,0,.16);z-index:191;display:flex;flex-direction:column;transition:right .22s cubic-bezier(.4,0,.2,1);overflow:hidden}
+#trip-drawer.open{right:0}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--navy);flex-shrink:0}
+.drawer-title{font-family:var(--fd);font-size:16px;font-weight:700;color:#fff}
+.drawer-subtitle{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px}
+.drawer-close{width:28px;height:28px;border-radius:6px;border:none;background:rgba(255,255,255,.12);cursor:pointer;font-size:16px;color:#fff;display:flex;align-items:center;justify-content:center}
+.drawer-close:hover{background:rgba(255,255,255,.22)}
+.drawer-body{flex:1;overflow-y:auto;padding:16px 18px}
+.drawer-section{margin-bottom:16px}
+.drawer-section-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.drawer-kv{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-bottom:10px}
+.drawer-kv-item{display:flex;flex-direction:column;gap:2px}
+.drawer-kv-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.drawer-kv-value{font-size:13px;font-weight:600;color:var(--text)}
+.drawer-financials{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.drawer-fin-card{background:var(--bg);border-radius:8px;padding:8px 10px;text-align:center}
+.drawer-fin-label{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase}
+.drawer-fin-value{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--navy);margin-top:2px}
+.drawer-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.drawer-actions .btn{justify-content:center;padding:9px 12px;font-size:13px}
+.drawer-actions .btn-full{grid-column:1/-1}
+
 @media (max-width:1200px){
   #pg-trips.pg.active{height:auto;min-height:calc(100vh - 94px)}
   #pg-trips .trip-filter-grid-main,#pg-trips .trip-filter-grid-sub{grid-template-columns:repeat(3,minmax(150px,1fr))}
   #pg-trips .trips-table-card{height:calc(100vh - 310px);flex:0 0 auto}
+  #trip-drawer{width:320px;right:-340px}
 }
 @media (max-width:760px){
   #pg-trips .trip-filter-grid-main,#pg-trips .trip-filter-grid-sub{grid-template-columns:1fr}
   #pg-trips .trips-table-card{height:420px}
+  #trip-drawer{width:100%;right:-100%}
 }
 
 </style>
@@ -386,6 +430,40 @@ tr:hover td{background:#f8fafc}
 <body>
 
 <div id="ld"><div class="sp"></div><div id="ldm">Loading software…</div></div>
+
+<!-- Trip Action Drawer -->
+<div id="trip-drawer-overlay" onclick="closeTripDrawer()"></div>
+<div id="trip-drawer">
+  <div class="drawer-header">
+    <div>
+      <div class="drawer-title" id="drawer-trip-id">Trip Details</div>
+      <div class="drawer-subtitle" id="drawer-trip-date"></div>
+    </div>
+    <button class="drawer-close" onclick="closeTripDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-section">
+      <div class="drawer-section-title">Route &amp; Vehicle</div>
+      <div class="drawer-kv" id="drawer-route-info"></div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-title">Financials</div>
+      <div class="drawer-financials" id="drawer-financials"></div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-title">Status</div>
+      <div class="drawer-kv" id="drawer-status-info"></div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-title">Consignee</div>
+      <div id="drawer-consignee" style="font-size:13px;color:var(--text);font-weight:500;padding:4px 0"></div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-title">Actions</div>
+      <div class="drawer-actions" id="drawer-actions"></div>
+    </div>
+  </div>
+</div>
 
 <div id="sb">
   <div class="brd">
@@ -524,7 +602,7 @@ tr:hover td{background:#f8fafc}
       </div>
       <div id="trip-filter-summary" style="margin-bottom:10px;font-size:13px;color:var(--muted)"></div>
       <div class="card trips-table-card" style="padding:0"><div class="tw trips-table-wrap"><table class="trips-table">
-        <thead><tr><th>Trip ID</th><th>Date</th><th>Transporter</th><th>From</th><th>To</th><th>Vehicle</th><th>Type</th><th>Invoice</th><th>Customer</th><th>Consignee</th><th>Amount</th><th>CNG</th><th>MCD</th><th>Other</th><th>In-Freight</th><th>P&L</th><th>Status</th><th>POD</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Trip ID</th><th>Date</th><th>Transporter</th><th>From</th><th>To</th><th>Vehicle</th><th>Type</th><th>Invoice</th><th>Customer</th><th>Amount</th><th>CNG</th><th>MCD</th><th>Other</th><th>In-Freight</th><th>P&L</th><th>Status</th><th>POD</th></tr></thead>
         <tbody id="tripstbody"></tbody>
       </table></div></div>
     </div>
@@ -1202,6 +1280,13 @@ tr:hover td{background:#f8fafc}
         <div class="fgrp full"><label class="flbl">Particulars</label><input class="finp" id="fund-entry-particulars" placeholder="CNG in 0970 / Fast Tag / Driver Fooding"></div>
         <div class="fgrp"><label class="flbl">Amount</label><input class="finp" type="number" id="fund-entry-amount" placeholder="0"></div>
         <div class="fgrp"><label class="flbl">Payment Mode</label><select class="finp" id="fund-entry-mode"><option>Cash</option><option>UPI</option><option>Bank</option><option>Other</option></select></div>
+        <div class="fgrp full" id="fund-entry-trip-row" style="display:none">
+          <label class="flbl" style="display:flex;align-items:center;gap:6px">
+            Link to Trip <span style="font-size:10px;color:var(--blue);font-weight:500;background:var(--lblue);padding:1px 7px;border-radius:10px">Auto-maps expense to trip P&L</span>
+          </label>
+          <select class="finp" id="fund-entry-trip" onchange="updateFundEntryTripHint()"><option value="">-- No trip link --</option></select>
+          <div id="fund-entry-trip-hint" style="font-size:11px;color:var(--muted);margin-top:4px;display:none"></div>
+        </div>
         <div class="fgrp full"><label class="flbl">Note</label><input class="finp" id="fund-entry-note" placeholder="Optional note"></div>
       </div>
     </div>
@@ -2913,7 +2998,7 @@ function renderTrips(){
     var st=t.status||'To Be Planned';
     var stCls=st==='In Transit'?'st-transit':st==='Delivered'?'st-delivered':'st-planned';
     var pod=t.pod||'Pending';
-    return '<tr>'
+    return '<tr onclick="openTripDrawer(\''+t.id+'\')" title="Click to view actions">'
       +'<td class="tmon" style="font-weight:700;color:var(--blue)">'+escHtml(t.tripCode||t.id||'-')+'</td>'
       +'<td>'+fmtDate(t.date)+'</td>'
       +'<td><span class="pill '+(t.transporter==='BGSG Logistics'?'pbgsg':'pthrd')+'">'+escHtml(t.transporter||'-')+'</span></td>'
@@ -2921,7 +3006,6 @@ function renderTrips(){
       +'<td class="tmon">'+escHtml(t.vehicle||'-')+'</td><td>'+tripPill(t.type)+'</td>'
       +'<td class="tmon" style="font-size:11px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escHtml(t.invoice||'')+'">'+escHtml(t.invoice||'-')+'</td>'
       +'<td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escHtml(t.customer||'')+'">'+escHtml(t.customer||'-')+'</td>'
-      +'<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escHtml(getTripConsignee(t)||'')+'">'+escHtml(getTripConsignee(t)||'-')+'</td>'
       +'<td class="tamt">'+showAmt(t.amount)+'</td>'
       +'<td class="tamt" style="color:var(--orange)">'+showAmt(t.cng)+'</td>'
       +'<td class="tamt">'+showAmt(t.mcd)+'</td>'
@@ -2930,13 +3014,8 @@ function renderTrips(){
       +plTD(t.pl)
       +'<td><span class="'+stCls+'">'+st+'</span></td>'
       +'<td><span class="'+(pod==='Received'?'pod-yes':'pod-no')+'">'+(pod==='Received'?'✓ Rcvd':'⏳ Pending')+'</span></td>'
-      +'<td><div class="acts">'
-        +'<button class="btn btns" onclick="openDetail(\''+t.id+'\')">'+(ec>0?ec+' exp':'Detail')+'</button>'
-        +'<button class="btn btns btno" onclick="openExpModal(\''+t.id+'\')">+Exp</button>'
-        +'<button class="btn btns" onclick="openTripModal(\''+t.id+'\')">Edit</button>'
-        +'<button class="btn btns btnd" onclick="deleteTrip(\''+t.id+'\')">Del</button>'
-      +'</div></td></tr>';
-  }).join('')||'<tr><td colspan="19" style="text-align:center;color:var(--muted);padding:28px">No trips found.</td></tr>';
+      +'</tr>';
+  }).join('')||'<tr><td colspan="17" style="text-align:center;color:var(--muted);padding:28px">No trips found.</td></tr>';
 }
 function clearTripFilters(){
   ['trip-search','tf-trans','tf-vehicle','tf-from','tf-cust','tf-status','tf-type','tf-date-from','tf-date-to'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
@@ -3185,15 +3264,78 @@ function syncFundEntryForm(){
   var catSel=document.getElementById('fund-entry-category');
   var src=document.getElementById('fund-entry-source');
   var part=document.getElementById('fund-entry-particulars');
+  var tripRow=document.getElementById('fund-entry-trip-row');
   if(type==='Receipt'){
     if(catSel && (!catSel.value || catSel.value!=='Fund Received')) catSel.value='Fund Received';
     if(src) src.placeholder='Company / Transporter / Other source';
     if(part) part.placeholder='Fund received for truck expense';
+    if(tripRow) tripRow.style.display='none';
   } else {
     if(catSel && (!catSel.value || catSel.value==='Fund Received')) catSel.value='Fuel';
     if(src) src.placeholder='Vendor / Driver / Transporter';
     if(part) part.placeholder='CNG in 0970 / Fast Tag / Driver Fooding';
+    if(tripRow) tripRow.style.display='';
+    populateFundEntryTripDropdown();
   }
+}
+
+function populateFundEntryTripDropdown(){
+  var sel=document.getElementById('fund-entry-trip'); if(!sel) return;
+  var vehicle=(document.getElementById('fund-entry-vehicle').value||'').trim().toUpperCase();
+  var date=document.getElementById('fund-entry-date').value||'';
+  var cur=sel.value||'';
+  sel.innerHTML='<option value="">-- No trip link --</option>';
+  // Sort trips: matching vehicle first, then by date desc
+  var trips=[].concat(APP.trips||[]);
+  trips.sort(function(a,b){
+    var aMatch=(a.vehicle||'').toUpperCase()===vehicle;
+    var bMatch=(b.vehicle||'').toUpperCase()===vehicle;
+    if(aMatch!==bMatch) return aMatch?-1:1;
+    return String(b.date||'').localeCompare(String(a.date||''));
+  });
+  trips.forEach(function(t){
+    var o=document.createElement('option');
+    o.value=t.id;
+    var vMatch=(t.vehicle||'').toUpperCase()===vehicle && vehicle;
+    o.textContent=(vMatch?'★ ':'')+(t.invoice||t.tripCode||t.id)+' | '+(t.vehicle||'')+' | '+(t.from||'')+' → '+(t.to||'')+' | '+fmtDate(t.date);
+    sel.appendChild(o);
+  });
+  // Auto-select: best match = same vehicle + date closest to entry date
+  if(!cur && vehicle){
+    var best=null, bestDiff=Infinity;
+    (APP.trips||[]).forEach(function(t){
+      if((t.vehicle||'').toUpperCase()!==vehicle) return;
+      var diff=Math.abs(new Date(t.date||0)-new Date(date||0));
+      if(diff<bestDiff){ bestDiff=diff; best=t; }
+    });
+    if(best){ sel.value=best.id; }
+  } else if(cur){ sel.value=cur; }
+  updateFundEntryTripHint();
+}
+
+function updateFundEntryTripHint(){
+  var hint=document.getElementById('fund-entry-trip-hint'); if(!hint) return;
+  var tid=(document.getElementById('fund-entry-trip')||{}).value||'';
+  var cat=(document.getElementById('fund-entry-category')||{}).value||'';
+  if(!tid){ hint.style.display='none'; return; }
+  var trip=getTripById(tid); if(!trip){ hint.style.display='none'; return; }
+  var expType=cashCategoryToExpType(cat);
+  hint.style.display='block';
+  hint.innerHTML='Will add as <strong style="color:var(--blue)">'+expType+'</strong> expense on trip <strong>'+escHtml(trip.invoice||trip.id)+'</strong> ('+escHtml(trip.vehicle||'')+' · '+escHtml(trip.from||'')+' → '+escHtml(trip.to||'')+')';
+}
+
+// Maps Fund Tracker category → Trip Expense type
+function cashCategoryToExpType(cat){
+  var map={
+    'Fuel':'CNG / Fuel',
+    'Toll Tax':'MCD / Tax',
+    'Driver Fooding':'Driver Allowance',
+    'Maintenance':'Repair',
+    'Unloading':'Loading / Unloading',
+    'Porter':'Loading / Unloading',
+    'Other':'Other'
+  };
+  return map[cat]||'Other';
 }
 
 function refreshFundUI(){
@@ -3256,6 +3398,9 @@ function openCashEntryModal(id){
     document.getElementById('fund-entry-amount').value=e.amount||'';
     document.getElementById('fund-entry-mode').value=e.paymentMode||'Cash';
     document.getElementById('fund-entry-note').value=e.note||'';
+    // pre-select linked trip if exists
+    var tripSel=document.getElementById('fund-entry-trip');
+    if(tripSel) tripSel.dataset.preselect=e.linkedTripId||'';
   } else {
     document.getElementById('fund-entry-date').value=today();
     document.getElementById('fund-entry-account').value='Pawan';
@@ -3267,7 +3412,14 @@ function openCashEntryModal(id){
     document.getElementById('fund-entry-amount').value='';
     document.getElementById('fund-entry-mode').value='Cash';
     document.getElementById('fund-entry-note').value='';
+    var tripSel2=document.getElementById('fund-entry-trip');
+    if(tripSel2){ tripSel2.innerHTML='<option value="">-- No trip link --</option>'; tripSel2.dataset.preselect=''; }
   }
+  // wire dynamic refresh
+  ['fund-entry-vehicle','fund-entry-date','fund-entry-category'].forEach(function(fid){
+    var el=document.getElementById(fid); if(!el) return;
+    el.oninput=el.onchange=function(){ populateFundEntryTripDropdown(); updateFundEntryTripHint(); };
+  });
   syncFundEntryForm();
   document.getElementById('mo-fund-entry').classList.add('open');
 }
@@ -3296,6 +3448,7 @@ function openCashTransferModal(id){
 function saveCashEntry(){
   var editId=document.getElementById('fund-entry-savebtn').dataset.editId||'';
   var entryType=document.getElementById('fund-entry-type').value||'Expense';
+  var linkedTripId=(document.getElementById('fund-entry-trip')||{}).value||'';
   var rec={
     id:editId||('cash'+Date.now()),
     date:(document.getElementById('fund-entry-date').value||today()),
@@ -3307,7 +3460,8 @@ function saveCashEntry(){
     particulars:(document.getElementById('fund-entry-particulars').value||'').trim(),
     paymentMode:(document.getElementById('fund-entry-mode').value||'Cash').trim(),
     amount:+document.getElementById('fund-entry-amount').value||0,
-    note:(document.getElementById('fund-entry-note').value||'').trim()
+    note:(document.getElementById('fund-entry-note').value||'').trim(),
+    linkedTripId:linkedTripId||''
   };
   if(!rec.date){ toast('Please select date'); return; }
   if(!rec.account){ toast('Please select account'); return; }
@@ -3319,11 +3473,42 @@ function saveCashEntry(){
   else APP.cashEntries.push(normalizeCashEntry(rec));
   closeModal('mo-fund-entry');
   refreshFundUI();
+  // ── Auto-mirror to trip expense ──────────────────────────────────────────
+  var tripExpCreated=false;
+  if(entryType==='Expense' && linkedTripId && rec.amount){
+    var expType=cashCategoryToExpType(rec.category);
+    // Only auto-create on NEW entries (not edits, to avoid duplicates)
+    if(!editId){
+      var exp={
+        id:'exp'+Date.now()+'f',
+        tripId:linkedTripId,
+        date:rec.date,
+        type:expType,
+        amount:rec.amount,
+        note:(rec.particulars||rec.note||'Auto from Fund Tracker')
+      };
+      APP.expenses.push(exp);
+      recompPL(linkedTripId);
+      renderPage(curPage);
+      updateBadge();
+      tripExpCreated=true;
+      sbInsert('expenses', expToRow(exp), function(err){ if(!err) saveAppCache(); });
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
   syncSt('save','Saving…');
   var cb=function(err,row){
     if(!err && row && row.id){ rec.id=String(row.id); }
     if(err){ saveCashLocal(); syncSt('save','Local save only'); toast('Saved locally. Create cash_entries table in Supabase for cloud sync.'); }
-    else { saveCashLocal(); saveAppCache(); syncSt('ok','Synced ✓'); toast(editId?'Cash entry updated!':'Cash entry saved!'); }
+    else {
+      saveCashLocal(); saveAppCache(); syncSt('ok','Synced ✓');
+      var msg=editId?'Cash entry updated!':'Cash entry saved!';
+      if(tripExpCreated){
+        var trip=getTripById(linkedTripId);
+        msg+=' ✓ Also added as trip expense'+(trip?' on '+escHtml(trip.invoice||''):'');
+      }
+      toast(msg);
+    }
   };
   if(editId) sbUpdate('cash_entries', editId, cashEntryToRow(rec), cb);
   else sbInsert('cash_entries', cashEntryToRow(rec), cb);
@@ -4776,6 +4961,82 @@ function _clone(x){ return JSON.parse(JSON.stringify(x)); }
 
 
 document.querySelectorAll('.mover').forEach(function(mo){mo.addEventListener('click',function(e){if(e.target===mo)mo.classList.remove('open');});});
+
+// ── TRIP DRAWER ──────────────────────────────────────────────────────────────
+var _drawerTripId = null;
+function openTripDrawer(tripId) {
+  var t = getTripById(tripId);
+  if (!t) return;
+  _drawerTripId = tripId;
+
+  // Highlight selected row
+  document.querySelectorAll('#tripstbody tr').forEach(function(r){ r.classList.remove('trip-row-selected'); });
+  var rows = document.querySelectorAll('#tripstbody tr');
+  rows.forEach(function(r){
+    if (r.getAttribute('onclick') && r.getAttribute('onclick').indexOf("'"+tripId+"'") >= 0) {
+      r.classList.add('trip-row-selected');
+    }
+  });
+
+  // Header
+  document.getElementById('drawer-trip-id').textContent = (t.tripCode || t.id || 'Trip');
+  document.getElementById('drawer-trip-date').textContent = fmtDate(t.date) + ' · ' + escHtml(t.invoice || '');
+
+  // Route & Vehicle
+  document.getElementById('drawer-route-info').innerHTML =
+    kvi('From', escHtml(t.from||'-')) +
+    kvi('To', escHtml(t.to||'-')) +
+    kvi('Transporter', '<span class="pill '+(t.transporter==='BGSG Logistics'?'pbgsg':'pthrd')+'" style="font-size:11px">'+escHtml(t.transporter||'-')+'</span>') +
+    kvi('Vehicle', '<span class="tmon">'+escHtml(t.vehicle||'-')+'</span>') +
+    kvi('Type', tripPill(t.type)) +
+    kvi('Customer', escHtml(t.customer||'-'));
+
+  // Financials
+  var pl = +t.pl||0;
+  var plColor = pl>0?'var(--green)':pl<0?'var(--red)':'var(--muted)';
+  document.getElementById('drawer-financials').innerHTML =
+    '<div class="drawer-fin-card"><div class="drawer-fin-label">Amount</div><div class="drawer-fin-value">'+fmt(t.amount||0)+'</div></div>' +
+    '<div class="drawer-fin-card"><div class="drawer-fin-label">In-Freight</div><div class="drawer-fin-value" style="color:var(--green)">'+fmt(t.infreight||0)+'</div></div>' +
+    '<div class="drawer-fin-card"><div class="drawer-fin-label">P&amp;L</div><div class="drawer-fin-value" style="color:'+plColor+'">'+fmt(pl)+'</div></div>' +
+    '<div class="drawer-fin-card"><div class="drawer-fin-label">CNG</div><div class="drawer-fin-value" style="color:var(--orange)">'+fmt(t.cng||0)+'</div></div>' +
+    '<div class="drawer-fin-card"><div class="drawer-fin-label">MCD</div><div class="drawer-fin-value">'+fmt(t.mcd||0)+'</div></div>' +
+    '<div class="drawer-fin-card"><div class="drawer-fin-label">Other Exp</div><div class="drawer-fin-value">'+fmt(t.other||0)+'</div></div>';
+
+  // Status
+  var st = t.status||'To Be Planned';
+  var stCls = st==='In Transit'?'st-transit':st==='Delivered'?'st-delivered':'st-planned';
+  var pod = t.pod||'Pending';
+  document.getElementById('drawer-status-info').innerHTML =
+    kvi('Status', '<span class="'+stCls+'">'+st+'</span>') +
+    kvi('POD', '<span class="'+(pod==='Received'?'pod-yes':'pod-no')+'">'+(pod==='Received'?'✓ Received':'⏳ Pending')+'</span>');
+
+  // Consignee
+  var cons = getTripConsignee(t)||'-';
+  document.getElementById('drawer-consignee').textContent = cons;
+
+  // Actions
+  var ec = getTripExp(tripId).length;
+  document.getElementById('drawer-actions').innerHTML =
+    '<button class="btn btnp" onclick="openDetail(\''+tripId+'\');closeTripDrawer()">📋 '+(ec>0?ec+' Expenses':'Detail')+'</button>' +
+    '<button class="btn btno" onclick="openExpModal(\''+tripId+'\');closeTripDrawer()">+ Add Expense</button>' +
+    '<button class="btn" onclick="openTripModal(\''+tripId+'\');closeTripDrawer()">✏ Edit Trip</button>' +
+    '<button class="btn" onclick="openVendorPaymentModalForTrip(\''+tripId+'\');closeTripDrawer()">💳 Vendor Pay</button>' +
+    '<button class="btn btnd btn-full" onclick="if(confirm(\'Delete this trip?\''+')){closeTripDrawer();deleteTrip(\''+tripId+'\');}">🗑 Delete Trip</button>';
+
+  document.getElementById('trip-drawer-overlay').classList.add('open');
+  document.getElementById('trip-drawer').classList.add('open');
+}
+function closeTripDrawer() {
+  document.getElementById('trip-drawer-overlay').classList.remove('open');
+  document.getElementById('trip-drawer').classList.remove('open');
+  document.querySelectorAll('#tripstbody tr').forEach(function(r){ r.classList.remove('trip-row-selected'); });
+  _drawerTripId = null;
+}
+function kvi(label, val) {
+  return '<div class="drawer-kv-item"><div class="drawer-kv-label">'+label+'</div><div class="drawer-kv-value">'+val+'</div></div>';
+}
+// Close drawer on Escape key
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'&&_drawerTripId) closeTripDrawer(); });
 
 window.addEventListener('beforeunload', saveAppCache);
 window.onload=init;
