@@ -570,50 +570,76 @@ tr:hover td{background:#f8fafc}
 
     <!-- DASHBOARD -->
     <div id="pg-dashboard" class="pg active">
-      <div class="stat-strip">
-        <div class="stat-tile" onclick="filterByStatus('In Transit')">
-          <div class="stat-ico" style="background:#fef3c7">🚛</div>
-          <div><div class="stat-num" id="cnt-transit">0</div><div class="stat-lbl">In Transit</div></div>
+
+      <!-- STATUS TILES -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+
+        <div onclick="filterByStatus('In Transit')" style="cursor:pointer;background:linear-gradient(135deg,#d97706 0%,#f59e0b 100%);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 14px #d9770630;transition:.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">In Transit</div>
+            <div id="cnt-transit" style="font-family:var(--fd);font-size:42px;font-weight:700;color:#fff;line-height:1">0</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:4px">Active shipments</div>
+          </div>
+          <div style="font-size:40px;opacity:1">🚛</div>
         </div>
-        <div class="stat-tile" onclick="filterByStatus('Delivered')">
-          <div class="stat-ico" style="background:#dcfce7">✅</div>
-          <div><div class="stat-num" id="cnt-delivered">0</div><div class="stat-lbl">Delivered</div></div>
+
+        <div onclick="filterByStatus('Delivered')" style="cursor:pointer;background:linear-gradient(135deg,#059669 0%,#10b981 100%);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 14px #05966930;transition:.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Delivered</div>
+            <div id="cnt-delivered" style="font-family:var(--fd);font-size:42px;font-weight:700;color:#fff;line-height:1">0</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:4px">Completed trips</div>
+          </div>
+          <div style="font-size:40px;opacity:1">✅</div>
         </div>
-        <div class="stat-tile" onclick="filterByStatus('To Be Planned')">
-          <div class="stat-ico" style="background:#e0f2fe">📋</div>
-          <div><div class="stat-num" id="cnt-planned">0</div><div class="stat-lbl">To Be Planned</div></div>
+
+        <div onclick="filterByStatus('To Be Planned')" style="cursor:pointer;background:linear-gradient(135deg,#2563eb 0%,#3b82f6 100%);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 14px #2563eb30;transition:.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">To Be Planned</div>
+            <div id="cnt-planned" style="font-family:var(--fd);font-size:42px;font-weight:700;color:#fff;line-height:1">0</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:4px">Awaiting dispatch</div>
+          </div>
+          <div style="font-size:40px;opacity:1">📋</div>
         </div>
+
       </div>
+
+      <!-- KPI METRICS -->
       <div class="mgrid" id="dashmetrics"></div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-        <div class="cardt" style="font-size:14px">Monthly Summary</div>
+
+      <!-- MONTHLY SUMMARY -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--navy)">📅 Monthly Summary</div>
         <select class="flt" id="dash-month-sel" onchange="renderDash()"><option value="">All Months</option></select>
       </div>
-      <div class="card" style="margin-bottom:16px">
+      <div class="card" style="margin-bottom:16px;overflow:hidden">
         <div class="tw"><table>
           <thead style="background:var(--navy)"><tr>
-            <th style="color:#fff">Month</th><th style="color:#fff">Trips</th><th style="color:#fff">Revenue</th>
-            <th style="color:#fff">CNG+Exp</th><th style="color:#fff">InFreight</th><th style="color:#fff">Gross P&L</th>
-            <th style="color:#fff">Driver Salaries</th><th style="color:#fff">EMI &amp; Maint.</th><th style="color:#fff">Net P&L</th>
+            <th style="color:#fff;text-align:left;padding-left:14px">Month</th>
+            <th style="color:#fff">Trips</th>
+            <th style="color:#fff">Revenue</th>
+            <th style="color:#fff">CNG+Exp</th>
+            <th style="color:#fff">InFreight</th>
+            <th style="color:#fff">Gross P&amp;L</th>
+            <th style="color:#fff">Driver Salaries</th>
+            <th style="color:#fff">EMI &amp; Maint.</th>
+            <th style="color:#fff">Net P&amp;L</th>
           </tr></thead>
           <tbody id="month-summary-body"></tbody>
         </table></div>
       </div>
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
-        <div>
-          <div class="card">
-            <div class="cardh"><span class="cardt">Recent Trips</span><button class="btn btns" onclick="gp('trips',document.querySelectorAll('.ni')[1])">All Trips</button></div>
-            <div class="tw"><table><thead><tr><th>Date</th><th>Invoice</th><th>Customer</th><th>Route</th><th>Amount</th><th>P&L</th><th>Status</th></tr></thead><tbody id="dashtripsbody"></tbody></table></div>
-          </div>
-          <div class="card">
-            <div class="cardh"><span class="cardt">Daily Trip Volume</span></div>
-            <div class="cardb"><div class="bchart" id="barchart"></div><div class="blabs" id="barlabs"></div></div>
-          </div>
-        </div>
-        <div>
-          <div class="card"><div class="cardh"><span class="cardt">Top Customers</span></div><div class="cardb" id="dashcust"></div></div>
-          <div class="card"><div class="cardh"><span class="cardt">Transporters</span></div><div class="cardb" id="dashtrans"></div></div>
-        </div>
+
+      <!-- BOTTOM GRID -->
+      <div class="card">
+        <div class="cardh"><span class="cardt">🕐 Recent Trips</span><button class="btn btns btnp" onclick="gp('trips',document.querySelectorAll('.ni')[1])">View All →</button></div>
+        <div class="tw"><table><thead><tr><th>Date</th><th>Invoice</th><th>Customer</th><th>Route</th><th>Amount</th><th>P&L</th><th>Status</th></tr></thead><tbody id="dashtripsbody"></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="cardh"><span class="cardt">📈 Daily Trip Volume</span></div>
+        <div class="cardb"><div class="bchart" id="barchart"></div><div class="blabs" id="barlabs"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card" style="margin-bottom:0"><div class="cardh"><span class="cardt">🏆 Top Customers</span></div><div class="cardb" id="dashcust"></div></div>
+        <div class="card" style="margin-bottom:0"><div class="cardh"><span class="cardt">🚚 Transporters</span></div><div class="cardb" id="dashtrans"></div></div>
       </div>
     </div>
 
@@ -670,21 +696,13 @@ tr:hover td{background:#f8fafc}
           <div style="display:flex;gap:8px"><select class="flt" style="width:100%" id="fund-vehicle" onchange="renderFundTracker()"><option value="">All Vehicles</option></select></div>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
-          <button class="btn btns" style="background:var(--lblue);color:var(--blue);border-color:#93c5fd" onclick="openCashVehicleModal()">+ Vehicle</button>
           <button class="btn btns" style="background:var(--lred);color:var(--red);border-color:#fca5a5" onclick="clearFundFilters()">✕ Clear</button>
         </div>
       </div>
       <div id="fund-summary" style="margin-bottom:10px;font-size:13px;color:var(--muted)"></div>
-      <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-bottom:16px">
-        <div class="card">
-          <div class="cardh"><span class="cardt">Vehicle-wise Expense</span></div>
-          <div class="tw"><table><thead><tr><th>Vehicle</th><th>Fuel</th><th>Toll</th><th>Fooding</th><th>Maint.</th><th>Other</th><th>Total</th></tr></thead><tbody id="fund-vehicle-body"></tbody></table></div>
-        </div>
-        <div class="card">
-          <div class="cardh"><span class="cardt">Category-wise Expense</span></div>
-          <div class="tw"><table><thead><tr><th>Category</th><th>Total</th></tr></thead><tbody id="fund-category-body"></tbody></table></div>
-        </div>
-      </div>
+
+      <!-- VEHICLE + CATEGORY SUMMARY REDESIGN -->
+      <div id="fund-analytics" style="margin-bottom:16px"></div>
       <div class="card" id="fund-entries-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
         <div class="cardh"><span class="cardt">All Cashbook Entries</span></div>
         <div id="fund-entries-wrap">
@@ -1338,7 +1356,7 @@ tr:hover td{background:#f8fafc}
         <div class="fgrp"><label class="flbl">Entry Type</label><select class="finp" id="fund-entry-type" onchange="syncFundEntryForm(null)"><option>Receipt</option><option>Expense</option></select></div>
         <div class="fgrp"><label class="flbl">Source / Party</label><input class="finp" id="fund-entry-source" placeholder="Company / Transporter / Vendor"></div>
         <div class="fgrp"><label class="flbl">Category</label><select class="finp" id="fund-entry-category"></select></div>
-        <div class="fgrp"><label class="flbl">Vehicle</label><input class="finp" id="fund-entry-vehicle" list="fund-entry-vehlist" placeholder="Type vehicle number if needed"><datalist id="fund-entry-vehlist"></datalist></div>
+        <div class="fgrp"><label class="flbl">Vehicle</label><select class="finp" id="fund-entry-vehicle"><option value="">-- Select Vehicle --</option><option>DL01LAL0970</option><option>DL01LY8139</option><option>DL01MB4318</option><option>HR63G9386</option><option>KA02AN0024</option></select></div>
         <div class="fgrp full"><label class="flbl">Particulars</label><input class="finp" id="fund-entry-particulars" placeholder="CNG in 0970 / Fast Tag / Driver Fooding"></div>
         <div class="fgrp"><label class="flbl">Amount</label><input class="finp" type="number" id="fund-entry-amount" placeholder="0"></div>
         <div class="fgrp"><label class="flbl">Payment Mode</label><select class="finp" id="fund-entry-mode"><option>Cash</option><option>UPI</option><option>Bank</option><option>Other</option></select></div>
@@ -1566,29 +1584,24 @@ function plTD(v){ v=+v||0; if(v>0)return '<td class="tpro">'+fmt(v)+'</td>'; if(
 function getTripExp(tid){ return APP.expenses.filter(function(e){return String(e.tripId)===String(tid);}); }
 function parseNum(v){ return parseFloat(v)||0; }
 
-var CASH_VEHICLE_MASTER_KEY='bgsg_cash_vehicle_master';
 var CASH_ACCOUNTS=['Pawan','Karan'];
 var CASH_CATEGORIES=['Fund Received','Fuel','Toll Tax','Driver Fooding','Maintenance','Unloading','Porter','Other'];
-var CASH_CUSTOM_VEHICLES=[];
+// Fixed validated vehicle list — canonical (no leading zeros after state code)
+var CASH_VEHICLES=['DL01LAL0970','DL01LY8139','DL01MB4318','HR63G9386','KA02AN0024'];
 function normalizeCashVehicle(v){ return String(v||'').trim().toUpperCase(); }
-function loadCashVehicleMaster(){
-  try{
-    var arr=JSON.parse(localStorage.getItem(CASH_VEHICLE_MASTER_KEY)||'[]');
-    CASH_CUSTOM_VEHICLES=Array.isArray(arr)?arr.map(normalizeCashVehicle).filter(Boolean):[];
-  }catch(err){ CASH_CUSTOM_VEHICLES=[]; }
+// Normalize vehicle numbers to standard DL01 form: DL1MB4318 → DL01MB4318
+// Pads a single digit after the state code to 2 digits (e.g. DL1 → DL01, KA2 → KA02)
+function normalizeVehicleNo(v){
+  if(!v) return '';
+  return String(v).trim().toUpperCase().replace(/^([A-Z]{2})([0-9])([A-Z])/, '$10$2$3');
 }
-function saveCashVehicleMaster(){
-  try{ localStorage.setItem(CASH_VEHICLE_MASTER_KEY, JSON.stringify(CASH_CUSTOM_VEHICLES||[])); }catch(err){}
-}
-function ensureCashVehicle(v){
-  v=normalizeCashVehicle(v);
-  if(!v) return;
-  if(CASH_CUSTOM_VEHICLES.indexOf(v)<0){ CASH_CUSTOM_VEHICLES.push(v); CASH_CUSTOM_VEHICLES.sort(); saveCashVehicleMaster(); }
-}
+function loadCashVehicleMaster(){ /* fixed vehicle list — no dynamic master needed */ }
+function saveCashVehicleMaster(){ /* fixed vehicle list — no dynamic master needed */ }
+function ensureCashVehicle(v){ /* fixed vehicle list — validation handled by select dropdown */ }
 function normalizeCashEntry(e){
   return { id:String(e.id||''), date:String(e.entry_date||e.date||'').slice(0,10), account:e.account_name||e.account||'Pawan',
     entryType:e.entry_type||e.entryType||'Expense', source:e.source_party||e.source||'', category:e.category||'Other',
-    vehicle:e.vehicle||'', particulars:e.particulars||'', paymentMode:e.payment_mode||e.paymentMode||'Cash',
+    vehicle:normalizeVehicleNo(e.vehicle||''), particulars:e.particulars||'', paymentMode:e.payment_mode||e.paymentMode||'Cash',
     amount:parseNum(e.amount), note:e.note||'', linkedTripId:e.linkedTripId||'' };
 }
 function normalizeCashTransfer(t){
@@ -1598,8 +1611,8 @@ function normalizeCashTransfer(t){
 function loadCashLocal(){ /* pure cloud – no local cache */ }
 function saveCashLocal(){ /* pure cloud – no local cache */ }
 function cashVehicles(){
-  var arr=(CASH_CUSTOM_VEHICLES||[]).concat(APP.cashEntries.map(function(e){return normalizeCashVehicle(e.vehicle);}));
-  return [...new Set(arr.filter(Boolean))].sort();
+  // Always return the fixed canonical vehicle list
+  return CASH_VEHICLES.slice();
 }
 function populateFundDropdowns(){
   var catSel=document.getElementById('fund-category');
@@ -1621,11 +1634,6 @@ function populateFundDropdowns(){
     fsel.innerHTML='<option value="">All Vehicles</option>';
     vehs.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; fsel.appendChild(o); });
     if(cur) fsel.value=cur;
-  }
-  var vlist=document.getElementById('fund-entry-vehlist');
-  if(vlist){
-    vlist.innerHTML='';
-    vehs.forEach(function(v){ var o=document.createElement('option'); o.value=v; vlist.appendChild(o); });
   }
 }
 function cashTotal(entryType, account){
@@ -1683,7 +1691,7 @@ function fundFilteredEntries(){
   return APP.cashEntries.filter(function(e){
     var d=String(e.date||'').slice(0,10);
     if(d1 && d<d1) return false; if(d2 && d>d2) return false;
-    if(ac && e.account!==ac) return false; if(ty && e.entryType!==ty) return false; if(ca && e.category!==ca) return false; if(ve && e.vehicle!==ve) return false;
+    if(ac && e.account!==ac) return false; if(ty && e.entryType!==ty) return false; if(ca && e.category!==ca) return false; if(ve && normalizeVehicleNo(e.vehicle)!==normalizeVehicleNo(ve)) return false;
     if(q && [e.account,e.entryType,e.source,e.category,e.vehicle,e.particulars,e.note].join(' ').toLowerCase().indexOf(q.toLowerCase())<0) return false;
     return true;
   }).sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
@@ -2553,7 +2561,7 @@ function aiParseDateRangeFromText(text, mode){
 function aiNormVehicle(v){ return String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
 function aiVehicleCanonical(v){
   var s=aiNormVehicle(v);
-  // Indian vehicle numbers are often written both ways: DL01MB4318 and DL1MB4318.
+  // Indian vehicle numbers are often written both ways: DL01MB4318 and DL01MB4318.
   // Canonical form removes leading zero in RTO code and in last numeric part.
   var m=s.match(/^([A-Z]{2})(\d{1,2})([A-Z]{1,3})(\d{3,5})$/);
   if(m) return m[1]+String(parseInt(m[2],10))+m[3]+String(parseInt(m[4],10));
@@ -2769,7 +2777,7 @@ function aiAnswer(q){
     return 'Vehicle Tracker stores vehicle documents and maintenance records. It highlights expired records in red and near-expiry records in orange. Use + Vehicle Record to add Insurance, Fitness, Pollution, National Permit and other records.';
   }
   if(/fund|cash|pawan|karan|expense/.test(s)){
-    return 'Fund Tracker records money received by Pawan/Karan, transfers, and expenses by vehicle/category. You can ask data questions like:\n• fuel expense of DL1LAL0970 last 2 days\n• toll expense for HR55BA667 this month\n• total expense of 0970 today\n\nI will read saved Fund Tracker entries and show total plus entry details.';
+    return 'Fund Tracker records money received by Pawan/Karan, transfers, and expenses by vehicle/category. You can ask data questions like:\n• fuel expense of DL01LAL0970 last 2 days\n• toll expense for HR55BA667 this month\n• total expense of 0970 today\n\nI will read saved Fund Tracker entries and show total plus entry details.';
   }
   if(/sync|cloud|supabase|not saving|local save|rls|permission/.test(s)){
     return 'Sync checklist:\n1. Confirm Supabase URL/key are correct.\n2. Check the Sync status on top right.\n3. If it says Local save only, the browser saved data locally but cloud rejected it.\n4. Common causes: missing table/column, RLS policy blocking insert/update, or internet issue.\n5. Do not clear browser data before cloud sync is fixed.';
@@ -2943,12 +2951,38 @@ function renderDash(){
   document.getElementById('cnt-transit').textContent=cntT;
   document.getElementById('cnt-delivered').textContent=cntD;
   document.getElementById('cnt-planned').textContent=cntP;
+  // ── KPI metric cards ────────────────────────────────────────────
+  var grossMarginPct=tA>0?Math.round(tP/tA*100):0;
+  var netMarginPct=tA>0?Math.round(netPL/tA*100):0;
+  function kpiCard(icon,label,val,col,sub,extra){
+    return '<div class="mcard" style="border-top:3px solid '+col+';position:relative;overflow:hidden">'
+      +'<div style="position:absolute;top:8px;right:12px;font-size:28px;opacity:1">'+icon+'</div>'
+      +'<div class="mlbl">'+label+'</div>'
+      +'<div class="mval" style="color:'+col+';font-size:20px">'+val+'</div>'
+      +(sub?'<div class="msub" style="margin-top:3px">'+sub+'</div>':'')
+      +(extra?'<div style="margin-top:8px">'+extra+'</div>':'')
+    +'</div>';
+  }
+  var tripsBar='<div style="height:4px;background:#f1f5f9;border-radius:2px"><div style="height:4px;background:#2563eb;border-radius:2px;width:100%"></div></div>';
+  var revBar='<div style="height:4px;background:#f1f5f9;border-radius:2px"><div style="height:4px;background:#059669;border-radius:2px;width:100%"></div></div>';
+  var plBar='<div style="height:4px;background:#f1f5f9;border-radius:2px"><div style="height:4px;background:'+(grossMarginPct>=0?'var(--green)':'var(--red)')+';border-radius:2px;width:'+Math.min(100,Math.abs(grossMarginPct))+'%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:2px">'+grossMarginPct+'% gross margin</div>';
+  var netBar='<div style="height:4px;background:#f1f5f9;border-radius:2px"><div style="height:4px;background:'+(netMarginPct>=0?'var(--green)':'var(--red)')+';border-radius:2px;width:'+Math.min(100,Math.abs(netMarginPct))+'%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:2px">'+netMarginPct+'% net margin</div>';
   document.getElementById('dashmetrics').innerHTML=
-    '<div class="mcard"><div class="mlbl">Trips'+(sel?' ('+sel+')':'')+' </div><div class="mval">'+data.length+'</div></div>'
-    +'<div class="mcard"><div class="mlbl">Revenue</div><div class="mval" style="font-size:20px">'+fmt(tA)+'</div></div>'
-    +'<div class="mcard"><div class="mlbl">Gross P&L</div><div class="mval" style="font-size:20px;color:'+(tP>0?'var(--green)':'var(--red)')+'">'+fmt(tP)+'</div></div>'
-    +'<div class="mcard"><div class="mlbl">Net P&L (after salary+EMI)</div><div class="mval" style="font-size:17px;color:'+(netPL>0?'var(--green)':'var(--red)')+'">'+fmt(netPL)+'</div><div class="msub" style="color:var(--muted)">Salary: <span style="color:var(--red)">'+fmt(tSal)+'</span> · EMI: <span style="color:var(--red)">'+fmt(tVeh)+'</span></div></div>';
+    kpiCard('🚛','Trips'+(sel?' · '+sel:''),data.length,'#2563eb','Total shipments',tripsBar)
+    +kpiCard('💰','Revenue',fmt(tA),'#059669','Out-freight billed',revBar)
+    +kpiCard('📊','Gross P&L',fmt(tP),(tP>=0?'var(--green)':'var(--red)'),'After CNG+MCD+Exp',plBar)
+    +kpiCard('🏆','Net P&L',fmt(netPL),(netPL>=0?'var(--green)':'var(--red)'),'Salary: <span style="color:var(--red)">'+fmt(tSal)+'</span> · EMI: <span style="color:var(--red)">'+fmt(tVeh)+'</span>',netBar);
+
+  // ── Monthly summary table ────────────────────────────────────
   var months=getMonths(); var mbody=''; var tR=0,tC=0,tIF=0,tGP=0,tSL=0,tVL=0;
+  var maxNetPL=0;
+  // first pass to find max for mini bar scaling
+  months.forEach(function(m){
+    var md=APP.trips.filter(function(t){return String(t.date).slice(0,7)===m;});
+    var mP=md.reduce(function(s,t){return s+(+t.pl||0);},0);
+    var mSal=totalSalForMonth(m); var mVeh=totalVehExpForMonth(m);
+    maxNetPL=Math.max(maxNetPL,Math.abs(mP-mSal-mVeh));
+  });
   months.forEach(function(m){
     var md=APP.trips.filter(function(t){return String(t.date).slice(0,7)===m;});
     var mA=md.reduce(function(s,t){return s+(+t.amount||0);},0);
@@ -2957,32 +2991,102 @@ function renderDash(){
     var mP=md.reduce(function(s,t){return s+(+t.pl||0);},0);
     var mSal=totalSalForMonth(m); var mVeh=totalVehExpForMonth(m); var mNet=mP-mSal-mVeh;
     tR+=mA; tC+=mC; tIF+=mIF; tGP+=mP; tSL+=mSal; tVL+=mVeh;
-    mbody+='<tr style="'+(sel===m?'background:#fffbeb;':'')+'">'
-      +'<td><strong>'+m+'</strong></td><td style="text-align:center">'+md.length+'</td>'
-      +'<td class="tamt">'+fmt(mA)+'</td><td class="tamt" style="color:var(--red)">'+fmt(mC)+'</td>'
-      +'<td class="tamt" style="color:var(--green)">'+fmt(mIF)+'</td>'
-      +'<td class="'+(mP>0?'tpro':'tlos')+'">'+fmt(mP)+'</td>'
-      +'<td class="tamt" style="color:var(--purple)">'+fmt(mSal)+'</td>'
-      +'<td class="tamt" style="color:#0891b2">'+(mVeh?fmt(mVeh):'-')+'</td>'
-      +'<td class="'+(mNet>0?'tpro':'tlos')+'"><strong>'+fmt(mNet)+'</strong></td></tr>';
+    var netCol=mNet>0?'#059669':'#dc2626';
+    var netPct=maxNetPL>0?Math.round(Math.abs(mNet)/maxNetPL*100):0;
+    // net P&L cell with mini inline pill bar
+    var netCell='<td>'
+      +'<strong class="'+(mNet>0?'tpro':'tlos')+'">'+fmt(mNet)+'</strong>'
+    +'</td>';
+    mbody+='<tr style="'+(sel===m?'background:#fffbeb!important;':'')+'">'
+      +'<td style="padding-left:14px"><strong style="font-family:monospace;color:var(--navy)">'+m+'</strong></td>'
+      +'<td><span style="background:#e0f2fe;color:#0369a1;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px">'+md.length+'</span></td>'
+      +'<td class="tamt"><strong>'+fmt(mA)+'</strong></td>'
+      +'<td style="color:#dc2626;font-weight:600">'+fmt(mC)+'</td>'
+      +'<td style="color:#059669;font-weight:600">'+fmt(mIF)+'</td>'
+      +'<td class="'+(mP>0?'tpro':'tlos')+'"><strong>'+fmt(mP)+'</strong></td>'
+      +'<td style="color:#7c3aed;font-weight:600">'+fmt(mSal)+'</td>'
+      +'<td style="color:#0284c7;font-weight:600">'+(mVeh?fmt(mVeh):'<span style="color:var(--muted)">—</span>')+'</td>'
+      +netCell
+    +'</tr>';
   });
-  if(months.length>1) mbody+='<tr style="background:#f8fafc"><td><strong>TOTAL</strong></td><td style="text-align:center"><strong>'+APP.trips.length+'</strong></td><td class="tamt"><strong>'+fmt(tR)+'</strong></td><td class="tamt" style="color:var(--red)"><strong>'+fmt(tC)+'</strong></td><td class="tamt" style="color:var(--green)"><strong>'+fmt(tIF)+'</strong></td><td class="'+(tGP>0?'tpro':'tlos')+'"><strong>'+fmt(tGP)+'</strong></td><td class="tamt" style="color:var(--purple)"><strong>'+fmt(tSL)+'</strong></td><td class="tamt" style="color:#0891b2"><strong>'+fmt(tVL)+'</strong></td><td class="'+(tGP-tSL-tVL>0?'tpro':'tlos')+'"><strong>'+fmt(tGP-tSL-tVL)+'</strong></td></tr>';
+  if(months.length>1){
+    var totNet=tGP-tSL-tVL;
+    mbody+='<tr style="background:var(--navy)">'
+      +'<td style="padding-left:14px"><strong style="color:#fff;font-size:12px">TOTAL</strong></td>'
+      +'<td><span style="background:rgba(255,255,255,.2);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px">'+APP.trips.length+'</span></td>'
+      +'<td><strong style="color:#fff">'+fmt(tR)+'</strong></td>'
+      +'<td><strong style="color:#fca5a5">'+fmt(tC)+'</strong></td>'
+      +'<td><strong style="color:#86efac">'+fmt(tIF)+'</strong></td>'
+      +'<td><strong style="color:'+(tGP>0?'#86efac':'#fca5a5')+'">'+fmt(tGP)+'</strong></td>'
+      +'<td><strong style="color:#c4b5fd">'+fmt(tSL)+'</strong></td>'
+      +'<td><strong style="color:#7dd3fc">'+fmt(tVL)+'</strong></td>'
+      +'<td><strong style="color:'+(totNet>0?'#86efac':'#fca5a5')+';font-size:13px">'+fmt(totNet)+'</strong></td>'
+    +'</tr>';
+  }
   document.getElementById('month-summary-body').innerHTML=mbody||'<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">No data</td></tr>';
+
+  // ── Recent trips ─────────────────────────────────────────────
   var recent=sortedTrips(data).slice(0,8);
   document.getElementById('dashtripsbody').innerHTML=recent.map(function(t){
     var st=t.status||'To Be Planned';
     var stCls=st==='In Transit'?'st-transit':st==='Delivered'?'st-delivered':'st-planned';
-    var ec=getTripExp(t.id).length;
-    return '<tr><td>'+fmtDate(t.date)+'</td><td class="tmon" style="font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.invoice+'</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.customer+'</td><td style="font-size:12px">'+t.from+' to '+t.to+'</td><td class="tamt">'+fmt(t.amount)+'</td>'+plTD(t.pl)+'<td><span class="'+stCls+'">'+st+'</span></td></tr>';
+    var rowBg=st==='In Transit'?'background:#fffbeb':st==='Delivered'?'background:#f0fdf4':'';
+    return '<tr style="'+rowBg+'">'
+      +'<td>'+fmtDate(t.date)+'</td>'
+      +'<td class="tmon" style="font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.invoice+'</td>'
+      +'<td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">'+t.customer+'</td>'
+      +'<td style="font-size:11px;color:var(--muted)">'+t.from+' → '+t.to+'</td>'
+      +'<td class="tamt"><strong>'+fmt(t.amount)+'</strong></td>'
+      +plTD(t.pl)
+      +'<td><span class="'+stCls+'">'+st+'</span></td>'
+    +'</tr>';
   }).join('');
+
+  // ── Daily bar chart ───────────────────────────────────────────
   var bd={}; data.forEach(function(t){ var d=String(t.date).slice(0,10); bd[d]=(bd[d]||0)+1; });
   var dates=Object.keys(bd).sort(); var mx=Math.max.apply(null,Object.values(bd).concat([1]));
-  document.getElementById('barchart').innerHTML=dates.map(function(d){ return '<div class="bar" style="height:'+Math.round(bd[d]/mx*100)+'%" title="'+fmtDate(d)+': '+bd[d]+' trips"></div>'; }).join('');
+  document.getElementById('barchart').innerHTML=dates.map(function(d){
+    return '<div class="bar" style="height:'+Math.round(bd[d]/mx*100)+'%;background:linear-gradient(180deg,#3b82f6,#1d4ed8)" title="'+fmtDate(d)+': '+bd[d]+' trips"></div>';
+  }).join('');
   document.getElementById('barlabs').innerHTML=dates.map(function(d){ return '<div class="blab">'+d.slice(8)+'</div>'; }).join('');
+
+  // ── Top customers with pill bars ──────────────────────────────
   var cm={}; data.forEach(function(t){ var c=t.customer.split(',')[0].trim().toUpperCase(); cm[c]=(cm[c]||0)+(+t.amount||0); });
-  document.getElementById('dashcust').innerHTML=Object.entries(cm).sort(function(a,b){return b[1]-a[1];}).slice(0,6).map(function(x){ return '<div class="tcrow"><span style="font-size:12px;font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+x[0]+'</span><span style="font-size:13px;font-weight:700;color:var(--blue)">'+fmt(x[1])+'</span></div>'; }).join('');
+  var custList=Object.entries(cm).sort(function(a,b){return b[1]-a[1];}).slice(0,5);
+  var custMax=custList.length>0?custList[0][1]:1;
+  var custColors=['#2563eb','#059669','#dc2626','#7c3aed','#d97706','#0284c7'];
+  document.getElementById('dashcust').innerHTML=custList.map(function(x,i){
+    var pct=Math.round(x[1]/custMax*100);
+    var col=custColors[i%custColors.length];
+    return '<div style="margin-bottom:9px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">'
+        +'<span style="font-size:12px;font-weight:600;color:var(--navy);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+x[0]+'</span>'
+        +'<span style="font-size:12px;font-weight:700;color:var(--navy)">'+fmt(x[1])+'</span>'
+      +'</div>'
+      +'<div style="height:7px;background:#f1f5f9;border-radius:4px;overflow:hidden">'
+        +'<div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:4px;transition:width .4s"></div>'
+      +'</div>'
+      +'<div style="font-size:10px;color:var(--muted);margin-top:2px">'+pct+'% of revenue</div>'
+    +'</div>';
+  }).join('');
+
+  // ── Transporters with pill bars ───────────────────────────────
   var tm={}; data.forEach(function(t){ tm[t.transporter]=(tm[t.transporter]||0)+1; }); var tot=data.length||1;
-  document.getElementById('dashtrans').innerHTML=Object.entries(tm).sort(function(a,b){return b[1]-a[1];}).map(function(x){ return '<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px"><span style="font-weight:500">'+x[0]+'</span><span style="color:var(--muted)">'+x[1]+' trips</span></div><div style="height:4px;background:var(--bg);border-radius:2px"><div style="height:4px;background:'+(x[0]==='BGSG Logistics'?'var(--blue)':'#94a3b8')+';border-radius:2px;width:'+Math.round(x[1]/tot*100)+'%"></div></div></div>'; }).join('');
+  var tList=Object.entries(tm).sort(function(a,b){return b[1]-a[1];}).slice(0,5);
+  var tColors=['#2563eb','#7c3aed','#059669','#d97706','#dc2626'];
+  document.getElementById('dashtrans').innerHTML=tList.map(function(x,i){
+    var pct=Math.round(x[1]/tot*100);
+    var col=x[0]==='BGSG Logistics'?'#2563eb':(tColors[i%tColors.length]);
+    return '<div style="margin-bottom:9px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">'
+        +'<span style="font-size:12px;font-weight:600;color:var(--navy);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+x[0]+'</span>'
+        +'<span style="font-size:12px;color:var(--muted)">'+x[1]+' trips &nbsp;·&nbsp; '+pct+'%</span>'
+      +'</div>'
+      +'<div style="height:7px;background:#f1f5f9;border-radius:4px;overflow:hidden">'
+        +'<div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:4px;transition:width .4s"></div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
 }
 
 // ── ALL TRIPS ─────────────────────────────────────
@@ -3197,12 +3301,13 @@ function renderFundTracker(){
   var combinedBal=pBal+kBal;
   var balanceMap=getCashEntryBalanceMap();
 
+  var utilRate=totalReceipts>0?Math.round(totalExpenses/totalReceipts*100):0;
   document.getElementById('fund-metrics').innerHTML=
-    '<div class="mcard"><div class="mlbl">Total Receipts</div><div class="mval" style="color:var(--green)">'+fmt(totalReceipts)+'</div></div>'
-    +'<div class="mcard"><div class="mlbl">Total Expenses</div><div class="mval" style="color:var(--red)">'+fmt(totalExpenses)+'</div></div>'
-    +'<div class="mcard"><div class="mlbl">Total Balance</div><div class="mval" style="color:'+(combinedBal>=0?'var(--green)':'var(--red)')+'">'+fmt(combinedBal)+'</div><div class="msub">Pawan + Karan combined</div></div>'
-    +'<div class="mcard" style="cursor:pointer" onclick="filterFundByAccount(\'Pawan\')"><div class="mlbl">Pawan Balance</div><div class="mval" style="color:'+(pBal>=0?'var(--green)':'var(--red)')+'">'+fmt(pBal)+'</div><div class="msub">Click to view Pawan entries</div></div>'
-    +'<div class="mcard" style="cursor:pointer" onclick="filterFundByAccount(\'Karan\')"><div class="mlbl">Karan Balance</div><div class="mval" style="color:'+(kBal>=0?'var(--green)':'var(--red)')+'">'+fmt(kBal)+'</div><div class="msub">Click to view Karan entries</div></div>';
+    '<div class="mcard" style="border-top:3px solid var(--green);position:relative;overflow:hidden"><div style="position:absolute;top:8px;right:10px;font-size:24px;opacity:1">💰</div><div class="mlbl">Total Receipts</div><div class="mval" style="color:var(--green)">'+fmt(totalReceipts)+'</div><div style="height:3px;background:#f1f5f9;border-radius:2px;margin-top:8px"><div style="height:3px;background:var(--green);border-radius:2px;width:100%"></div></div><div class="msub" style="margin-top:3px">All inflows</div></div>'
+    +'<div class="mcard" style="border-top:3px solid var(--red);position:relative;overflow:hidden"><div style="position:absolute;top:8px;right:10px;font-size:24px;opacity:1">💸</div><div class="mlbl">Total Expenses</div><div class="mval" style="color:var(--red)">'+fmt(totalExpenses)+'</div><div style="height:3px;background:#f1f5f9;border-radius:2px;margin-top:8px"><div style="height:3px;background:var(--red);border-radius:2px;width:'+Math.min(utilRate,100)+'%"></div></div><div class="msub" style="margin-top:3px">'+utilRate+'% of receipts spent</div></div>'
+    +'<div class="mcard" style="border-top:3px solid '+(combinedBal>=0?'var(--green)':'var(--red)')+';position:relative;overflow:hidden"><div style="position:absolute;top:8px;right:10px;font-size:24px;opacity:1">🏦</div><div class="mlbl">Net Balance</div><div class="mval" style="color:'+(combinedBal>=0?'var(--green)':'var(--red)')+'">'+fmt(combinedBal)+'</div><div style="display:flex;gap:6px;margin-top:8px"><span style="background:'+(pBal>=0?'#dcfce7':'#fef2f2')+';color:'+(pBal>=0?'var(--green)':'var(--red)')+';font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px">P: '+fmt(pBal)+'</span><span style="background:'+(kBal>=0?'#dcfce7':'#fef2f2')+';color:'+(kBal>=0?'var(--green)':'var(--red)')+';font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px">K: '+fmt(kBal)+'</span></div></div>'
+    +'<div class="mcard" style="border-top:3px solid var(--blue);cursor:pointer;position:relative;overflow:hidden" onclick="filterFundByAccount(\'Pawan\')"><div style="position:absolute;top:8px;right:10px;font-size:24px;opacity:1">👤</div><div class="mlbl">Pawan Balance</div><div class="mval" style="color:'+(pBal>=0?'var(--green)':'var(--red)')+'">'+fmt(pBal)+'</div><div class="msub" style="margin-top:6px">'+(pBal>=0?'✅ Sufficient':'⚠️ Overspent')+' · Click to filter</div></div>'
+    +'<div class="mcard" style="border-top:3px solid var(--purple);cursor:pointer;position:relative;overflow:hidden" onclick="filterFundByAccount(\'Karan\')"><div style="position:absolute;top:8px;right:10px;font-size:24px;opacity:1">👤</div><div class="mlbl">Karan Balance</div><div class="mval" style="color:'+(kBal>=0?'var(--green)':'var(--red)')+'">'+fmt(kBal)+'</div><div class="msub" style="margin-top:6px">'+(kBal>=0?'✅ Sufficient':'⚠️ Overspent')+' · Click to filter</div></div>';
 
   var activeAccount=(document.getElementById('fund-account')||{}).value||'';
   var summary='Showing <strong>'+data.length+'</strong> of <strong>'+all.length+'</strong> entries';
@@ -3234,34 +3339,137 @@ function renderFundTracker(){
       }).join('');
 
   var expEntries=data.filter(function(e){ return e.entryType==='Expense'; });
-  var vehs=[...new Set(expEntries.map(function(e){ return e.vehicle||''; }).filter(Boolean))].sort();
-  document.getElementById('fund-vehicle-body').innerHTML=vehs.length===0
-    ? '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">No vehicle expense data for selected filters.</td></tr>'
-    : vehs.map(function(v){
-        var rows=expEntries.filter(function(e){ return (e.vehicle||'')===v; });
-        var fuel=rows.filter(function(e){return e.category==='Fuel';}).reduce(function(s,e){return s+(+e.amount||0);},0);
-        var toll=rows.filter(function(e){return e.category==='Toll Tax';}).reduce(function(s,e){return s+(+e.amount||0);},0);
-        var food=rows.filter(function(e){return e.category==='Driver Fooding';}).reduce(function(s,e){return s+(+e.amount||0);},0);
-        var maint=rows.filter(function(e){return e.category==='Maintenance';}).reduce(function(s,e){return s+(+e.amount||0);},0);
-        var other=rows.filter(function(e){return ['Fuel','Toll Tax','Driver Fooding','Maintenance'].indexOf(e.category)<0;}).reduce(function(s,e){return s+(+e.amount||0);},0);
-        var total=fuel+toll+food+maint+other;
-        return '<tr>'
-          +'<td class="tmon"><strong>'+v+'</strong></td>'
-          +'<td>'+fmt(fuel)+'</td>'
-          +'<td>'+fmt(toll)+'</td>'
-          +'<td>'+fmt(food)+'</td>'
-          +'<td>'+fmt(maint)+'</td>'
-          +'<td>'+fmt(other)+'</td>'
-          +'<td class="tamt">'+fmt(total)+'</td>'
-        +'</tr>';
-      }).join('');
+  var recEntries=data.filter(function(e){ return e.entryType==='Receipt'; });
 
+  // ── Per-vehicle stats ──────────────────────────────────────────────────────
+  var vehData=CASH_VEHICLES.map(function(v){
+    var rows=expEntries.filter(function(e){ return normalizeVehicleNo(e.vehicle||'')===v; });
+    var fuel=rows.filter(function(e){return e.category==='Fuel';}).reduce(function(s,e){return s+(+e.amount||0);},0);
+    var toll=rows.filter(function(e){return e.category==='Toll Tax';}).reduce(function(s,e){return s+(+e.amount||0);},0);
+    var food=rows.filter(function(e){return e.category==='Driver Fooding';}).reduce(function(s,e){return s+(+e.amount||0);},0);
+    var maint=rows.filter(function(e){return e.category==='Maintenance';}).reduce(function(s,e){return s+(+e.amount||0);},0);
+    var other=rows.filter(function(e){return ['Fuel','Toll Tax','Driver Fooding','Maintenance'].indexOf(e.category)<0;}).reduce(function(s,e){return s+(+e.amount||0);},0);
+    var total=fuel+toll+food+maint+other;
+    return {v:v,fuel:fuel,toll:toll,food:food,maint:maint,other:other,total:total,count:rows.length};
+  });
+  var grandTotalExp=vehData.reduce(function(s,d){return s+d.total;},0);
+
+  // ── Category stats ─────────────────────────────────────────────────────────
   var catMap={};
   expEntries.forEach(function(e){ catMap[e.category||'Other']=(catMap[e.category||'Other']||0)+(+e.amount||0); });
   var catRows=Object.keys(catMap).sort(function(a,b){ return catMap[b]-catMap[a]; });
-  document.getElementById('fund-category-body').innerHTML=catRows.length===0
-    ? '<tr><td colspan="2" style="text-align:center;color:var(--muted);padding:20px">No category data for selected filters.</td></tr>'
-    : catRows.map(function(c){ return '<tr><td>'+c+'</td><td class="tamt">'+fmt(catMap[c])+'</td></tr>'; }).join('');
+  var catTotal=catRows.reduce(function(s,c){return s+catMap[c];},0);
+
+  // ── Category icons & colours ───────────────────────────────────────────────
+  var catMeta={
+    'Fuel':       {icon:'⛽',color:'#f97316',bg:'#fff7ed'},
+    'Toll Tax':   {icon:'🛣️',color:'#8b5cf6',bg:'#ede9fe'},
+    'Driver Fooding':{icon:'🍽️',color:'#0891b2',bg:'#e0f9ff'},
+    'Maintenance':{icon:'🔧',color:'#b45309',bg:'#fef3c7'},
+    'Unloading':  {icon:'📦',color:'#16a34a',bg:'#dcfce7'},
+    'Porter':     {icon:'🧍',color:'#6d28d9',bg:'#ede9fe'},
+    'Other':      {icon:'📋',color:'#64748b',bg:'#f1f5f9'},
+    'Fund Received':{icon:'💰',color:'#16a34a',bg:'#dcfce7'}
+  };
+
+  // ── Vehicle colour palette ─────────────────────────────────────────────────
+  var vColors=['#1a5fa8','#16a34a','#f97316','#8b5cf6','#0891b2'];
+  var barCats=[
+    {key:'fuel',  label:'Fuel',   color:'#f97316'},
+    {key:'toll',  label:'Toll',   color:'#8b5cf6'},
+    {key:'food',  label:'Fooding',color:'#0891b2'},
+    {key:'maint', label:'Maint',  color:'#b45309'},
+    {key:'other', label:'Other',  color:'#64748b'}
+  ];
+
+  // ── Build analytics HTML ───────────────────────────────────────────────────
+  var html='';
+
+  // ── Section 1: Vehicle Cards (full width) ─────────────────────────────────
+  html+='<div style="margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">'
+      +'<div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--navy)">🚛 Vehicle-wise Expense Breakdown</div>'
+      +'<div style="font-size:12px;color:var(--muted)">Total: <strong style="color:var(--red)">'+fmt(grandTotalExp)+'</strong></div>'
+    +'</div>';
+
+  html+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">';
+
+  vehData.forEach(function(d,i){
+    var pct=grandTotalExp>0?Math.round(d.total/grandTotalExp*100):0;
+    var col=vColors[i%vColors.length];
+    var hasData=d.total>0;
+    var opacity=hasData?'1':'0.45';
+
+    // Stacked bar segments
+    var barHtml='';
+    if(d.total>0){
+      barCats.forEach(function(bc){
+        var val=d[bc.key]||0;
+        var w=d.total>0?Math.round(val/d.total*100):0;
+        if(w>0) barHtml+='<div title="'+bc.label+': '+fmt(val)+'" style="height:100%;width:'+w+'%;background:'+bc.color+';transition:width .3s"></div>';
+      });
+    }
+
+    html+='<div style="background:var(--card);border:1.5px solid '+(hasData?col:'var(--border)')+';border-radius:12px;padding:14px;opacity:'+opacity+';transition:.2s;position:relative;overflow:hidden">'
+      // top accent bar
+      +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+col+'"></div>'
+      // vehicle number
+      +'<div style="font-family:monospace;font-size:13px;font-weight:700;color:'+col+';margin-bottom:8px;margin-top:2px">'+d.v+'</div>'
+      // total amount
+      +'<div style="font-family:var(--fd);font-size:22px;font-weight:700;color:'+(hasData?'var(--navy)':'var(--muted)')+';line-height:1;margin-bottom:4px">'+(hasData?fmt(d.total):'No data')+'</div>'
+      // entries count + share
+      +'<div style="font-size:11px;color:var(--muted);margin-bottom:10px">'+d.count+' entries &nbsp;·&nbsp; '+pct+'% of total</div>'
+      // stacked bar
+      +'<div style="height:6px;background:#f1f5f9;border-radius:3px;display:flex;overflow:hidden;margin-bottom:10px">'
+        +(hasData?barHtml:'')
+      +'</div>'
+      // breakdown grid
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">'
+        +barCats.map(function(bc){
+          var val=d[bc.key]||0;
+          if(!val) return '';
+          return '<div style="background:'+bc.color+'18;border-radius:7px;padding:6px 8px;border:1px solid '+bc.color+'30">'
+            +'<div style="font-size:10px;font-weight:700;color:#374151;margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em">'+bc.label+'</div>'
+            +'<div style="font-size:13px;font-weight:700;color:#111827;line-height:1">'+fmt(val)+'</div>'
+          +'</div>';
+        }).join('')
+      +'</div>'
+    +'</div>';
+  });
+
+  html+='</div>';
+
+  // ── Section 2: Category breakdown — full-width horizontal bar chart ─────────
+  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:16px">';
+  html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
+      +'<div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--navy)">📊 Category-wise Expense</div>'
+      +'<div style="font-size:12px;color:var(--muted)">'+catRows.length+' categories &nbsp;·&nbsp; <strong style="color:var(--navy)">'+fmt(catTotal)+'</strong> total</div>'
+    +'</div>';
+
+  if(catRows.length===0){
+    html+='<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">No expense data for selected filters.</div>';
+  } else {
+    html+='<div style="display:flex;flex-direction:column;gap:0">';
+    catRows.forEach(function(c,i){
+      var val=catMap[c];
+      var pct=catTotal>0?Math.round(val/catTotal*100):0;
+      var meta=catMeta[c]||{icon:'📋',color:'#64748b',bg:'#f1f5f9'};
+      var isLast=i===catRows.length-1;
+      html+=''
+        +'<div style="display:grid;align-items:center;grid-template-columns:22px 120px 1fr auto auto;gap:8px;padding:6px 0;'+(isLast?'':'border-bottom:1px solid #f1f5f9')+'">'
+          +'<div style="font-size:16px;text-align:center;line-height:1">'+meta.icon+'</div>'
+          +'<div style="font-size:12px;font-weight:700;color:var(--navy)">'+c+'</div>'
+          +'<div style="height:7px;background:#f1f5f9;border-radius:4px;overflow:hidden">'
+            +'<div style="height:100%;width:'+pct+'%;background:'+meta.color+';border-radius:4px;transition:width .5s ease"></div>'
+          +'</div>'
+          +'<div style="font-size:11px;font-weight:700;color:'+meta.color+';white-space:nowrap">'+pct+'%</div>'
+          +'<div style="text-align:right;font-family:var(--fd);font-size:14px;font-weight:700;color:var(--navy);white-space:nowrap;min-width:90px">'+fmt(val)+'</div>'
+        +'</div>';
+    });
+    html+='</div>';
+  }
+  html+='</div>';
+
+  document.getElementById('fund-analytics').innerHTML=html;
 }
 
 function filterFundByAccount(account){
@@ -3402,7 +3610,7 @@ function openCashEntryModal(id){
     document.getElementById('fund-entry-type').value=e.entryType||'Expense';
     document.getElementById('fund-entry-source').value=e.source||'';
     document.getElementById('fund-entry-category').value=e.category||'Other';
-    document.getElementById('fund-entry-vehicle').value=e.vehicle||'';
+    document.getElementById('fund-entry-vehicle').value=normalizeVehicleNo(e.vehicle||'')||'';
     document.getElementById('fund-entry-particulars').value=e.particulars||'';
     document.getElementById('fund-entry-amount').value=e.amount||'';
     document.getElementById('fund-entry-mode').value=e.paymentMode||'Cash';
@@ -3472,7 +3680,7 @@ function saveCashEntry(){
     entryType:entryType,
     source:(document.getElementById('fund-entry-source').value||'').trim(),
     category:cat,
-    vehicle:(document.getElementById('fund-entry-vehicle').value||'').trim().toUpperCase(),
+    vehicle:normalizeVehicleNo((document.getElementById('fund-entry-vehicle').value||'').trim()),
     particulars:(document.getElementById('fund-entry-particulars').value||'').trim(),
     paymentMode:(document.getElementById('fund-entry-mode').value||'Cash').trim(),
     amount:amt,
@@ -4131,7 +4339,7 @@ function genReport(type){
       +'<tr style="background:#f8fafc"><td><strong>Net P&L (after salary+EMI)</strong></td><td class="'+(tPL-tSal-tVeh>=0?'tpro':'tlos')+'"><strong>'+fmt(tPL-tSal-tVeh)+'</strong></td></tr>'
       +'</tbody></table></div></div>';
   } else if(type==='vehicle'){
-    m={}; data.forEach(function(t){ var v=t.vehicle||'Unknown'; if(!m[v])m[v]={type:t.type,trips:0,amount:0,cng:0,mcd:0,other:0,infreight:0,pl:0}; m[v].trips++;m[v].amount+=(+t.amount||0);m[v].cng+=(+t.cng||0);m[v].mcd+=(+t.mcd||0);m[v].other+=(+t.other||0);m[v].infreight+=(+t.infreight||0);m[v].pl+=(+t.pl||0); });
+    m={}; data.forEach(function(t){ var v=normalizeVehicleNo(t.vehicle||'Unknown'); if(!m[v])m[v]={type:t.type,trips:0,amount:0,cng:0,mcd:0,other:0,infreight:0,pl:0}; m[v].trips++;m[v].amount+=(+t.amount||0);m[v].cng+=(+t.cng||0);m[v].mcd+=(+t.mcd||0);m[v].other+=(+t.other||0);m[v].infreight+=(+t.infreight||0);m[v].pl+=(+t.pl||0); });
     html='<div class="card"><div class="cardh"><span class="cardt">Vehicle-wise P&L</span></div><div class="cardb"><table><thead><tr><th>Vehicle No</th><th>Type</th><th>Trips</th><th>Revenue</th><th>CNG</th><th>MCD</th><th>Other</th><th>InFreight</th><th>P&L</th><th>Avg P&L/Trip</th></tr></thead><tbody>'+Object.entries(m).sort(function(a,b){return b[1].pl-a[1].pl;}).map(function(e){ var v=e[0],d=e[1]; return '<tr><td><strong class="tmon">'+v+'</strong></td><td>'+tripPill(d.type)+'</td><td>'+d.trips+'</td><td class="tamt">'+fmt(d.amount)+'</td><td class="tamt" style="color:var(--orange)">'+fmt(d.cng)+'</td><td class="tamt">'+fmt(d.mcd)+'</td><td class="tamt">'+fmt(d.other)+'</td><td class="tamt" style="color:var(--green)">'+fmt(d.infreight)+'</td>'+plTD(d.pl)+'<td class="'+(d.pl/d.trips>0?'tpro':'tlos')+'">'+fmt(Math.round(d.pl/d.trips))+'</td></tr>'; }).join('')+'</tbody></table></div></div>';
   } else if(type==='transporter'){
     m={}; data.forEach(function(t){if(!m[t.transporter])m[t.transporter]={trips:0,amount:0,pl:0};m[t.transporter].trips++;m[t.transporter].amount+=(+t.amount||0);m[t.transporter].pl+=(+t.pl||0);});
